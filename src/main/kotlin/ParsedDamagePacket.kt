@@ -9,7 +9,7 @@ class ParsedDamagePacket {
         private var skillCode2 = 0
         private var type = 0
         private var unknown = 0
-        private var unknown2 = 0
+        private var switchVariable = 0
         private var loop = 0
         private var skipValues = mutableListOf<Int>()
         private val timestamp = System.currentTimeMillis()
@@ -35,8 +35,8 @@ class ParsedDamagePacket {
         fun setUnknown(unknownInfo:StreamProcessor.VarIntOutput){
                 this.unknown = unknownInfo.value
         }
-        fun setUnknown2(unknown2Info:StreamProcessor.VarIntOutput){
-                this.unknown2 = unknown2Info.value
+        fun setSwitchVariable(switchVariableInfo:StreamProcessor.VarIntOutput){
+                this.switchVariable = switchVariableInfo.value
         }
         fun setLoop(loopInfo:StreamProcessor.VarIntOutput){
                 this.loop = loopInfo.value
@@ -75,8 +75,8 @@ class ParsedDamagePacket {
         fun getUnknown():Int{
                 return this.unknown
         }
-        fun getUnknown2():Int{
-                return this.unknown2
+        fun getSwitchVariable():Int{
+                return this.switchVariable
         }
         fun getLoop():Int{
                 return this.loop
