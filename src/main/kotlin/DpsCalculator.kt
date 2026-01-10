@@ -46,7 +46,7 @@ class DpsCalculator(private val dataStorage: DataStorage) {
             return dpsData
         }
         pdpMap[currentTarget]!!.forEach lastPdpLoop@{ pdp ->
-            val nickname = nicknameData[pdp.getActorId()] ?: nicknameData[dataStorage.getSummonData()[pdp.getActorId()]] ?: return@lastPdpLoop
+            val nickname = nicknameData[pdp.getActorId()] ?: nicknameData[dataStorage.getSummonData()[pdp.getActorId()]?:return@lastPdpLoop] ?: return@lastPdpLoop
             dpsData.map.merge(nickname, pdp.getDamage().toDouble(), Double::plus)
         }
         dpsData.map.forEach { (name,damage) ->
@@ -58,6 +58,7 @@ class DpsCalculator(private val dataStorage: DataStorage) {
     private fun decideTarget(): Int {
         val target: Int = targetInfoMap.maxByOrNull { it.value.damagedAmount() }?.key ?: 0
         currentTarget = target
+        //데미지 누계말고도 건수누적방식도 추가하는게 좋을지도? 지금방식은 정복같은데선 타겟변경에 너무 오랜시간이듬
         return target
     }
 
