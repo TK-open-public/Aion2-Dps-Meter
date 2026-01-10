@@ -1,14 +1,21 @@
 package com.tbread.webview
 
 import com.tbread.DpsCalculator
+import com.tbread.entity.DpsData
+import javafx.animation.KeyFrame
+import javafx.animation.Timeline
 import javafx.application.Application
+import javafx.application.Platform
 import javafx.concurrent.Worker
 import javafx.scene.Scene
 import javafx.scene.paint.Color
+import javafx.scene.web.WebEngine
 import javafx.scene.web.WebView
 import javafx.stage.Stage
 import javafx.stage.StageStyle
+import javafx.util.Duration
 import netscape.javascript.JSObject
+import kotlin.system.exitProcess
 
 class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
 
@@ -19,54 +26,59 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
         }
     }
 
-//    private var xOffset = 0.0
-//    private var yOffset = 0.0
+    @Volatile
+    private var dpsData: DpsData = dpsCalculator.getDps()
+
 
     override fun start(stage: Stage) {
-            val webView = WebView()
-            val engine = webView.engine
-            engine.load(javaClass.getResource("/index.html")?.toExternalForm())
-//
-//            webView.addEventFilter(MouseEvent.MOUSE_PRESSED) { e ->
-//                xOffset = e.sceneX
-//                yOffset = e.sceneY
-//                e.consume()
-//            }
-//            webView.addEventFilter(MouseEvent.MOUSE_DRAGGED) { e ->
-//                stage.x = e.sceneX - xOffset
-//                stage.y = e.sceneY - yOffset
-//                e.consume()
-//            }
+        stage.setOnCloseRequest {
+            exitProcess(0)
+        }
+        val webView = WebView()
+        val engine = webView.engine
+        engine.load(javaClass.getResource("/index.html")?.toExternalForm())
 
         val bridge = JSBridge(stage)
         engine.loadWorker.stateProperty().addListener { _, _, newState ->
             if (newState == Worker.State.SUCCEEDED) {
                 val window = engine.executeScript("window") as JSObject
                 window.setMember("javaBridge", bridge)
+                window.setMember("dpsData", this)
             }
         }
 
 
-            val scene = Scene(webView, 1000.0, 800.0)
-            scene.fill = Color.TRANSPARENT
+        val scene = Scene(webView, 1000.0, 800.0)
+        scene.fill = Color.TRANSPARENT
 
-            try {
-                val pageField = engine.javaClass.getDeclaredField("page")
-                pageField.isAccessible = true
-                val page = pageField.get(engine)
+        try {
+            val pageField = engine.javaClass.getDeclaredField("page")
+            pageField.isAccessible = true
+            val page = pageField.get(engine)
 
-                val setBgMethod = page.javaClass.getMethod("setBackgroundColor", Int::class.javaPrimitiveType)
-                setBgMethod.isAccessible = true
-                setBgMethod.invoke(page, 0)
-            } catch (e: Exception) {
-                println("리플렉션 실패: ${e.message}")
-            }
-
-            stage.initStyle(StageStyle.TRANSPARENT)
-            stage.scene = scene
-            stage.isAlwaysOnTop = true
-            stage.title = "Aion2 Dps Overlay"
-
-            stage.show()
+            val setBgMethod = page.javaClass.getMethod("setBackgroundColor", Int::class.javaPrimitiveType)
+            setBgMethod.isAccessible = true
+            setBgMethod.invoke(page, 0)
+        } catch (e: Exception) {
+            println("리플렉션 실패: ${e.message}")
         }
+
+        stage.initStyle(StageStyle.TRANSPARENT)
+        stage.scene = scene
+        stage.isAlwaysOnTop = true
+        stage.title = "Aion2 Dps Overlay"
+
+        stage.show()
+        Timeline(KeyFrame(Duration.millis(500.0), {
+            dpsData = dpsCalculator.getDps()
+        })).apply {
+            cycleCount = Timeline.INDEFINITE
+            play()
+        }
+    }
+
+    fun getDpsData(): DpsData {
+        return dpsData
+    }
+
 }
