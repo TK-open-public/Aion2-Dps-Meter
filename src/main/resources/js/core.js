@@ -10,6 +10,7 @@ class DpsApp {
     this.USER_NAME = "승찬";
     this.lastJson = null;
     this.isCollapse = false;
+    this.lastEmptyRows = null;
 
     this.dpsFormatter = new Intl.NumberFormat("ko-KR");
 
@@ -64,11 +65,22 @@ class DpsApp {
 
   fetchDps() {
     const raw = window.dpsData?.getDpsData?.();
-    if (typeof raw !== "string") return;
-    if (raw === this.lastJson) return;
+    if (typeof raw !== "string") {
+      return;
+    }
+    if (raw === this.lastJson) {
+      return;
+    }
     this.lastJson = raw;
 
     const { rows, targetName } = this.buildRowsFromPayload(raw);
+
+   //UI 초기화 안되는 버그 있어서 주석처리 
+    // if (rows.length > 0) {
+    //   this.lastNonEmptyRows = rows;
+    // } else if (this.lastNonEmptyRows) {
+    //   rows = this.lastNonEmptyRows;
+    // }
 
     this.elBossName.textContent = targetName;
 
@@ -88,7 +100,9 @@ class DpsApp {
 
     for (const [name, value] of Object.entries(mapObj || {})) {
       const dps = Math.trunc(Number(value));
-      if (!Number.isFinite(dps)) continue;
+      if (!Number.isFinite(dps)) {
+        continue;
+      }
 
       rows.push({
         id: name,
@@ -165,6 +179,12 @@ class DpsApp {
     });
 
     this.resetBtn?.addEventListener("click", () => {
+      this.detailsUI?.close?.();
+      this.meterUI?.onResetMeterUi?.();
+
+      this.lastJson = null;
+      this.elBossName.textContent = "DPS METER";
+
       window.javaBridge?.resetDps?.();
     });
   }

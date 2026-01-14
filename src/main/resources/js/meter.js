@@ -1,8 +1,16 @@
 const createMeterUI = ({ elList, dpsFormatter, getUserName, onClickUserRow }) => {
-  const createRowView = () => {
+  const MAX_CACHE = 32;
+
+  const rowViewById = new Map();
+  let lastVisibleIds = new Set();
+
+  const nowMs = () => (typeof performance !== "undefined" ? performance.now() : Date.now());
+
+  const createRowView = (id) => {
     const rowEl = document.createElement("div");
     rowEl.className = "item";
     rowEl.style.display = "none";
+    rowEl.dataset.rowId = String(id);
 
     const fillEl = document.createElement("div");
     fillEl.className = "fill";
@@ -26,7 +34,15 @@ const createMeterUI = ({ elList, dpsFormatter, getUserName, onClickUserRow }) =>
     rowEl.appendChild(fillEl);
     rowEl.appendChild(contentEl);
 
-    const view = { rowEl, nameEl, dpsEl, fillEl, currentRow: null };
+    const view = {
+      id,
+      rowEl,
+      nameEl,
+      dpsEl,
+      fillEl,
+      currentRow: null,
+      lastSeenAt: 0,
+    };
 
     rowEl.addEventListener("click", () => {
       if (view.currentRow?.isUser) onClickUserRow?.(view.currentRow);
@@ -35,25 +51,38 @@ const createMeterUI = ({ elList, dpsFormatter, getUserName, onClickUserRow }) =>
     return view;
   };
 
-  const rowSlots = Array.from({ length: 7 }, createRowView);
-  rowSlots.forEach((v) => elList.appendChild(v.rowEl));
+  const getRowView = (id) => {
+    let view = rowViewById.get(id);
+    if (!view) {
+      view = createRowView(id);
+      rowViewById.set(id, view);
+      elList.appendChild(view.rowEl);
+    }
+    return view;
+  };
 
   // 상위 6개 + 유저(유저가 top6 밖이면 7개)
   const getDisplayRows = (sortedAll) => {
     const top6 = sortedAll.slice(0, 6);
-    const isUser = sortedAll.find((x) => x.isUser);
+    const user = sortedAll.find((x) => x.isUser);
 
-    if (!isUser) return top6;
+    if (!user) return top6;
     if (top6.some((x) => x.isUser)) return top6;
-    return [...top6, isUser];
+    return [...top6, user];
   };
 
   const buildRowsFromJson = (jsonStr) => {
-    const obj = JSON.parse(jsonStr);
     const userName = getUserName();
+    let obj;
+
+    try {
+      obj = JSON.parse(jsonStr);
+    } catch {
+      return [];
+    }
 
     const rows = [];
-    for (const [name, value] of Object.entries(obj)) {
+    for (const [name, value] of Object.entries(obj || {})) {
       const dps = Math.trunc(Number(value));
       if (!Number.isFinite(dps)) continue;
 
@@ -67,25 +96,49 @@ const createMeterUI = ({ elList, dpsFormatter, getUserName, onClickUserRow }) =>
     return rows;
   };
 
+  const pruneCache = (keepIds) => {
+    if (rowViewById.size <= MAX_CACHE) return;
+
+    const candidates = [];
+    for (const [id, view] of rowViewById) {
+      if (keepIds.has(id)) {
+        continue;
+      }
+      candidates.push({ id, t: view.lastSeenAt || 0 });
+    }
+
+    candidates.sort((a, b) => a.t - b.t); // 오래된거 제거
+
+    for (let i = 0; rowViewById.size > MAX_CACHE && i < candidates.length; i++) {
+      const id = candidates[i].id;
+      const view = rowViewById.get(id);
+      if (!view) continue;
+      view.rowEl.remove();
+      rowViewById.delete(id);
+    }
+  };
+
   const renderRows = (rows) => {
+    const now = nowMs();
+    const nextVisibleIds = new Set();
+
     elList.classList.toggle("hasRows", rows.length > 0);
 
     let topDps = 1;
-
     for (const row of rows) topDps = Math.max(topDps, Number(row?.dps) || 0);
 
-    for (let i = 0; i < rowSlots.length; i++) {
-      const view = rowSlots[i];
-      const row = rows[i];
+    for (const row of rows) {
+      if (!row) continue;
 
-      if (!row) {
-        view.currentRow = null;
-        view.rowEl.style.display = "none";
-        view.fillEl.style.transform = "scaleX(0)";
-        continue;
-      }
+      const id = row.id ?? row.name;
+      if (!id) continue;
 
+      nextVisibleIds.add(id);
+
+      const view = getRowView(id);
       view.currentRow = row;
+      view.lastSeenAt = now;
+
       view.rowEl.style.display = "";
       view.rowEl.classList.toggle("isUser", !!row.isUser);
 
@@ -96,23 +149,37 @@ const createMeterUI = ({ elList, dpsFormatter, getUserName, onClickUserRow }) =>
 
       const ratio = Math.max(0, Math.min(1, dps / topDps));
       view.fillEl.style.transform = `scaleX(${ratio})`;
+
+      elList.appendChild(view.rowEl);
     }
+
+    for (const id of lastVisibleIds) {
+      if (nextVisibleIds.has(id)) continue;
+      const view = rowViewById.get(id);
+      if (view) view.rowEl.style.display = "none";
+    }
+
+    lastVisibleIds = nextVisibleIds;
+
+    pruneCache(nextVisibleIds);
   };
 
   const updateFromJson = (jsonStr) => {
     const rows = buildRowsFromJson(jsonStr);
-    rows.sort((a, b) => (Number(b.dps) || 0) - (Number(a.dps) || 0));
+    rows.sort((a, b) => (Number(b?.dps) || 0) - (Number(a?.dps) || 0));
     renderRows(getDisplayRows(rows));
   };
+
   const updateFromRows = (rows) => {
-    const arr = Array.isArray(rows) ? rows : [];
+    const arr = Array.isArray(rows) ? rows.slice() : [];
     arr.sort((a, b) => (Number(b?.dps) || 0) - (Number(a?.dps) || 0));
     renderRows(getDisplayRows(arr));
   };
-
-  const setOnClickUserRow = (fn) => {
-    onClickUserRow = fn;
+  const onResetMeterUi = () => {
+    elList.classList.remove("hasRows");
+    lastVisibleIds = new Set();
+    elList.replaceChildren();
+    rowViewById.clear();
   };
-
-  return { updateFromJson, updateFromRows, setOnClickUserRow };
+  return { updateFromJson, updateFromRows, onResetMeterUi };
 };
