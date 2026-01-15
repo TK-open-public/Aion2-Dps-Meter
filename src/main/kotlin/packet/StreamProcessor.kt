@@ -47,6 +47,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
     }
 
     private fun parseBrokenLengthPacket(packet: ByteArray) {
+//        println(toHex(packet))
         var originOffset = 0
         while (originOffset < packet.size) {
             val info = readVarInt(packet, originOffset)
@@ -65,9 +66,9 @@ class StreamProcessor(private val dataStorage: DataStorage) {
                 if (innerOffset + 6 + possibleNameLength <= packet.size) {
                     val possibleNameBytes = packet.copyOfRange(innerOffset + 6, innerOffset + 6 + possibleNameLength)
                     if (hasPossibilityNickname(String(possibleNameBytes, Charsets.UTF_8))) {
+//                        println("1번 패턴에서 발견: ${String(possibleNameBytes, Charsets.UTF_8)}")
                         dataStorage.appendNickname(info.value, String(possibleNameBytes, Charsets.UTF_8))
                         originOffset++
-                        continue
                     }
                 }
             }
@@ -76,19 +77,23 @@ class StreamProcessor(private val dataStorage: DataStorage) {
                 if (packet.size >= innerOffset + possibleNameLength + 3 && possibleNameLength.toInt() != 0) {
                     val possibleNameBytes = packet.copyOfRange(innerOffset + 3, innerOffset + possibleNameLength + 3)
                     if (hasPossibilityNickname(String(possibleNameBytes, Charsets.UTF_8))) {
+//                        println("2번 패턴에서 발견: ${String(possibleNameBytes, Charsets.UTF_8)}")
                         dataStorage.appendNickname(info.value, String(possibleNameBytes, Charsets.UTF_8))
                         originOffset++
-                        continue
                     }
                 }
             }
-            val possibleNameLength: Int = packet[innerOffset].toInt() and 0xff
-            if (packet.size >= innerOffset + possibleNameLength + 1) {
-                val possibleNameBytes = packet.copyOfRange(innerOffset + 1, innerOffset + possibleNameLength + 1)
-                if (hasPossibilityNickname(String(possibleNameBytes, Charsets.UTF_8))) {
-                    dataStorage.appendNickname(info.value, String(possibleNameBytes, Charsets.UTF_8))
-                    originOffset++
-                    continue
+            if (packet.size> innerOffset+5) {
+                if (packet[innerOffset+3] == 0x00.toByte() && packet[innerOffset+4] == 0x07.toByte()) {
+                    val possibleNameLength = packet[innerOffset + 5].toInt() and 0xff
+                    if (packet.size > innerOffset + possibleNameLength + 6){
+                    val possibleNameBytes = packet.copyOfRange(innerOffset + 6, innerOffset + possibleNameLength + 6)
+                    if (hasPossibilityNickname(String(possibleNameBytes, Charsets.UTF_8))) {
+//                        println("신규 패턴에서 발견: ${String(possibleNameBytes, Charsets.UTF_8)}")
+                        dataStorage.appendNickname(info.value, String(possibleNameBytes, Charsets.UTF_8))
+                        originOffset++
+                    }
+                }
                 }
             }
             originOffset++
@@ -162,7 +167,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
             if (packet.size > offset) {
                 val mobInfo2 = readVarInt(packet, offset)
                 if (mobInfo.value == mobInfo2.value) {
-                    println("mid: ${summonInfo.value} code: ${mobInfo.value}")
+//                    println("mid: ${summonInfo.value} code: ${mobInfo.value}")
                     dataStorage.appendMob(summonInfo.value, mobInfo.value)
                 }
             }
@@ -305,11 +310,11 @@ class StreamProcessor(private val dataStorage: DataStorage) {
             }
         }
 
-        println(
-            "피격자: ${pdp.getTargetId()} 공격자: ${pdp.getActorId()} 스위치용변수: ${pdp.getSwitchVariable()} 스킬: ${pdp.getSkillCode1()} 스킬2: ${pdp.getSkillType()}" +
-                    " 플래그: ${pdp.getFlag()} 타입: ${pdp.getType()}" +
-                    " unknown : ${pdp.getUnknown()} 데미지: ${pdp.getDamage()} loop: ${pdp.getLoop()}"
-        )
+//        println(
+//            "피격자: ${pdp.getTargetId()} 공격자: ${pdp.getActorId()} 스위치용변수: ${pdp.getSwitchVariable()} 스킬: ${pdp.getSkillCode1()} 스킬2: ${pdp.getSkillType()}" +
+//                    " 플래그: ${pdp.getFlag()} 타입: ${pdp.getType()}" +
+//                    " unknown : ${pdp.getUnknown()} 데미지: ${pdp.getDamage()} loop: ${pdp.getLoop()}"
+//        )
 
         dataStorage.appendDamage(pdp)
         return true
