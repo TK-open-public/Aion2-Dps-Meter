@@ -59,7 +59,7 @@ class DpsApp {
     this.elBossName.textContent = "DPS METER";
     this.fetchDps();
     setInterval(() => this.fetchDps(), this.POLL_MS);
-    this.callDebugWindow();
+    // this.callDebugWindow();
   }
 
   fetchDps() {
@@ -71,7 +71,7 @@ class DpsApp {
       return;
     }
     this.lastJson = raw;
-   
+
     const { rows, targetName } = this.buildRowsFromPayload(raw);
 
     //UI 초기화 안되는 버그 있어서 주석처리
