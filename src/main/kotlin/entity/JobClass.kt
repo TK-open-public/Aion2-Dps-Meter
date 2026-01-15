@@ -8,5 +8,11 @@ enum class JobClass(val className: String, val basicSkillCode: Int) {
     SORCERER("마도성", 0),
     CLERIC("치유성", 0),
     SUMMONER("정령성", 19216),
-    SHAMAN("호법성", 0)
+    SHAMAN("호법성", 0);
+
+    companion object{
+        fun convertFromSkill(skillCode:Int):JobClass?{
+            return entries.find { it.basicSkillCode == skillCode }
+        }
+    }
 }

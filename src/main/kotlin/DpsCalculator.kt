@@ -1,7 +1,9 @@
 package com.tbread
 
 import com.tbread.entity.DpsData
+import com.tbread.entity.JobClass
 import com.tbread.entity.TargetInfo
+import kotlinx.coroutines.Job
 
 class DpsCalculator(private val dataStorage: DataStorage) {
 
@@ -11,7 +13,7 @@ class DpsCalculator(private val dataStorage: DataStorage) {
 
     private val POSSIBLE_OFFSETS: IntArray =
         intArrayOf(
-            10, 20, 30, 40, 50,
+            0, 10, 20, 30, 40, 50,
             120, 130, 140, 150,
             230, 240, 250,
             340, 350,
@@ -24,7 +26,7 @@ class DpsCalculator(private val dataStorage: DataStorage) {
             3450
         )
 
-    private val SKILL_CODES: IntArray = intArrayOf()
+    private val SKILL_CODES: IntArray = intArrayOf(9952, 60832, 33872, 19216)
 
     private val targetInfoMap = hashMapOf<Int, TargetInfo>()
 
@@ -67,6 +69,15 @@ class DpsCalculator(private val dataStorage: DataStorage) {
             val nickname = nicknameData[pdp.getActorId()] ?: nicknameData[dataStorage.getSummonData()[pdp.getActorId()]
                 ?: return@lastPdpLoop] ?: return@lastPdpLoop
             dpsData.map.merge(nickname, pdp.getDamage().toDouble(), Double::plus)
+            if (!dpsData.classMap.containsKey(nickname)) {
+                val origSkillCode = inferOriginalSkillCode(pdp.getSkillCode1()) ?: -1
+                val job = JobClass.convertFromSkill(origSkillCode)
+                if (job != null) {
+                    dpsData.classMap[nickname] = job.className
+                }
+            }
+
+
         }
         dpsData.map.forEach { (name, damage) ->
             dpsData.map[name] = damage / battleTime * 1000
@@ -74,7 +85,7 @@ class DpsCalculator(private val dataStorage: DataStorage) {
         return dpsData
     }
 
-    private fun decideTarget(): Pair<Int,String> {
+    private fun decideTarget(): Pair<Int, String> {
         val target: Int = targetInfoMap.maxByOrNull { it.value.damagedAmount() }?.key ?: 0
         var targetName = ""
         currentTarget = target
@@ -99,7 +110,7 @@ class DpsCalculator(private val dataStorage: DataStorage) {
         return null
     }
 
-    fun resetDataStorage(){
+    fun resetDataStorage() {
         dataStorage.flushDamageStorage()
         targetInfoMap.clear()
     }
