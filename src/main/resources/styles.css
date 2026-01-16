@@ -1,6 +1,8 @@
 :root {
   --row-fill: #ffc837;
   --isUser-fill: #65d635;
+  --warning-fill: #ffa537;
+  --error-fill: #c24343;
   --dps: #29ff6f;
 
   --text-color: rgb(255, 255, 255);
@@ -105,7 +107,12 @@
   .item.isUser .fill {
     background: var(--isUser-fill);
   }
-
+  .item.warning .fill {
+    background: var(--warning-fill);
+  }
+  .item.error .fill {
+    background: var(--error-fill);
+  }
   .fill {
     position: absolute;
     inset: 0;
