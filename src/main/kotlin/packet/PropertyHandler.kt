@@ -1,11 +1,13 @@
 package com.tbread.packet
 
+import org.slf4j.LoggerFactory
 import java.io.*
 import java.util.*
 
 object PropertyHandler {
     private val props = Properties()
     private const val PROPERTIES_FILE_NAME = "settings.properties"
+    private val logger = LoggerFactory.getLogger(PropertyHandler::class.java)
 
     init {
         loadProperties(PROPERTIES_FILE_NAME)
@@ -17,10 +19,10 @@ object PropertyHandler {
                 props.load(fis)
             }
         } catch (e: FileNotFoundException) {
-            println("설정 파일이 존재하지 않습니다. 신규 파일을 작성합니다.")
+            logger.info("설정파일이 존재하지 않아 파일을 생성합니다.")
             FileOutputStream(fname).use {}
         } catch (e: IOException) {
-            println("설정 파일 읽기에 실패했습니다.")
+            logger.error("설정파일 읽기에 실패했습니다.")
         }
     }
 

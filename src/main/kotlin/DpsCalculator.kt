@@ -5,8 +5,10 @@ import com.tbread.entity.JobClass
 import com.tbread.entity.PersonalData
 import com.tbread.entity.TargetInfo
 import kotlinx.coroutines.Job
+import org.slf4j.LoggerFactory
 
 class DpsCalculator(private val dataStorage: DataStorage) {
+    private val logger = LoggerFactory.getLogger(DpsCalculator::class.java)
 
     enum class Mode {
         ALL, BOSS_ONLY
@@ -107,15 +109,18 @@ class DpsCalculator(private val dataStorage: DataStorage) {
         for (offset in POSSIBLE_OFFSETS) {
             val possibleOrigin = skillCode - offset
             if (SKILL_CODES.binarySearch(possibleOrigin) >= 0) {
+                logger.debug("추론 성공한 원본 스킬코드 :{}",possibleOrigin)
                 return possibleOrigin
             }
         }
+        logger.debug("스킬코드 추론 실패")
         return null
     }
 
     fun resetDataStorage() {
         dataStorage.flushDamageStorage()
         targetInfoMap.clear()
+        logger.info("대상 데미지 누적 데이터 초기화 완료")
     }
 
 }

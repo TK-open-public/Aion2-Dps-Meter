@@ -1,6 +1,9 @@
 package com.tbread.packet
 
+import org.slf4j.LoggerFactory
+
 class StreamAssembler(private val processor: StreamProcessor) {
+    private val logger = LoggerFactory.getLogger(StreamAssembler::class.java)
 
     private val buffer = PacketAccumulator()
 
@@ -22,6 +25,7 @@ class StreamAssembler(private val processor: StreamProcessor) {
                 val fullPacket = buffer.getRange(0, cutPoint)
 
                 if (fullPacket.isNotEmpty()) {
+                    logger.debug("패킷 블록: {}", fullPacket)
                     processor.onPacketReceived(fullPacket)
                 }
 

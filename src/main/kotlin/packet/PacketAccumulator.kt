@@ -1,9 +1,12 @@
 package com.tbread.packet
 
+import org.slf4j.LoggerFactory
 import java.io.ByteArrayOutputStream
 import java.util.*
 
 class PacketAccumulator {
+    private val logger = LoggerFactory.getLogger(PacketAccumulator::class.java)
+
     private val buffer = ByteArrayOutputStream()
 
     // 프로퍼티스로 옮길까? 우선도는 낮음
@@ -14,10 +17,10 @@ class PacketAccumulator {
     fun append(data: ByteArray) {
         //뭔가 꼬였을때 한번 날려서 oom 회피하기, 추후 시간체크같은거 추가해서 용량조절이랑 발생 상황 체크 해주면 될듯?
         if (buffer.size() in (WARN_BUFFER_SIZE + 1)..<MAX_BUFFER_SIZE) {
-            println("${this::class.java.simpleName} : [경고] $this 버퍼 용량 제한 임박")
+            logger.warn("{} : 버퍼 용량 제한 임박",logger.name)
         }
         if (buffer.size() > MAX_BUFFER_SIZE) {
-            println("${this::class.java.simpleName} : [에러] $this 버퍼 용량 제한 초과로 강제 초기화 진행")
+            logger.error("{} : 버퍼 용량 제한 초과, 강제 초기화 진행",logger.name)
             buffer.reset()
         }
         buffer.write(data)

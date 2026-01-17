@@ -1,10 +1,12 @@
 package com.tbread
 
 import com.tbread.entity.ParsedDamagePacket
+import org.slf4j.LoggerFactory
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentSkipListSet
 
 class DataStorage {
+    private val logger = LoggerFactory.getLogger(DataStorage::class.java)
     private val byTargetStorage = ConcurrentHashMap<Int, ConcurrentSkipListSet<ParsedDamagePacket>>()
     private val byActorStorage = ConcurrentHashMap<Int, ConcurrentSkipListSet<ParsedDamagePacket>>()
     private val nicknameStorage = ConcurrentHashMap<Int, String>()
@@ -39,7 +41,11 @@ class DataStorage {
         if (nicknameStorage[uid] != null &&
             nickname.toByteArray(Charsets.UTF_8).size == 2 &&
             nickname.toByteArray(Charsets.UTF_8).size < nicknameStorage[uid]!!.toByteArray(Charsets.UTF_8).size
-        ) return
+        ) {
+            logger.debug("닉네임 등록 시도 취소 {} -x> {}",nicknameStorage[uid],nickname)
+            return
+        }
+        logger.debug("닉네임 등록 {} -> {}",nicknameStorage[uid],nickname)
         nicknameStorage[uid] = nickname
     }
 
@@ -47,6 +53,7 @@ class DataStorage {
     fun flushDamageStorage() {
         byActorStorage.clear()
         byTargetStorage.clear()
+        logger.info("데미지 패킷 초기화됨")
     }
 
     private fun flushNicknameStorage() {

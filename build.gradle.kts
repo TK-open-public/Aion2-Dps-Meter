@@ -29,20 +29,7 @@ dependencies {
     implementation ("org.pcap4j:pcap4j-packetfactory-static:1.8.2")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
 
-//    implementation("io.github.kevinnzou:compose-webview-multiplatform:1.9.20")
-//    //cef 래퍼 포함 라이브러리
-//
-//    implementation ("net.java.dev.jna:jna:5.18.1")
-//    implementation ("net.java.dev.jna:jna-platform:5.18.1")
-//    //jna
-//
-//    implementation("org.jetbrains.intellij.deps.jcef:jcef:137.0.17-gf354b0e-chromium-137.0.7151.104-api-1.20-261-b15")
-//
-//    implementation("org.jogamp.gluegen:gluegen-rt:2.3.2")
-//    implementation("org.jogamp.gluegen:gluegen-rt:2.3.2:natives-windows-amd64")
-//    implementation("org.jogamp.jogl:jogl-all:2.3.2")
-//    implementation("org.jogamp.jogl:jogl-all:2.3.2:natives-windows-amd64")
-
+    
     implementation("org.openjfx:javafx-base:21.0.5:win")
     implementation("org.openjfx:javafx-graphics:21.0.5:win")
     implementation("org.openjfx:javafx-controls:21.0.5:win")
@@ -52,6 +39,10 @@ dependencies {
 
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
+
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:3.0.0-beta2")
+
+
 
 }
 

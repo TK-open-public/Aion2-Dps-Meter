@@ -5,11 +5,9 @@ import com.tbread.entity.DpsData
 import javafx.animation.KeyFrame
 import javafx.animation.Timeline
 import javafx.application.Application
-import javafx.application.Platform
 import javafx.concurrent.Worker
 import javafx.scene.Scene
 import javafx.scene.paint.Color
-import javafx.scene.web.WebEngine
 import javafx.scene.web.WebView
 import javafx.stage.Stage
 import javafx.stage.StageStyle
@@ -17,9 +15,12 @@ import javafx.util.Duration
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
 import netscape.javascript.JSObject
+import org.slf4j.LoggerFactory
 import kotlin.system.exitProcess
 
 class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
+
+    private val logger = LoggerFactory.getLogger(BrowserApp::class.java)
 
     class JSBridge(private val stage: Stage,private val dpsCalculator: DpsCalculator) {
         fun moveWindow(x: Double, y: Double) {
@@ -68,7 +69,7 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
             setBgMethod.isAccessible = true
             setBgMethod.invoke(page, 0)
         } catch (e: Exception) {
-            println("리플렉션 실패: ${e.message}")
+            logger.error("리플렉션 실패",e)
         }
 
         stage.initStyle(StageStyle.TRANSPARENT)
