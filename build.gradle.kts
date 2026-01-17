@@ -59,6 +59,9 @@ compose.desktop {
             targetFormats(TargetFormat.Msi)
             packageName = "aion2meter4j"
             packageVersion = "1.0.0"
+            description = "아이온2 전투분석을 위한 미터기"
+            copyright = "© 2026 TK-open-public. Licensed under MIT License"
+            vendor = "TeamSupSin"
         }
 
 
