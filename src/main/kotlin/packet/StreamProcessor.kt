@@ -14,7 +14,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
     fun onPacketReceived(packet: ByteArray) {
         val packetLengthInfo = readVarInt(packet)
         if (packet.size == packetLengthInfo.value) {
-            logger.debug("현재 바이트길이와 예상 길이가 같음 : {}", toHex(packet.copyOfRange(0, packet.size - 3)))
+            logger.trace("현재 바이트길이와 예상 길이가 같음 : {}", toHex(packet.copyOfRange(0, packet.size - 3)))
             parsePerfectPacket(packet.copyOfRange(0, packet.size - 3))
             //더이상 자를필요가 없는 최종 패킷뭉치
             return
@@ -22,7 +22,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         if (packet.size <= 3) return
         // 매직패킷 단일로 올때 무시
         if (packetLengthInfo.value > packet.size) {
-            logger.debug("현재 바이트길이가 예상 길이보다 짧음 : {}", toHex(packet))
+            logger.trace("현재 바이트길이가 예상 길이보다 짧음 : {}", toHex(packet))
             parseBrokenLengthPacket(packet)
             //길이헤더가 실제패킷보다 김 보통 여기 닉네임이 몰려있는듯?
             return
@@ -34,9 +34,11 @@ class StreamProcessor(private val dataStorage: DataStorage) {
 
         try {
             if (packet.copyOfRange(0, packetLengthInfo.value - 3).size != 3) {
-                logger.debug("패킷을 성공적으로 분리함 : {}", toHex(packet.copyOfRange(0, packetLengthInfo.value - 3)))
-                parsePerfectPacket(packet.copyOfRange(0, packetLengthInfo.value - 3))
-                //매직패킷이 빠져있는 패킷뭉치
+                if (packet.copyOfRange(0, packetLengthInfo.value - 3).isNotEmpty()) {
+                    logger.trace("패킷을 성공적으로 분리함 : {}", toHex(packet.copyOfRange(0, packetLengthInfo.value - 3)))
+                    parsePerfectPacket(packet.copyOfRange(0, packetLengthInfo.value - 3))
+                    //매직패킷이 빠져있는 패킷뭉치
+                }
             }
 
             onPacketReceived(packet.copyOfRange(packetLengthInfo.value - 3, packet.size))
@@ -169,7 +171,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
             if (packet.size > offset) {
                 val mobInfo2 = readVarInt(packet, offset)
                 if (mobInfo.value == mobInfo2.value) {
-                    logger.debug("mid: {}, code: {}",summonInfo.value,mobInfo.value)
+                    logger.debug("mid: {}, code: {}", summonInfo.value, mobInfo.value)
                     dataStorage.appendMob(summonInfo.value, mobInfo.value)
                 }
             }
@@ -187,7 +189,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         if (offset + 2 > packet.size) return false
         val realActorId = parseUInt16le(packet, offset)
 
-        logger.debug("소환몹 맵핑 성공 {},{}",realActorId,summonInfo.value)
+        logger.debug("소환몹 맵핑 성공 {},{}", realActorId, summonInfo.value)
         dataStorage.appendSummon(realActorId, summonInfo.value)
         return true
     }
@@ -221,7 +223,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
 
         val np = packet.copyOfRange(offset + 1, offset + nicknameLength + 1)
 
-        logger.debug("0번 패턴에서 발견된 확정 닉네임 {}",String(np, Charsets.UTF_8))
+        logger.debug("0번 패턴에서 발견된 확정 닉네임 {}", String(np, Charsets.UTF_8))
         dataStorage.appendNickname(playerInfo.value, String(np, Charsets.UTF_8))
 
         return true
@@ -314,7 +316,14 @@ class StreamProcessor(private val dataStorage: DataStorage) {
             }
         }
 
-        logger.debug("피격자: {},공격자: {},스킬: {},타입: {},데미지: {}",pdp.getTargetId(),pdp.getActorId(),pdp.getSkillCode1(),pdp.getType(),pdp.getDamage())
+        logger.debug(
+            "피격자: {},공격자: {},스킬: {},타입: {},데미지: {}",
+            pdp.getTargetId(),
+            pdp.getActorId(),
+            pdp.getSkillCode1(),
+            pdp.getType(),
+            pdp.getDamage()
+        )
 
         dataStorage.appendDamage(pdp)
         return true
@@ -334,11 +343,11 @@ class StreamProcessor(private val dataStorage: DataStorage) {
 
         while (true) {
             if (offset + count >= bytes.size) {
-                logger.error("배열범위초과, 패킷 {} 오프셋 {} count {}",toHex(bytes),offset,count)
+                logger.error("배열범위초과, 패킷 {} 오프셋 {} count {}", toHex(bytes), offset, count)
                 return VarIntOutput(-1, -1)
             }
 
-            val byteVal = bytes[offset + count].toInt()
+            val byteVal = bytes[offset + count].toInt() and 0xff
             count++
 
             value = value or (byteVal and 0x7F shl shift)
@@ -348,8 +357,13 @@ class StreamProcessor(private val dataStorage: DataStorage) {
             }
 
             shift += 7
-            if (shift >= 64){
-                logger.error("가변정수 오버플로우, 패킷 {} 오프셋 {} shift {}",toHex(bytes),offset,shift)
+            if (shift >= 32) {
+                logger.trace(
+                    "가변정수 오버플로우, 패킷 {} 오프셋 {} shift {}",
+                    toHex(bytes.copyOfRange(offset, offset + 4)),
+                    offset,
+                    shift
+                )
                 return VarIntOutput(-1, -1)
             }
         }
