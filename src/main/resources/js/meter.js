@@ -63,7 +63,8 @@ const createMeterUI = ({ elList, dpsFormatter, getUserName, onClickUserRow }) =>
     };
 
     rowEl.addEventListener("click", () => {
-      if (view.currentRow?.isUser) onClickUserRow?.(view.currentRow);
+      // if (view.currentRow?.isUser)
+      onClickUserRow?.(view.currentRow);
     });
 
     return view;

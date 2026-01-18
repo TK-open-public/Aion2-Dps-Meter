@@ -7,7 +7,7 @@ class DpsApp {
     }
 
     this.POLL_MS = 200;
-    this.USER_NAME = "승찬";
+    this.USER_NAME = "-------";
     this.lastJson = null;
     this.isCollapse = false;
 
