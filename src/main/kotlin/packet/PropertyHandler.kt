@@ -1,13 +1,13 @@
 package com.tbread.packet
 
-import org.slf4j.LoggerFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.*
 import java.util.*
 
 object PropertyHandler {
     private val props = Properties()
     private const val PROPERTIES_FILE_NAME = "settings.properties"
-    private val logger = LoggerFactory.getLogger(PropertyHandler::class.java)
+    private val logger = KotlinLogging.logger {}
 
     init {
         loadProperties(PROPERTIES_FILE_NAME)
@@ -18,11 +18,11 @@ object PropertyHandler {
             FileInputStream(fname).use { fis ->
                 props.load(fis)
             }
-        } catch (e: FileNotFoundException) {
-            logger.info("설정파일이 존재하지 않아 파일을 생성합니다.")
+        } catch (_: FileNotFoundException) {
+            logger.info { "설정파일이 존재하지 않아 파일을 생성합니다." }
             FileOutputStream(fname).use {}
         } catch (e: IOException) {
-            logger.error("설정파일 읽기에 실패했습니다.")
+            logger.error(e) { "설정파일 읽기에 실패했습니다." }
         }
     }
 
@@ -30,12 +30,12 @@ object PropertyHandler {
         if (key == null) return null
         return try {
             String(key.toByteArray(Charsets.ISO_8859_1), charset("EUC-KR"))
-        } catch (e: UnsupportedEncodingException) {
+        } catch (_: UnsupportedEncodingException) {
             key
         }
     }
 
-    private fun save(){
+    private fun save() {
         FileOutputStream(PROPERTIES_FILE_NAME).use { fos ->
             props.store(fos, "settings")
         }
@@ -49,8 +49,8 @@ object PropertyHandler {
         return encodeToEucKr(props.getProperty(key, defaultValue))
     }
 
-    fun setProperty(key:String,value:String){
-        props.setProperty(key,value)
+    fun setProperty(key: String, value: String) {
+        props.setProperty(key, value)
         save()
     }
 

@@ -4,33 +4,34 @@ import com.tbread.entity.DpsData
 import com.tbread.entity.JobClass
 import com.tbread.entity.PersonalData
 import com.tbread.entity.TargetInfo
-import kotlinx.coroutines.Job
-import org.slf4j.LoggerFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 class DpsCalculator(private val dataStorage: DataStorage) {
-    private val logger = LoggerFactory.getLogger(DpsCalculator::class.java)
+    private val logger = KotlinLogging.logger {}
 
     enum class Mode {
         ALL, BOSS_ONLY
     }
 
-    private val POSSIBLE_OFFSETS: IntArray =
-        intArrayOf(
-            0, 10, 20, 30, 40, 50,
-            120, 130, 140, 150,
-            230, 240, 250,
-            340, 350,
-            450,
-            1230, 1240, 1250,
-            1340, 1350,
-            1450,
-            2340, 2350,
-            2450,
-            3450
-        )
+    companion object {
+        private val POSSIBLE_OFFSETS: IntArray =
+            intArrayOf(
+                0, 10, 20, 30, 40, 50,
+                120, 130, 140, 150,
+                230, 240, 250,
+                340, 350,
+                450,
+                1230, 1240, 1250,
+                1340, 1350,
+                1450,
+                2340, 2350,
+                2450,
+                3450
+            )
 
-    private val SKILL_CODES: IntArray =
-        intArrayOf(9952, 60832, 33872, 19216, 53136, 36176, 5648, 16912).apply { sort() }
+        private val SKILL_CODES: IntArray =
+            intArrayOf(9952, 60832, 33872, 19216, 53136, 36176, 5648, 16912).apply { sort() }
+    }
 
     private val targetInfoMap = hashMapOf<Int, TargetInfo>()
 
@@ -55,7 +56,7 @@ class DpsCalculator(private val dataStorage: DataStorage) {
                 if (flag) {
                     flag = false
                     targetInfo = TargetInfo(target, 0, pdp.getTimeStamp(), pdp.getTimeStamp())
-                    targetInfoMap[target] = targetInfo!!
+                    targetInfoMap[target] = targetInfo
                 }
                 targetInfo!!.processPdp(pdp)
                 //그냥 아래에서 재계산하는거 여기서 해놓고 아래에선 그냥 골라서 주는게 맞는거같은데 나중에 고민할필요있을듯
@@ -112,18 +113,18 @@ class DpsCalculator(private val dataStorage: DataStorage) {
         for (offset in POSSIBLE_OFFSETS) {
             val possibleOrigin = skillCode - offset
             if (SKILL_CODES.binarySearch(possibleOrigin) >= 0) {
-                logger.debug("추론 성공한 원본 스킬코드 :{}",possibleOrigin)
+                logger.debug { "추론 성공한 원본 스킬코드 : $possibleOrigin" }
                 return possibleOrigin
             }
         }
-        logger.debug("스킬코드 추론 실패")
+        logger.debug { "스킬코드 추론 실패" }
         return null
     }
 
     fun resetDataStorage() {
         dataStorage.flushDamageStorage()
         targetInfoMap.clear()
-        logger.info("대상 데미지 누적 데이터 초기화 완료")
+        logger.info { "대상 데미지 누적 데이터 초기화 완료" }
     }
 
 }

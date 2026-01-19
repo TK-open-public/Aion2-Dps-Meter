@@ -1,28 +1,29 @@
 package com.tbread.packet
 
-import org.slf4j.LoggerFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.ByteArrayOutputStream
-import java.util.*
 
 class PacketAccumulator {
-    private val logger = LoggerFactory.getLogger(PacketAccumulator::class.java)
-
+    private val logger = KotlinLogging.logger {}
     private val buffer = ByteArrayOutputStream()
 
-    // 프로퍼티스로 옮길까? 우선도는 낮음
-    private val MAX_BUFFER_SIZE = 2 * 1024 * 1024
-    private val WARN_BUFFER_SIZE = 1024 * 1024
+    companion object {
+        // 프로퍼티스로 옮길까? 우선도는 낮음
+        private const val MAX_BUFFER_SIZE = 2 * 1024 * 1024
+        private const val WARN_BUFFER_SIZE = 1024 * 1024
+    }
 
     @Synchronized
     fun append(data: ByteArray) {
         //뭔가 꼬였을때 한번 날려서 oom 회피하기, 추후 시간체크같은거 추가해서 용량조절이랑 발생 상황 체크 해주면 될듯?
         if (buffer.size() in (WARN_BUFFER_SIZE + 1)..<MAX_BUFFER_SIZE) {
-            logger.warn("{} : 버퍼 용량 제한 임박",logger.name)
+            logger.warn { "버퍼 용량 제한 임박" }
         }
         if (buffer.size() > MAX_BUFFER_SIZE) {
-            logger.error("{} : 버퍼 용량 제한 초과, 강제 초기화 진행",logger.name)
+            logger.error { "버퍼 용량 제한 초과, 강제 초기화 진행" }
             buffer.reset()
         }
+
         buffer.write(data)
     }
 
@@ -53,7 +54,8 @@ class PacketAccumulator {
         if (start < 0 || endExclusive > allBytes.size || start > endExclusive) {
             return ByteArray(0)
         }
-        return Arrays.copyOfRange(allBytes, start, endExclusive)
+
+        return allBytes.copyOfRange(start, endExclusive)
     }
 
     @Synchronized

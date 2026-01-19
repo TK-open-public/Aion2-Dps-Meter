@@ -1,10 +1,6 @@
 package com.tbread.packet
 
-import org.slf4j.LoggerFactory
-
 class StreamAssembler(private val processor: StreamProcessor) {
-    private val logger = LoggerFactory.getLogger(StreamAssembler::class.java)
-
     private val buffer = PacketAccumulator()
 
     private val MAGIC_PACKET = byteArrayOf(0x06.toByte(), 0x00.toByte(), 0x36.toByte())
