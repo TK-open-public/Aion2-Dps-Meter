@@ -5,7 +5,7 @@ class StreamAssembler(private val processor: StreamProcessor) {
 
     private val MAGIC_PACKET = byteArrayOf(0x06.toByte(), 0x00.toByte(), 0x36.toByte())
 
-    suspend fun processChunk(chunk: ByteArray) {
+    fun processChunk(chunk: ByteArray) {
             buffer.append(chunk)
 
             while (true) {
