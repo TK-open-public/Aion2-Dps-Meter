@@ -63,7 +63,8 @@ const createMeterUI = ({ elList, dpsFormatter, getUserName, onClickUserRow }) =>
     };
 
     rowEl.addEventListener("click", () => {
-      if (view.currentRow?.isUser) onClickUserRow?.(view.currentRow);
+      // if (view.currentRow?.isUser)
+      onClickUserRow?.(view.currentRow);
     });
 
     return view;
@@ -121,10 +122,14 @@ const createMeterUI = ({ elList, dpsFormatter, getUserName, onClickUserRow }) =>
     for (const row of rows) topDps = Math.max(topDps, Number(row?.dps) || 0);
 
     for (const row of rows) {
-      if (!row) continue;
+      if (!row) {
+        continue;
+      }
 
       const id = row.id ?? row.name;
-      if (!id) continue;
+      if (!id) {
+        continue;
+      }
 
       nextVisibleIds.add(id);
 
@@ -146,8 +151,8 @@ const createMeterUI = ({ elList, dpsFormatter, getUserName, onClickUserRow }) =>
 
       // view.classIconEl.style.display = "";
 
-      const dps = row.dps || 0;
-      const damageContribution = row.damageContribution;
+      const dps = Number(row.dps) || 0;
+      const damageContribution = Number(row.damageContribution) || 0;
 
       let contributionClass = "";
       if (damageContribution < 3) {

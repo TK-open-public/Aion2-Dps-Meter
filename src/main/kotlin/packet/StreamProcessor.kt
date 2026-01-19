@@ -26,7 +26,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
             //길이헤더가 실제패킷보다 김 보통 여기 닉네임이 몰려있는듯?
             return
         }
-        if (packetLengthInfo.value <= 2) {
+        if (packetLengthInfo.value <= 3) {
             onPacketReceived(packet.copyOfRange(1, packet.size))
             return
         }
@@ -155,6 +155,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
     private fun parseSummonPacket(packet: ByteArray): Boolean {
         var offset = 0
         val packetLengthInfo = readVarInt(packet)
+        if (packetLengthInfo.length < 0) return false
         offset += packetLengthInfo.length
 
 
@@ -163,13 +164,16 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         offset += 2
 
         val summonInfo = readVarInt(packet, offset)
+        if (summonInfo.length < 0) return false
         offset += summonInfo.length + 28
         if (packet.size > offset) {
             val mobInfo = readVarInt(packet, offset)
+            if (mobInfo.length < 0) return false
             offset += mobInfo.length
 
             if (packet.size > offset) {
                 val mobInfo2 = readVarInt(packet, offset)
+                if (mobInfo2.length < 0) return false
                 if (mobInfo.value == mobInfo2.value) {
                     logger.debug { "mid: ${summonInfo.value}, code: ${mobInfo.value}" }
                     dataStorage.appendMob(summonInfo.value, mobInfo.value)
@@ -197,9 +201,18 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         return (packet[offset].toInt() and 0xff) or ((packet[offset + 1].toInt() and 0xff) shl 8)
     }
 
+    private fun parseUInt32le(packet: ByteArray,offset: Int=0):Int{
+        require(offset + 4 <= packet.size) { "패킷 길이가 필요길이보다 짧음" }
+        return ((packet[offset].toInt() and 0xFF)) or
+                ((packet[offset + 1].toInt() and 0xFF) shl 8) or
+                ((packet[offset + 2].toInt() and 0xFF) shl 16) or
+                ((packet[offset + 3].toInt() and 0xFF) shl 24)
+    }
+
     private fun parsingNickname(packet: ByteArray): Boolean {
         var offset = 0
         val packetLengthInfo = readVarInt(packet)
+        if (packetLengthInfo.length < 0) return false
         offset += packetLengthInfo.length
 //        if (packetLengthInfo.value < 32) return
         //좀더 검증필요 대부분이 0x20,0x23 정도였음
@@ -232,6 +245,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         if (packet[0] == 0x20.toByte()) return false
         var offset = 0
         val packetLengthInfo = readVarInt(packet)
+        if (packetLengthInfo.length < 0) return false
         val pdp = ParsedDamagePacket()
 
         offset += packetLengthInfo.length
@@ -242,21 +256,25 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         offset += 2
         if (offset >= packet.size) return false
         val targetInfo = readVarInt(packet, offset)
+        if (targetInfo.length < 0) return false
         pdp.setTargetId(targetInfo)
         offset += targetInfo.length //타겟
         if (offset >= packet.size) return false
 
         val switchInfo = readVarInt(packet, offset)
+        if (switchInfo.length < 0) return false
         pdp.setSwitchVariable(switchInfo)
         offset += switchInfo.length //점프용
         if (offset >= packet.size) return false
 
         val flagInfo = readVarInt(packet, offset)
+        if (flagInfo.length < 0) return false
         pdp.setFlag(flagInfo)
         offset += flagInfo.length //플래그
         if (offset >= packet.size) return false
 
         val actorInfo = readVarInt(packet, offset)
+        if (actorInfo.length < 0) return false
         pdp.setActorId(actorInfo)
         offset += actorInfo.length
         if (offset >= packet.size) return false
@@ -265,17 +283,13 @@ class StreamProcessor(private val dataStorage: DataStorage) {
 
         val temp = offset
 
-        val skillCode = parseUInt16le(packet, offset)
+        val skillCode = parseUInt32le(packet, offset)
         pdp.setSkillCode(skillCode)
-        offset += 2
 
-        val skillType = parseUInt16le(packet, offset)
-        pdp.setSkillType(skillType)
-        // 다음연계기가 있을경우 168,조건기 170? 절단2타와 올려치기 모두 174로 동일 유린/검난/결박 172
-        // 발목격파가 171, 연계기 174 예상 파기
         offset = temp + 5
 
         val typeInfo = readVarInt(packet, offset)
+        if (typeInfo.length < 0) return false
         pdp.setType(typeInfo)
         offset += typeInfo.length
         if (offset >= packet.size) return false
@@ -292,16 +306,19 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         if (offset >= packet.size) return false
 
         val unknownInfo = readVarInt(packet, offset)
+        if (unknownInfo.length < 0) return false
         pdp.setUnknown(unknownInfo)
         offset += unknownInfo.length
         if (offset >= packet.size) return false
 
         val damageInfo = readVarInt(packet, offset)
+        if (damageInfo.length < 0) return false
         pdp.setDamage(damageInfo)
         offset += damageInfo.length
         if (offset >= packet.size) return false
 
         val loopInfo = readVarInt(packet, offset)
+        if (loopInfo.length < 0) return false
         pdp.setLoop(loopInfo)
         offset += loopInfo.length
 
@@ -310,13 +327,18 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         if (loopInfo.value != 0) {
             repeat(loopInfo.length) {
                 val skipValueInfo = readVarInt(packet, offset)
+                if (skipValueInfo.length < 0) return false
                 pdp.addSkipData(skipValueInfo)
                 offset += skipValueInfo.length
             }
         }
 
         logger.debug { "피격자: ${pdp.getTargetId()},공격자: ${pdp.getActorId()},스킬: ${pdp.getSkillCode1()},타입: ${pdp.getType()},데미지: ${pdp.getDamage()}" }
-        dataStorage.appendDamage(pdp)
+        if (pdp.getActorId() != pdp.getTargetId()) {
+            //추후 hps 를 넣는다면 수정하기
+            //혹시 나중에 자기자신에게 데미지주는 보스 기믹이 나오면..
+            dataStorage.appendDamage(pdp)
+        }
         return true
 
     }

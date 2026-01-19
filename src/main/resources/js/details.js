@@ -18,8 +18,8 @@ const createDetailsUI = ({
   const STATUS = [
     { label: "누적 피해량", getValue: (d) => formatNum(d?.totalDmg) },
     { label: "피해량 기여도", getValue: (d) => d?.percent ?? "-" },
-    { label: "보스 막기비율", getValue: (d) => d?.parry ?? "-" },
-    { label: "보스 회피비율", getValue: (d) => d?.eva ?? "-" },
+    // { label: "보스 막기비율", getValue: (d) => d?.parry ?? "-" },
+    // { label: "보스 회피비율", getValue: (d) => d?.eva ?? "-" },
     { label: "전투시간", getValue: (d) => d?.combatTime ?? "-" },
   ];
 
@@ -42,7 +42,7 @@ const createDetailsUI = ({
   };
 
   const statSlots = STATUS.map((def) => createStatView(def.label));
-  statSlots.forEach((v) => detailsStatsEl.appendChild(v.statEl));
+  statSlots.forEach((value) => detailsStatsEl.appendChild(value.statEl));
 
   const renderStats = (details) => {
     for (let i = 0; i < STATUS.length; i++) {
@@ -58,7 +58,14 @@ const createDetailsUI = ({
     nameEl.className = "cell name";
 
     const castEl = document.createElement("div");
-    castEl.className = "cell cast right";
+    castEl.className = "cell cast";
+    const hitEl = document.createElement("span");
+    hitEl.className = "castHit";
+
+    const critEl = document.createElement("span");
+    critEl.className = "castCrit";
+    castEl.appendChild(hitEl);
+    castEl.appendChild(critEl);
 
     const dmgEl = document.createElement("div");
     dmgEl.className = "cell dmg right";
@@ -76,7 +83,7 @@ const createDetailsUI = ({
     rowEl.appendChild(castEl);
     rowEl.appendChild(dmgEl);
 
-    return { rowEl, nameEl, castEl, dmgFillEl, dmgTextEl };
+    return { rowEl, nameEl, castEl, hitEl, critEl, dmgFillEl, dmgTextEl };
   };
 
   const skillSlots = [];
@@ -89,24 +96,25 @@ const createDetailsUI = ({
   };
 
   const renderSkills = (details) => {
-    const list = Array.isArray(details?.skills) ? details.skills : [];
-    const sorted = [...list]
+    const skills = Array.isArray(details?.skills) ? details.skills : [];
+    const topSkills = [...skills]
       .sort((a, b) => (Number(b?.dmg) || 0) - (Number(a?.dmg) || 0))
-      .slice(0, 10);
+      .slice(0, 12);
 
-    const totalAllDmg = Number(details?.totalDmg) || 0;
-    const denom =
-      totalAllDmg > 0
-        ? totalAllDmg
-        : sorted.reduce((acc, s) => acc + (Number(s?.dmg) || 0), 0) || 1;
+    const totalDamage = Number(details?.totalDmg);
+    if (!Number.isFinite(totalDamage) || totalDamage <= 0) {
+      uiDebug?.log("details:invalidTotalDmg", details);
+      return;
+    }
+    const percentBaseTotal = totalDamage;
 
-    ensureSkillSlots(sorted.length);
+    ensureSkillSlots(topSkills.length);
 
     for (let i = 0; i < skillSlots.length; i++) {
       const view = skillSlots[i];
-      const s = sorted[i];
+      const skill = topSkills[i];
 
-      if (!s) {
+      if (!skill) {
         view.rowEl.style.display = "none";
         view.dmgFillEl.style.transform = "scaleX(0)";
         continue;
@@ -114,15 +122,21 @@ const createDetailsUI = ({
 
       view.rowEl.style.display = "";
 
-      const dmg = Number(s.dmg) || 0;
-      const pct = (dmg / denom) * 100;
-      const pctRounded = Math.round(pct);
-      const barRatio = clamp01(pct / 100);
+      const damage = Number(skill.dmg) || 0;
+      const damagePercent = (damage / percentBaseTotal) * 100;
+      const damagePercentRounded = Math.round(damagePercent);
+      const barFillRatio = clamp01(damage / percentBaseTotal);
+      const hits = Number(skill.time) || 0;
+      const crits = Number(skill.crit) || 0;
 
-      view.nameEl.textContent = s.name ?? "";
-      view.castEl.textContent = `${formatNum(s.time)} (${formatNum(s.crit)})`;
-      view.dmgTextEl.textContent = `${formatNum(dmg)} (${pctRounded}%)`;
-      view.dmgFillEl.style.transform = `scaleX(${barRatio})`;
+      // 0으로 나누기 방지
+      const critRate = hits > 0 ? Math.floor((crits / hits) * 100) : 0;
+
+      view.nameEl.textContent = skill.name ?? "";
+      view.hitEl.textContent = `${hits}회`;
+      view.critEl.textContent = `(${critRate}%)`;
+      view.dmgTextEl.textContent = `${formatNum(damage)} (${damagePercentRounded}%)`;
+      view.dmgFillEl.style.transform = `scaleX(${barFillRatio})`;
     }
   };
 
@@ -135,10 +149,22 @@ const createDetailsUI = ({
   const isOpen = () => detailsPanel.classList.contains("open");
 
   const open = async (row) => {
-    const details = await getDetails(row);
-    render(details, row);
-
+    detailsTitle.textContent = `${row.name} 상세내역`;
     detailsPanel.classList.add("open");
+
+    // 이전 값 비우기
+    for (let i = 0; i < statSlots.length; i++) statSlots[i].valueEl.textContent = "-";
+    for (let i = 0; i < skillSlots.length; i++) {
+      skillSlots[i].rowEl.style.display = "none";
+      skillSlots[i].dmgFillEl.style.transform = "scaleX(0)";
+    }
+
+    try {
+      const details = await getDetails(row);
+      render(details, row);
+    } catch (e) {
+      uiDebug?.log("getDetails:error", { id: row?.id, message: e?.message });
+    }
   };
 
   const close = () => detailsPanel.classList.remove("open");

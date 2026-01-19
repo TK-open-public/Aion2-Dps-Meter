@@ -6,8 +6,9 @@
   --dps: #29ff6f;
 
   --text-color: rgb(255, 255, 255);
-  --text-shadow: 1px 0 0 rgba(0, 0, 0, 0.55), -1px 0 0 rgba(0, 0, 0, 0.55),
-    0 1px 0 rgba(0, 0, 0, 0.55), 0 -1px 0 rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.35);
+  --text-shadow:
+    1px 0 0 rgba(0, 0, 0, 0.55), -1px 0 0 rgba(0, 0, 0, 0.55), 0 1px 0 rgba(0, 0, 0, 0.55),
+    0 -1px 0 rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.35);
 
   --rounded-lg: 12px;
   --rounded: 10px;
@@ -25,6 +26,7 @@
   -webkit-user-select: none;
   user-select: none;
 }
+
 .container {
   position: relative;
 }
@@ -94,16 +96,17 @@
   padding: 0px 12px;
   .item {
     position: relative;
-    height: 32px;
+    height: 36px;
     padding: 0 8px;
     border-radius: var(--rounded-xs);
     overflow: hidden;
     background: rgba(0, 0, 0, 0.3);
-  }
-
-  .item.isUser {
     cursor: pointer;
   }
+
+  /* .item.isUser {
+    cursor: pointer;
+  } */
   .item.isUser .fill {
     background: var(--isUser-fill);
   }
@@ -171,9 +174,8 @@
   color: white;
   display: none;
   left: 0px;
-  top: calc(100% + 8px);
+  top: calc(100% + 4px);
   font-weight: bold;
-
   width: 600px;
   border: 1px solid var(--panel-border);
   background: rgba(12, 22, 40, 0.7);
@@ -185,13 +187,19 @@
 .detailsHeader {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   color: var(--title);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   padding-bottom: 12px;
   margin-bottom: 12px;
+  .tooltip {
+    opacity: 0.6;
+    margin-left: 12px;
+
+    font-size: 12px;
+  }
   .closeX {
     cursor: pointer;
+    margin-left: auto;
     user-select: none;
     font-size: 22px;
     padding: 2px 8px;
@@ -219,9 +227,16 @@
   margin-top: 14px;
   .cell.name {
     flex: 1;
+    color: var(--row-fill);
   }
   .cell.cast {
-    flex: 1;
+    flex: 0 0 110px;
+    display: flex;
+    position: relative;
+
+    justify-content: space-between;
+    align-items: center;
+    overflow: visible;
   }
   .cell.dmg {
     flex: 2;
@@ -230,18 +245,30 @@
   .cell.right {
     text-align: right;
   }
+  .cell.center {
+    text-align: center;
+  }
+
   .skillHeader {
     display: flex;
     align-items: center;
     gap: 24px;
     padding: 8px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    .cell.name {
+      flex: 1;
+      color: white;
+    }
   }
   .skillRow {
     display: flex;
     align-items: center;
     gap: 24px;
-    padding: 6px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    &:last-child {
+      border-bottom: none;
+    }
 
     .cell.dmg {
       position: relative;

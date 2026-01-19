@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
   <head>
     <meta charset="utf-8" />
@@ -41,6 +41,8 @@
           aria-modal="true">
           <div class="detailsHeader">
             <div class="detailsTitle">상세</div>
+            <div class="tooltip">스킬은 총 12개 까지만 표시됩니다.</div>
+
             <div class="closeX detailsClose">×</div>
           </div>
 
@@ -49,10 +51,14 @@
 
             <div class="detailsSkills">
               <div class="skillHeader">
-                <div class="cell name">스킬명</div>
-                <div class="cell cast right">시전 횟수 (치명)</div>
+                <div class="cell name center">스킬명</div>
+                <div class="cell cast">
+                  <span class="castHit">명중횟수</span>
+                  <span class="castCrit">(치명)</span>
+                </div>
                 <div class="cell dmg">누적 피해량</div>
               </div>
+
               <div class="skills"></div>
             </div>
           </div>
