@@ -7,6 +7,9 @@ const createDetailsUI = ({
   dpsFormatter,
   getDetails,
 }) => {
+  let openedRowId = null;
+  let openSeq = 0;
+
   const clamp01 = (v) => Math.max(0, Math.min(1, v));
 
   const formatNum = (v) => {
@@ -148,7 +151,18 @@ const createDetailsUI = ({
 
   const isOpen = () => detailsPanel.classList.contains("open");
 
-  const open = async (row) => {
+  const open = async (row, { force = false } = {}) => {
+    const rowId = row?.id ?? null;
+    if (!rowId) {
+      return;
+    }
+
+    if (!force && detailsPanel.classList.contains("open") && openedRowId === rowId) {
+      return;
+    }
+
+    openedRowId = rowId;
+
     detailsTitle.textContent = `${row.name} 상세내역`;
     detailsPanel.classList.add("open");
 
@@ -159,11 +173,21 @@ const createDetailsUI = ({
       skillSlots[i].dmgFillEl.style.transform = "scaleX(0)";
     }
 
+    const seq = ++openSeq;
+
     try {
       const details = await getDetails(row);
+
+      if (seq !== openSeq) {
+        return;
+      }
+
       render(details, row);
     } catch (e) {
-      uiDebug?.log("getDetails:error", { id: row?.id, message: e?.message });
+      if (seq !== openSeq) {
+        return;
+      }
+      uiDebug?.log("getDetails:error", { id: rowId, message: e?.message });
     }
   };
 

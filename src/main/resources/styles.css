@@ -212,6 +212,7 @@
   background: rgba(12, 22, 40, 0.7);
   padding: 12px 24px;
   border-radius: var(--rounded);
+
   &.open {
     display: block;
   }
