@@ -262,7 +262,7 @@
   .detailsSkills {
     margin-top: 24px;
     .cell {
-      min-width: 50px;
+      min-width: 60px;
     }
     .cell.center {
       text-align: center;
@@ -272,15 +272,7 @@
 
       color: var(--row-fill);
     }
-    .cell.base {
-      flex: 0 0 110px;
-      display: flex;
-      position: relative;
 
-      justify-content: space-between;
-      align-items: center;
-      overflow: visible;
-    }
     .cell.dmg {
       flex: 1;
       text-align: center;

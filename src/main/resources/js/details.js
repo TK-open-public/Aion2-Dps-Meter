@@ -69,11 +69,9 @@ const createDetailsUI = ({
     nameEl.className = "cell name";
 
     const hitEl = document.createElement("div");
-    const hitTimesEl = document.createElement("span");
-    const critEl = document.createElement("span");
-    hitEl.className = "cell base hit";
-    hitEl.appendChild(hitTimesEl);
-    hitEl.appendChild(critEl);
+    const critEl = document.createElement("div");
+    hitEl.className = "cell center hit";
+    critEl.className = "cell center crit";
 
     const parryEl = document.createElement("div");
 
@@ -101,6 +99,7 @@ const createDetailsUI = ({
 
     rowEl.appendChild(nameEl);
     rowEl.appendChild(hitEl);
+    rowEl.appendChild(critEl);
     rowEl.appendChild(parryEl);
     rowEl.appendChild(perfectEl);
     rowEl.appendChild(doubleEl);
@@ -111,7 +110,7 @@ const createDetailsUI = ({
     return {
       rowEl,
       nameEl,
-      hitTimesEl,
+      hitEl,
       critEl,
       parryEl,
       backEl,
@@ -178,8 +177,8 @@ const createDetailsUI = ({
       const doubleRate = pct(double, hits);
 
       view.nameEl.textContent = skill.name ?? "";
-      view.hitTimesEl.textContent = `${hits}회`;
-      view.critEl.textContent = `(${critRate}%)`;
+      view.hitEl.textContent = `${hits}회`;
+      view.critEl.textContent = `${critRate}%`;
 
       view.parryEl.textContent = `${parryRate}%`;
       view.backEl.textContent = `${backRate}%`;
