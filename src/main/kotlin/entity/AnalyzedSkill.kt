@@ -11,7 +11,11 @@ data class AnalyzedSkill(
     var damageAmount: Int = 0,
     var critTimes: Int = 0,
     var times: Int = 0,
-    @Required val skillName:String
+    @Required val skillName:String,
+    var backTimes: Int = 0,
+    var perfectTimes: Int = 0,
+    var doubleTimes: Int = 0,
+    var parryTimes: Int = 0
 ) {
-    constructor(pdp:ParsedDamagePacket) : this(pdp.getSkillCode1(),0,0,0,DpsCalculator.SKILL_MAP[pdp.getSkillCode1()] ?: "")
+    constructor(pdp:ParsedDamagePacket) : this(pdp.getSkillCode1(),0,0,0,DpsCalculator.SKILL_MAP[pdp.getSkillCode1()] ?: "",0,0,0)
 }

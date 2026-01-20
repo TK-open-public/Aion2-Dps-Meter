@@ -27,5 +27,9 @@ data class PersonalData(
         analyzedSkill.times++
         analyzedSkill.damageAmount += pdp.getDamage()
         if (pdp.isCrit()) analyzedSkill.critTimes++
+        if (pdp.getSpecials().contains(SpecialDamage.BACK)) analyzedSkill.backTimes++
+        if (pdp.getSpecials().contains(SpecialDamage.PARRY)) analyzedSkill.parryTimes++
+        if (pdp.getSpecials().contains(SpecialDamage.DOUBLE)) analyzedSkill.doubleTimes++
+        if (pdp.getSpecials().contains(SpecialDamage.PERFECT)) analyzedSkill.perfectTimes++
     }
 }
