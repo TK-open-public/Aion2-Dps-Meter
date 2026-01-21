@@ -54,12 +54,9 @@ tasks.withType<JavaExec> {
 }
 
 javafx {
-    version = "21.0.9:win" // 사용하려는 JavaFX 버전 (JDK 버전과 호환되는지 확인)
+    version = "21.0.9:win"
     modules(
         "javafx.base",
         "javafx.graphics",
-        "javafx.controls",
-        "javafx.swing",
-        "javafx.web",
-        "javafx.media") // 필요한 모듈 명시
+        "javafx.web")
 }

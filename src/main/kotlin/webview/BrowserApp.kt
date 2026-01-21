@@ -17,20 +17,29 @@ import kotlinx.serialization.json.Json
 import netscape.javascript.JSObject
 import kotlin.system.exitProcess
 
-class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
-
+class JSBridge(private val stage: Stage, private val dpsCalculator: DpsCalculator) {
     private val logger = KotlinLogging.logger {}
 
-    class JSBridge(private val stage: Stage, private val dpsCalculator: DpsCalculator) {
-        fun moveWindow(x: Double, y: Double) {
-            stage.x = x
-            stage.y = y
-        }
+    fun moveWindow(x: Double, y: Double) {
+        stage.x = x
+        stage.y = y
+    }
 
-        fun resetDps() {
-            dpsCalculator.resetDataStorage()
+    fun resetDps() {
+        dpsCalculator.resetDataStorage()
+    }
+
+    fun log(level: String, message: String) {
+        when(level){
+            "LOG" -> logger.info { message }
+            "ERROR" -> logger.error { message }
+            "WARN" -> logger.warn { message }
         }
     }
+}
+
+class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
+    private val logger = KotlinLogging.logger {}
 
     @Volatile
     private var dpsData: DpsData = dpsCalculator.getDps()
@@ -43,16 +52,46 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
         }
         val webView = WebView()
         val engine = webView.engine
-        engine.load(javaClass.getResource("/index.html")?.toExternalForm())
-
         val bridge = JSBridge(stage, dpsCalculator)
+
         engine.loadWorker.stateProperty().addListener { _, _, newState ->
             if (newState == Worker.State.SUCCEEDED) {
                 val window = engine.executeScript("window") as JSObject
                 window.setMember("javaBridge", bridge)
                 window.setMember("dpsData", this)
+
+                // JS에서 console.log를 가로채도록 설정
+                engine.executeScript(
+                    """
+                      (function() {
+                            const log = (level, ...args) => {
+                              const message = args.join(' ');
+                              
+                              if (window.javaBridge) {
+                                window.javaBridge.log(level, message);
+                              }
+                            };
+                            
+                            console.log = (...args) => log('LOG', ...args);
+                            console.error = (...args) => log('ERROR', ...args);
+                            console.warn = (...args) => log('WARN', ...args);
+                            
+                            window.addEventListener('error', (e) => {
+                              log('ERROR', e.message + ' at ' + e.filename + ':' + e.lineno);
+                            });
+                            
+                            window.addEventListener('unhandledrejection', (e) => {
+                              log('ERROR', 'Unhandled Rejection: ' + e.reason);
+                            });
+                                
+                            window.dispatchEvent(new CustomEvent('javaReady'));
+                        })();
+                    """.trimIndent()
+                )
             }
         }
+
+        engine.load(javaClass.getResource("/index.html")?.toExternalForm())
 
         val scene = Scene(webView, 1000.0, 1000.0)
         scene.fill = Color.TRANSPARENT
@@ -91,8 +130,7 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
         return debugMode
     }
 
-    fun getBattleDetail(uid:Int):String{
+    fun getBattleDetail(uid: Int): String {
         return Json.encodeToString(dpsData.map[uid]?.analyzedData)
     }
-
 }

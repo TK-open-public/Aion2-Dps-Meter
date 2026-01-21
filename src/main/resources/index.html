@@ -1,99 +1,264 @@
 <!doctype html>
 <html lang="ko">
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1" />
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>DPS</title>
     <link
-      href="styles.css"
-      rel="stylesheet"
-      type="text/css" />
+        href="styles.css"
+        rel="stylesheet"
+        type="text/css"/>
     <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/spoqa-han-sans@3.3.0/css/SpoqaHanSansNeo.min.css" />
-    <script src="https://unpkg.com/lucide@latest"></script>
-  </head>
+        rel="stylesheet"
+        href="./lib/SpoqaHanSansNeo.min.css"/>
+    <script src="./lib/vue.global.js"></script>
+    <script src="./lib/lucide.min.js"></script>
+</head>
 
-  <body>
-    <div class="container">
+<body>
+<div class="container">
+    <div id="app"></div>
+</div>
+
+<script src="./js/dps.js"></script>
+<script src="./components/headerArea.js"></script>
+<script src="./components/meterArea.js"></script>
+<script src="./components/detailArea.js"></script>
+
+<script>
+  const {createApp, ref, onMounted, onUnmounted, watch} = Vue;
+
+  createApp({
+    components: {
+      HeaderArea: window.HeaderArea,
+      MeterArea: window.MeterArea,
+      DetailArea: window.DetailArea
+    },
+    setup() {
+      const isCollapse = ref(false);
+      const isDetailOpen = ref(false);
+      const detailRowId = ref("");
+      const dpsDatas = ref([]);
+      const targetName = ref("");
+      let intervalId = null;
+
+      const isDragging = ref(false);
+      const startX = ref(0);
+      const startY = ref(0);
+      const initialStageX = ref(0);
+      const initialStageY = ref(0);
+
+      const fightState = ref("state-grace");
+      const isFight = ref(false);
+      const fightStartAt = ref(0);
+      const lastActiveAt = ref(0);
+      const fightEndAt = ref(0);
+
+      // 리셋버튼 이벤트
+      const resetClick = () => {
+        isCollapse.value = false;
+        isDetailOpen.value = false;
+        detailRowId.value = "";
+        dpsDatas.value = [];
+        targetName.value = "";
+
+        fightState.value = "";
+        isFight.value = false;
+        fightStartAt.value = 0;
+        lastActiveAt.value = 0;
+        fightEndAt.value = 0;
+      };
+
+      // 정렬 이벤트
+      const collapseClick = () => {
+        isCollapse.value = !isCollapse.value;
+      };
+
+      //리스트에서 유저클릭시 이벤트
+      const onClickUserRow = (row) => {
+        if(row.id) {
+          detailRowId.value = row.id;
+          isDetailOpen.value = true;
+        }
+      }
+
+      // 창 이동 이벤트
+      const handleMouseDown = (e) => {
+        isDragging.value = true;
+        startX.value = e.screenX;
+        startY.value = e.screenY;
+        initialStageX.value = window.screenX;
+        initialStageY.value = window.screenY;
+      };
+
+      const handleMouseMove = (e) => {
+        if (isDragging.value && window.javaBridge) {
+          const deltaX = e.screenX - startX.value;
+          const deltaY = e.screenY - startY.value;
+
+          window.javaBridge.moveWindow(
+            initialStageX.value + deltaX,
+            initialStageY.value + deltaY
+          );
+        }
+      };
+
+      const handleMouseUp = () => {
+        isDragging.value = false;
+      };
+
+      // dps 풀링 시작
+      const startPolling = () => {
+        const initPolling = () => {
+          if (window.dpsData && window.dpsData.getDpsData) {
+            intervalId = setInterval(() => {
+              if (!window.dpsData || !window.dpsData.getDpsData) {
+                return;
+              }
+
+              const raw = window.dpsData.getDpsData() || [];
+              if (typeof raw !== "string") return;
+
+              let { rows, targetName : newTargetName } = buildRowsFromPayload(raw);
+
+              dpsDatas.value = rows;
+              targetName.value = newTargetName;
+            }, 200);
+          } else {
+            console.log("dpsData 없음");
+          }
+        };
+
+        // 이미 준비되어 있으면 바로 실행
+        if (window.dpsData) {
+          initPolling();
+        } else {
+          console.log("javaReady 이벤트 대기 중...");
+
+          window.addEventListener('javaReady', () => {
+            console.log("javaReady 이벤트 수신!");
+            initPolling();
+          }, { once: true });
+        }
+      };
+
+      const stopPolling = () => {
+        if (intervalId) {
+          clearInterval(intervalId);
+          intervalId = null;
+        }
+      };
+
+      // 미터기 상세 창 닫기 이벤트
+      const detailClose = () => {
+        isDetailOpen.value = false;
+        detailRowId.value = "";
+      }
+
+      // 배틀 시간 계산
+      watch(dpsDatas, (newVal) => {
+        const isActivity = computedDps(newVal);
+        console.log(isActivity)
+        const now = performance.now() || Date.now();
+
+        if(isActivity) {
+          if(fightStartAt.value === 0) {
+            isFight.value = true;
+            fightStartAt.value = now;
+            lastActiveAt.value = now;
+            fightEndAt.value = 0;
+            fightState.value = "state-fighting";
+          } else {
+            if(isFight.value) {
+              lastActiveAt.value = now;
+            }
+          }
+        } else {
+          if(isFight.value) {
+            const inactiveMs = now - lastActiveAt;
+            if (inactiveMs >= 30000) {
+              isFight.value = false;
+              fightEndAt.value = lastActiveAt - fightStartAt.value; // 전투시간
+              fightStartAt.value = 0;
+              fightState.value = "state-ended";
+            } else if (inactiveMs >= 1000) {
+              fightState.value = "state-grace";
+            }
+          }
+        }
+      }, { deep: true });
+
+      const formatMMSS = (ms) => {
+        const sec = Math.max(0, Math.floor(ms / 1000));
+        const mm = String(Math.floor(sec / 60)).padStart(2, "0");
+        const ss = String(sec % 60).padStart(2, "0");
+        return `${mm}:${ss}`;
+      };
+
+      onMounted(() => {
+        document.addEventListener("mousedown", handleMouseDown);
+        document.addEventListener("mousemove", handleMouseMove);
+        document.addEventListener("mouseup", handleMouseUp);
+        startPolling();
+      });
+
+      onUnmounted(() => {
+        document.removeEventListener("mousedown", handleMouseDown);
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+        stopPolling();
+      });
+
+      return {
+        isCollapse,
+        isDetailOpen,
+        dpsDatas,
+        targetName,
+        detailRowId,
+        fightState,
+        isFight,
+        fightStartAt,
+        lastActiveAt,
+        fightEndAt,
+        resetClick,
+        collapseClick,
+        onClickUserRow,
+        detailClose,
+        formatMMSS
+      };
+    },
+    template: `
       <div class="meter">
-        <div class="header">
-          <div class="bossIcon">
-            <img src="./assets/logo.png" />
-          </div>
-          <div class="bossNames">
-            <span class="bossName"></span>
-          </div>
-          <div class="headerBtns">
-            <div class="headerBtn resetBtn"><i data-lucide="rotate-ccw"></i></div>
-            <div class="headerBtn collapseBtn">
-              <i
-                class="collapseIcon"
-                data-lucide="arrow-up-wide-narrow"></i>
-            </div>
-          </div>
-        </div>
-        <div
-          class="detailsPanel"
-          role="dialog"
-          aria-modal="true">
-          <div class="detailsHeader">
-            <div class="detailsTitle">상세</div>
-            <div class="tooltip">스킬은 총 12개 까지만 표시됩니다.</div>
+        <HeaderArea :targetName="targetName" :isCollapse="isCollapse" @resetClick="resetClick"
+                    @collapseClick="collapseClick"/>
 
-            <div class="closeX detailsClose">×</div>
-          </div>
+        <MeterArea @onClickUserRow="onClickUserRow" :rows="dpsDatas"/>
 
-          <div class="detailsBody">
-            <div class="detailsStats"></div>
+        <DetailArea  @closeClick="detailClose" :isDetailOpen="isDetailOpen" :id="detailRowId" :combatTime="formatMMSS(isFight ? lastActiveAt - fightStartAt : fightEndAt)"/>
 
-            <div class="detailsSkills">
-              <div class="skillHeader">
-                <div class="cell name center">스킬명</div>
-                <div class="cell cast">
-                  <span class="castHit">명중횟수</span>
-                  <span class="castCrit">(치명)</span>
-                </div>
-                <div class="cell dmg">누적 피해량</div>
-              </div>
-
-              <div class="skills"></div>
-            </div>
-          </div>
-        </div>
-        <div class="list"></div>
-        <div class="battleTime">
+        <div class="battleTime" :class="[fightState]">
           <div class="status"></div>
-          <div class="tick"></div>
+          <div class="tick">{{ formatMMSS(isFight ? lastActiveAt - fightStartAt : fightEndAt) }}</div>
         </div>
-      </div>
-      <div
-        class="console"
-        style="
-          position: fixed;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          background: rgba(0, 0, 0, 0.8);
-          color: lime;
-          font-family: monospace;
-          font-size: 12px;
-          padding: 10px;
-          max-height: 200px;
-          overflow-y: auto;
-          display: none;
-        "></div>
-    </div>
 
-    <script src="./js/battleTime.js"></script>
-    <script src="./js/meter.js"></script>
-    <script src="./js/details.js"></script>
-    <script src="./js/core.js"></script>
-    <script>
-      lucide.createIcons();
-      dpsApp.start();
-    </script>
-  </body>
+        <div class="console"
+             style="
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            color: lime;
+            font-family: monospace;
+            font-size: 12px;
+            padding: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+          "></div>
+      </div>
+    `
+  }).mount('#app');
+</script>
+</body>
 </html>

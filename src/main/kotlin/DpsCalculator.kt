@@ -5,6 +5,7 @@ import com.tbread.entity.JobClass
 import com.tbread.entity.PersonalData
 import com.tbread.entity.TargetInfo
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlin.collections.forEach
 import kotlin.math.roundToInt
 
 class DpsCalculator(private val dataStorage: DataStorage) {
@@ -18,7 +19,7 @@ class DpsCalculator(private val dataStorage: DataStorage) {
         val POSSIBLE_OFFSETS: IntArray =
             intArrayOf(
                 0, 10, 20, 30, 40, 50,
-                120, 130, 140, 150,
+                120, 130, 131, 132, 133, 140, 141, 150,
                 230, 240, 250,
                 340, 350,
                 450,
@@ -385,10 +386,10 @@ class DpsCalculator(private val dataStorage: DataStorage) {
             12780000 to "격앙",
             12790000 to "생존 의지",
             12800000 to "고통 차단",
-            12310000 to "주신의 징벌",
+            12310010 to "주신의 징벌",
             12320000 to "네자칸의 방패",
             12110000 to "보호의 방패",
-            12120000 to "도발",
+            12120010 to "도발",
             12200000 to "균형의 갑옷",
             12190000 to "이중 갑옷",
             12070000 to "파멸의 방패",
@@ -452,394 +453,11 @@ class DpsCalculator(private val dataStorage: DataStorage) {
             13700000 to "강습 습격"
 
         )
-
-        val SKILL_CODES: IntArray =
-            intArrayOf(
-                100051,
-                100055,
-                17010000,
-                17020000,
-                17030000,
-                17040000,
-                17040007,
-                17050000,
-                17080000,
-                17070000,
-                17150002,
-                17090000,
-                17350000,
-                17100000,
-                17120000,
-                17120001,
-                17370000,
-                17060000,
-                17060001,
-                17060002,
-                17060003,
-                17240000,
-                17320000,
-                17280000,
-                17290000,
-                17160000,
-                17430000,
-                17390000,
-                17400000,
-                17270000,
-                17190000,
-                17410000,
-                17420000,
-                17300000,
-                17700000,
-                17710000,
-                17720000,
-                17730001,
-                17730002,
-                17740000,
-                17750000,
-                17760000,
-                17770000,
-                17780000,
-                17790000,
-                17800000,
-                11020000,
-                11030000,
-                11040000,
-                11180000,
-                11010000,
-                11420000,
-                11190000,
-                11290000,
-                11290001,
-                11170000,
-                11440000,
-                11280000,
-                11200000,
-                11210000,
-                11050000,
-                11060000,
-                11360000,
-                11360001,
-                11300000,
-                11370000,
-                11100000,
-                11100001,
-                11100002,
-                11260000,
-                11320000,
-                11240000,
-                11400000,
-                11250000,
-                11110000,
-                11130000,
-                11080000,
-                11090000,
-                11380000,
-                11340000,
-                11390000,
-                11410000,
-                11430000,
-                11700000,
-                11170037,
-                11710000,
-                11720000,
-                11730000,
-                11740000,
-                11750000,
-                11760000,
-                11770000,
-                11770007,
-                11780000,
-                11790000,
-                11800008,
-                16010000,
-                16020000,
-                16030000,
-                16040000,
-                16050000,
-                16100004,
-                16110004,
-                16110005,
-                16140000,
-                16001104,
-                16001108,
-                16001110,
-                16001113,
-                16001117,
-                16340000,
-                16130001,
-                16130005,
-                16330000,
-                16120002,
-                16120005,
-                16070000,
-                16300000,
-                16300001,
-                16300002,
-                16300003,
-                16200000,
-                16210000,
-                16710000,
-                16720000,
-                16730001,
-                16740001,
-                16750000,
-                16760000,
-                16800001,
-                16770000,
-                16790000,
-                16780000,
-                16240000,
-                16240001,
-                16240002,
-                16240003,
-                16001301,
-                16001305,
-                16001309,
-                16001313,
-                16001317,
-                16190000,
-                16370000,
-                16250000,
-                16250001,
-                16150000,
-                16151100,
-                16152100,
-                16154100,
-                16153100,
-                16360000,
-                16060000,
-                16080000,
-                16220000,
-                16230000,
-                16260000,
-                16700000,
-                18010000,
-                18020000,
-                18030000,
-                18370000,
-                18040000,
-                18050000,
-                18090000,
-                18090001,
-                18090002,
-                18090003,
-                18060000,
-                18070000,
-                18100000,
-                18400000,
-                18300000,
-                18150000,
-                18120000,
-                18210000,
-                18390000,
-                18080000,
-                18080001,
-                18290000,
-                18200000,
-                18410000,
-                18220000,
-                18190000,
-                18140000,
-                18160000,
-                18130000,
-                18330000,
-                18240000,
-                18230000,
-                18170000,
-                18250000,
-                18420000,
-                18700000,
-                18710000,
-                18720000,
-                18730000,
-                18740000,
-                18750000,
-                18760000,
-                18770000,
-                18780000,
-                18790000,
-                18800001,
-                14020000,
-                14030000,
-                14040000,
-                14100000,
-                14340000,
-                14130000,
-                14140000,
-                14090000,
-                14050000,
-                14330000,
-                14110000,
-                14110001,
-                14110002,
-                14110003,
-                14170001,
-                14080000,
-                14070000,
-                14010000,
-                14010001,
-                14010002,
-                14010003,
-                14260000,
-                14370000,
-                14720007,
-                14770007,
-                14780008,
-                14800007,
-                14270000,
-                14120000,
-                14180000,
-                14150000,
-                14160000,
-                14350000,
-                14060000,
-                14360000,
-                14700000,
-                14200000,
-                15210000,
-                15030000,
-                15250000,
-                15090000,
-                15100000,
-                15040000,
-                15280002,
-                15050000,
-                15050007,
-                15010000,
-                15150000,
-                15110000,
-                15330000,
-                15220000,
-                15310000,
-                15060000,
-                15060001,
-                15060002,
-                15060003,
-                15060008,
-                15240000,
-                15340000,
-                15710008,
-                15720000,
-                15730007,
-                15740000,
-                15760000,
-                15770000,
-                15750000,
-                15780000,
-                15790000,
-                15800007,
-                15360000,
-                15160000,
-                15400000,
-                15140000,
-                15230000,
-                15130000,
-                15200000,
-                15390000,
-                15300000,
-                15300001,
-                15320007,
-                15120000,
-                15700000,
-                12010000,
-                12020000,
-                12030000,
-                12440000,
-                12040000,
-                12060000,
-                12060005,
-                12130000,
-                12100000,
-                12240000,
-                12340000,
-                12270000,
-                12350000,
-                12430000,
-                12430001,
-                12300000,
-                12090000,
-                12090001,
-                12090002,
-                12090003,
-                12260000,
-                12330000,
-                12710000,
-                12720000,
-                12730001,
-                12740000,
-                12750000,
-                12760000,
-                12770000,
-                12780000,
-                12790000,
-                12800000,
-                12310000,
-                12320000,
-                12110000,
-                12120000,
-                12200000,
-                12190000,
-                12070000,
-                12230000,
-                12410000,
-                12250000,
-                12220000,
-                12420000,
-                12700000,
-                13010000,
-                13030000,
-                13040000,
-                13100000,
-                13110000,
-                13120000,
-                13070000,
-                13060000,
-                13350000,
-                13340000,
-                13210000,
-                13050000,
-                13360000,
-                13380000,
-                13220000,
-                13130000,
-                13260000,
-                13330000,
-                13710000,
-                13720000,
-                13720005,
-                13720006,
-                13720007,
-                13720008,
-                13720009,
-                13730000,
-                13730007,
-                13740000,
-                13750000,
-                13760000,
-                13770000,
-                13780000,
-                13790000,
-                13800007,
-                13270000,
-                13390000,
-                13250000,
-                13080000,
-                13280000,
-                13180000,
-                13020000,
-                13090000,
-                13300000,
-                13230000,
-                13240000,
-                13310000,
-                13370000,
-                13700000
-            ).apply { sort() }
     }
 
     private val targetInfoMap = hashMapOf<Int, TargetInfo>()
 
-    private var mode: Mode = Mode.BOSS_ONLY
+    private var mode: Mode = Mode.ALL
     private var currentTarget: Int = 0
 
     fun setMode(mode: Mode) {
@@ -878,11 +496,17 @@ class DpsCalculator(private val dataStorage: DataStorage) {
         pdpMap[currentTarget]!!.forEach lastPdpLoop@{ pdp ->
             totalDamage += pdp.getDamage()
             val uid = dataStorage.getSummonData()[pdp.getActorId()] ?: pdp.getActorId()
-            val nickname = nicknameData[pdp.getActorId()] ?: nicknameData[dataStorage.getSummonData()[pdp.getActorId()]
-                ?: return@lastPdpLoop] ?: return@lastPdpLoop
+            val actorId = pdp.getActorId()
+            val nickname = actorId.let {
+                nicknameData[it] ?: dataStorage.getSummonData()[it]?.let { ownerId ->
+                    nicknameData[ownerId]
+                }
+            } ?: ""
+
             if (!dpsData.map.containsKey(uid)) {
                 dpsData.map[uid] = PersonalData(nickname = nickname)
             }
+
             pdp.setSkillCode(inferOriginalSkillCode(pdp.getSkillCode1()) ?: pdp.getSkillCode1())
             dpsData.map[uid]!!.processPdp(pdp)
             if (dpsData.map[uid]!!.job == "") {
@@ -897,6 +521,7 @@ class DpsCalculator(private val dataStorage: DataStorage) {
             data.dps = data.amount / battleTime * 1000
             data.damageContribution = data.amount / totalDamage * 100
         }
+
         return dpsData
     }
 
@@ -918,12 +543,12 @@ class DpsCalculator(private val dataStorage: DataStorage) {
     private fun inferOriginalSkillCode(skillCode: Int): Int? {
         for (offset in POSSIBLE_OFFSETS) {
             val possibleOrigin = skillCode - offset
-            if (SKILL_CODES.binarySearch(possibleOrigin) >= 0) {
-                logger.debug { "추론 성공한 원본 스킬코드 : $possibleOrigin" }
+            if (SKILL_MAP.containsKey(possibleOrigin)) {
+//                logger.debug { "추론 성공한 원본 스킬코드 : $possibleOrigin" }
                 return possibleOrigin
             }
         }
-        logger.debug { "스킬코드 추론 실패" }
+//        logger.debug { "스킬코드 추론 실패" }
         return null
     }
 
@@ -936,26 +561,16 @@ class DpsCalculator(private val dataStorage: DataStorage) {
     fun analyzingData(uid: Int) {
         val dpsData = getDps()
         dpsData.map.forEach { (_, pData) ->
-            logger.info("-----------------------------------------")
-            logger.info(
-                "닉네임: {} 직업: {} 총 딜량: {} 기여도: {}",
-                pData.nickname,
-                pData.job,
-                pData.amount,
-                pData.damageContribution
-            )
+            logger.info { "-----------------------------------------" }
+            logger.info { "닉네임: $pData.nickname 직업: $pData.job 총 딜량: $pData.amount 기여도: $pData.damageContribution" }
             pData.analyzedData.forEach { (key, data) ->
-                logger.info("스킬(코드): {} 스킬 총 피해량: {}", SKILL_MAP[key] ?: key, data.damageAmount)
-                logger.info(
-                    "사용 횟수: {} 치명타 횟수: {} 치명타 비율:{}",
-                    data.times,
-                    data.critTimes,
-                    data.critTimes / data.times * 100
-                )
-                logger.info("스킬의 딜 지분: {}%", (data.damageAmount / pData.amount * 100).roundToInt())
+                logger.info { "스킬(코드): ${SKILL_MAP[key] ?: key} 스킬 총 피해량: $data.damageAmount" }
+                logger.info {
+                    "사용 횟수: $data.times 치명타 횟수: $data.critTimes 치명타 비율:${data.critTimes / data.times * 100}"
+                }
+                logger.info { "스킬의 딜 지분: ${(data.damageAmount / pData.amount * 100).roundToInt()}%" }
             }
-            logger.info("-----------------------------------------")
         }
+        logger.info { "-----------------------------------------" }
     }
-
 }
