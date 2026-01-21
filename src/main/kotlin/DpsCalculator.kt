@@ -896,12 +896,13 @@ class DpsCalculator(private val dataStorage: DataStorage) {
                 }
             }
         }
-        dpsData.map.forEach { (key, data) ->
-            if (dataStorage.getSummonData().containsKey(key)){
-                dataStorage.getSummonData().remove(key)
+        dpsData.map.forEach dpsLoop@{ (key, data) ->
+            if (data.job == ""){
+                dpsData.map.remove(key)
+            } else {
+                data.dps = data.amount / battleTime * 1000
+                data.damageContribution = data.amount / totalDamage * 100
             }
-            data.dps = data.amount / battleTime * 1000
-            data.damageContribution = data.amount / totalDamage * 100
         }
         return dpsData
     }
