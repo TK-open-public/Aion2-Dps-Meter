@@ -896,9 +896,11 @@ class DpsCalculator(private val dataStorage: DataStorage) {
                 }
             }
         }
-        dpsData.map.forEach dpsLoop@{ (key, data) ->
-            if (data.job == ""){
-                dpsData.map.remove(key)
+        val iterator = dpsData.map.iterator()
+        while (iterator.hasNext()) {
+            val (_, data) = iterator.next()
+            if (data.job == "") {
+                iterator.remove()
             } else {
                 data.dps = data.amount / battleTime * 1000
                 data.damageContribution = data.amount / totalDamage * 100
