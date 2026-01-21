@@ -75,9 +75,15 @@ cd Aion2-Dps-Meter
 
 <br />
 
-![image](./readme-asset/battleAnalyze.png)
+![image](./readme-asset/battleAnalyze_2.png)
+
 
 <br />
+
+미터기를 클릭하면 각 유저의 디테일을 조회할 수 있습니다.
+<br />
+타격 횟수는 시전 횟수가 아닌, 명중 횟수 입니다.
+스킬을 1회 시전을 했을 때 3회 타격을 하는 스킬이라면, 명중 횟수는 3회가 표기됩니다.
 
 ## FAQ
 
