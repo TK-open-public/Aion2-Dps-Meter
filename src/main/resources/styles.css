@@ -165,7 +165,7 @@
   }
 }
 .battleTime {
-  display: none;
+  /*display: none;*/
   align-items: center;
   gap: 8px;
   margin-bottom: 6px; /* 리스트 위쪽에 띄우고 싶으면 */
@@ -173,12 +173,6 @@
 
   &.isVisible {
     display: flex;
-  }
-  .tick {
-    color: var(--text-color);
-    text-shadow: var(--text-shadow);
-    font-weight: 700;
-    font-size: 14px;
   }
 
   .status {
@@ -188,6 +182,16 @@
     background: rgba(255, 255, 255, 0.25);
     box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.25);
     flex: 0 0 auto;
+    display: inline-block;
+  }
+
+  .tick {
+    color: var(--text-color);
+    text-shadow: var(--text-shadow);
+    font-weight: 700;
+    font-size: 14px;
+    margin-left: 10px;
+    display: inline-block;
   }
 
   &.state-fighting .status {

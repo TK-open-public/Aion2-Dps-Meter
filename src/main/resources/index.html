@@ -12,6 +12,7 @@
         rel="stylesheet"
         href="./lib/SpoqaHanSansNeo.min.css"/>
     <script src="./lib/vue.global.js"></script>
+<!--    <script src="./lib/vue.min.js"></script>-->
     <script src="./lib/lucide.min.js"></script>
 </head>
 
@@ -27,6 +28,7 @@
 
 <script>
   const {createApp, ref, onMounted, onUnmounted, watch} = Vue;
+  const INACTIVE_MS = 20000;
 
   createApp({
     components: {
@@ -72,6 +74,7 @@
       // 정렬 이벤트
       const collapseClick = () => {
         isCollapse.value = !isCollapse.value;
+        dpsDatas.value.reverse();
       };
 
       //리스트에서 유저클릭시 이벤트
@@ -156,9 +159,9 @@
       }
 
       // 배틀 시간 계산
-      watch(dpsDatas, (newVal) => {
+      watch(dpsDatas, (newVal, oldVal) => {
+        console.log(JSON.stringify(newVal), JSON.stringify(oldVal));
         const isActivity = computedDps(newVal);
-        console.log(isActivity)
         const now = performance.now() || Date.now();
 
         if(isActivity) {
@@ -176,7 +179,7 @@
         } else {
           if(isFight.value) {
             const inactiveMs = now - lastActiveAt;
-            if (inactiveMs >= 30000) {
+            if (inactiveMs >= INACTIVE_MS) {
               isFight.value = false;
               fightEndAt.value = lastActiveAt - fightStartAt.value; // 전투시간
               fightStartAt.value = 0;

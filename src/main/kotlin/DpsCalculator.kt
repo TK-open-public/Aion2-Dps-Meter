@@ -451,7 +451,6 @@ class DpsCalculator(private val dataStorage: DataStorage) {
             13310000 to "환영 분신",
             13370000 to "회피의 계약",
             13700000 to "강습 습격"
-
         )
     }
 

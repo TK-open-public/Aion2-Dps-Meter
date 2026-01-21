@@ -35,17 +35,22 @@ window.MeterArea = {
       }
     }
 
+    const sliceRows = computed(() => {
+      return props.rows.slice(0, 15);
+    });
+
     return {
       dpsFormatter,
       topDps,
       onClickUserRow,
       getJobIcon,
-      contributionClass
+      contributionClass,
+      sliceRows
     };
   },
   template: `
       <div class="list" :class="{ hasRows: rows.length > 0 }">
-        <div v-for="row in rows" class="item" :class="[{ isUser: !!row.isUser}, contributionClass(row.damageContribution)]"
+        <div v-for="row in sliceRows" class="item" :class="[{ isUser: !!row.isUser}, contributionClass(row.damageContribution)]"
             :key="row.id || row.name" :data-row-id="row.id || row.name" @click="onClickUserRow(row)">
           <div class="fill" :style="{ transform: 'scaleX(' + Math.max(0, Math.min(1, row.dps / topDps)) + ')' }"></div>
           <div class="content">

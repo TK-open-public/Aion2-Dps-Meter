@@ -61,7 +61,7 @@ window.DetailArea = {
         }
       }
 
-      return skills.sort((a, b) => b.dmg - a.dmg).slice(0, 15);
+      return skills.sort((a, b) => b.dmg - a.dmg);
     });
 
     const totalDmg = computed(() => {
