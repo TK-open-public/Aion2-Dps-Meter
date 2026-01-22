@@ -91,7 +91,7 @@
 .list {
   display: grid;
   gap: 4px;
-  padding: 0px 12px;
+  padding: 0 12px;
   &:has(.item:not([style*="display: none"])) {
     padding: 4px 12px 12px;
   }
@@ -173,7 +173,7 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 6px; /* 리스트 위쪽에 띄우고 싶으면 */
-  padding: 0px 12px;
+  padding: 0 12px;
 
   &.isVisible {
     display: flex;
@@ -245,7 +245,6 @@
       user-select: none;
       font-size: 22px;
       padding: 2px 8px;
-      border-radius: 6px;
       transition: 0.2s;
       border-radius: 4px;
     }
