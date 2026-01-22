@@ -4,6 +4,7 @@
   --warning-fill: #ffa537;
   --error-fill: #c24343;
   --dps: #29ff6f;
+  --font: 11px;
 
   --text-color: rgb(255, 255, 255);
   --text-shadow:
@@ -209,19 +210,18 @@
 }
 
 .detailsPanel {
-  position: absolute;
+  position: relative;
   color: white;
   display: none;
   /* left: calc(100% + 8px); */
-  left: 358px;
   /* top: calc(100% + 4px); */
-  top: 0;
   font-weight: bold;
   width: 940px;
   border: 1px solid var(--panel-border);
   background: rgba(12, 22, 40, 0.7);
   padding: 12px 24px;
   border-radius: var(--rounded);
+  margin-top: 5px;
 
   &.open {
     display: block;

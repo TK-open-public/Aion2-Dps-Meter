@@ -159,8 +159,7 @@
       }
 
       // 배틀 시간 계산
-      watch(dpsDatas, (newVal, oldVal) => {
-        console.log(JSON.stringify(newVal), JSON.stringify(oldVal));
+      watch(dpsDatas, (newVal) => {
         const isActivity = computedDps(newVal);
         const now = performance.now() || Date.now();
 
@@ -237,8 +236,6 @@
 
         <MeterArea @onClickUserRow="onClickUserRow" :rows="dpsDatas"/>
 
-        <DetailArea  @closeClick="detailClose" :isDetailOpen="isDetailOpen" :id="detailRowId" :combatTime="formatMMSS(isFight ? lastActiveAt - fightStartAt : fightEndAt)"/>
-
         <div class="battleTime" :class="[fightState]">
           <div class="status"></div>
           <div class="tick">{{ formatMMSS(isFight ? lastActiveAt - fightStartAt : fightEndAt) }}</div>
@@ -260,6 +257,8 @@
             display: none;
           "></div>
       </div>
+
+      <DetailArea  @closeClick="detailClose" :isDetailOpen="isDetailOpen" :id="detailRowId" :combatTime="formatMMSS(isFight ? lastActiveAt - fightStartAt : fightEndAt)"/>
     `
   }).mount('#app');
 </script>

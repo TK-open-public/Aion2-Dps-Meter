@@ -2,8 +2,8 @@ package com.tbread.packet
 
 import com.tbread.DataStorage
 import com.tbread.entity.ParsedDamagePacket
-import io.github.oshai.kotlinlogging.KotlinLogging
 import com.tbread.entity.SpecialDamage
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 class StreamProcessor(private val dataStorage: DataStorage) {
     private val logger = KotlinLogging.logger {}
@@ -307,7 +307,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
             7 -> 14
             else -> return false
         }
-        pdp.setSpecials(parseSpecialDamageFlags(packet.copyOfRange(start,start+tempV)))
+        pdp.setSpecials(parseSpecialDamageFlags(packet.copyOfRange(start, start + tempV)))
         offset += tempV
 
 
@@ -341,22 +341,17 @@ class StreamProcessor(private val dataStorage: DataStorage) {
             }
         }
 
-        logger.trace("{}", toHex(packet))
-        logger.trace("타입패킷 {}", toHex(byteArrayOf(damageType)))
-        logger.trace(
-            "타입패킷비트 {}", String.format("%8s", (damageType.toInt() and 0xFF).toString(2))
-                .replace(' ', '0')
-        )
-        logger.trace("가변패킷: {}", toHex(packet.copyOfRange(start, start + tempV)))
-        logger.debug(
-            "피격자: {},공격자: {},스킬: {},타입: {},데미지: {},데미지플래그: {}",
-            pdp.getTargetId(),
-            pdp.getActorId(),
-            pdp.getSkillCode1(),
-            pdp.getType(),
-            pdp.getDamage(),
-            pdp.getSpecials()
-        )
+        logger.trace { toHex(packet) }
+        logger.trace { "타입패킷 ${toHex(byteArrayOf(damageType))}" }
+        logger.trace {
+            "타입패킷비트 ${
+                String.format("%8s", (damageType.toInt() and 0xFF).toString(2))
+                    .replace(' ', '0')
+            }"
+        }
+
+        logger.trace { "가변패킷: ${toHex(packet.copyOfRange(start, start + tempV))}" }
+        logger.debug { "피격자: $pdp.getTargetId(),공격자: $pdp.getActorId(),스킬: $pdp.getSkillCode1(),타입: $pdp.getType(),데미지: $pdp.getDamage(),데미지플래그: $pdp.getSpecials()" }
 
         if (pdp.getActorId() != pdp.getTargetId()) {
             //추후 hps 를 넣는다면 수정하기
@@ -364,7 +359,6 @@ class StreamProcessor(private val dataStorage: DataStorage) {
             dataStorage.appendDamage(pdp)
         }
         return true
-
     }
 
     private fun toHex(bytes: ByteArray): String {

@@ -5,7 +5,6 @@ import com.tbread.entity.JobClass
 import com.tbread.entity.PersonalData
 import com.tbread.entity.TargetInfo
 import io.github.oshai.kotlinlogging.KotlinLogging
-import kotlin.collections.forEach
 import kotlin.math.roundToInt
 
 class DpsCalculator(private val dataStorage: DataStorage) {
@@ -452,8 +451,10 @@ class DpsCalculator(private val dataStorage: DataStorage) {
             13370000 to "회피의 계약",
             13700000 to "강습 습격"
         )
+
+        val SKILL_CODES = SKILL_MAP.keys.sorted().toIntArray()
     }
-    private val SKILL_CODES = skillMap.keys.sorted().toIntArray()
+
     private val targetInfoMap = hashMapOf<Int, TargetInfo>()
 
     private var mode: Mode = Mode.ALL
@@ -477,7 +478,7 @@ class DpsCalculator(private val dataStorage: DataStorage) {
                 if (flag) {
                     flag = false
                     targetInfo = TargetInfo(target, 0, pdp.getTimeStamp(), pdp.getTimeStamp())
-                    targetInfoMap[target] = targetInfo!!
+                    targetInfoMap[target] = targetInfo
                 }
                 targetInfo!!.processPdp(pdp)
                 //그냥 아래에서 재계산하는거 여기서 해놓고 아래에선 그냥 골라서 주는게 맞는거같은데 나중에 고민할필요있을듯
@@ -495,8 +496,8 @@ class DpsCalculator(private val dataStorage: DataStorage) {
         pdpMap[currentTarget]!!.forEach lastPdpLoop@{ pdp ->
             totalDamage += pdp.getDamage()
             val uid = dataStorage.getSummonData()[pdp.getActorId()] ?: pdp.getActorId()
-            val nickname:String = nicknameData[uid]
-                ?: nicknameData[dataStorage.getSummonData()[uid]?:uid]
+            val nickname: String = nicknameData[uid]
+                ?: nicknameData[dataStorage.getSummonData()[uid] ?: uid]
                 ?: uid.toString()
             if (!dpsData.map.containsKey(uid)) {
                 dpsData.map[uid] = PersonalData(nickname = nickname)
@@ -562,25 +563,14 @@ class DpsCalculator(private val dataStorage: DataStorage) {
     fun analyzingData(uid: Int) {
         val dpsData = getDps()
         dpsData.map.forEach { (_, pData) ->
-            logger.debug("-----------------------------------------")
-            logger.debug(
-                "닉네임: {} 직업: {} 총 딜량: {} 기여도: {}",
-                pData.nickname,
-                pData.job,
-                pData.amount,
-                pData.damageContribution
-            )
+            logger.debug { "-----------------------------------------" }
+            logger.debug { "닉네임: $pData.nickname 직업: $pData.job 총 딜량: $pData.amount 기여도: $pData.damageContribution" }
             pData.analyzedData.forEach { (key, data) ->
-                logger.debug("스킬(코드): {} 스킬 총 피해량: {}", SKILL_MAP[key] ?: key, data.damageAmount)
-                logger.debug(
-                    "사용 횟수: {} 치명타 횟수: {} 치명타 비율:{}",
-                    data.times,
-                    data.critTimes,
-                    data.critTimes / data.times * 100
-                )
-                logger.debug("스킬의 딜 지분: {}%", (data.damageAmount / pData.amount * 100).roundToInt())
+                logger.debug { "스킬(코드): ${SKILL_MAP[key] ?: key} 스킬 총 피해량: $data.damageAmount" }
+                logger.debug { "사용 횟수: $data.times 치명타 횟수: $data.critTimes 치명타 비율: ${data.critTimes / data.times * 100}" }
+                logger.debug { "스킬의 딜 지분: ${(data.damageAmount / pData.amount * 100).roundToInt()}%" }
             }
-            logger.debug("-----------------------------------------")
+            logger.debug { "-----------------------------------------" }
         }
         logger.info { "-----------------------------------------" }
     }
