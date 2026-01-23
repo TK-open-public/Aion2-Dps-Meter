@@ -146,14 +146,20 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         if (targetInfo.length < 0) return
         offset += targetInfo.length + 3
         if (packet.size < offset) return
+        val flag1 = packet[offset-3].toInt() and 0xff
+        val flag2 = packet[offset-2].toInt() and 0xff
+        val flag3 = packet[offset-1].toInt() and 0xff
 
         val amount = parseUInt32le(packet,offset)
 
         logger.debug("------------------------")
-        logger.debug("플래그: {},{},{}",packet[offset-3],packet[offset-2],packet[offset-3])
+        logger.debug("플래그: {},{},{}",flag1,flag2,flag3)
         logger.debug("파싱대상: {}",targetInfo.value)
         logger.debug("남은 수치(uint32le): {}",amount)
         logger.debug("------------------------")
+        if (flag1 == 2 && flag2 == 1 && flag3 == 1){
+            dataStorage.appendHpData(targetInfo.value,amount)
+        }
 
     }
 

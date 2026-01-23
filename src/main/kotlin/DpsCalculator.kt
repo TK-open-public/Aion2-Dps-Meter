@@ -915,6 +915,7 @@ class DpsCalculator(private val dataStorage: DataStorage) {
             }
         }
         dpsData.battleTime = battleTime
+        dpsData.mobHp = dataStorage.getMobHp(currentTarget)
         return dpsData
     }
 

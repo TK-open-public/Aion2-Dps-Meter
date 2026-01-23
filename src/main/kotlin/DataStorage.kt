@@ -14,6 +14,7 @@ class DataStorage {
     private val skillCodeData = HashMap<Int, String>()
     private val mobCodeData = HashMap<Int, String>()
     private val mobStorage = HashMap<Int, Int>()
+    private val hpData = HashMap<Int, Int>()
 
     @Synchronized
     fun appendDamage(pdp: ParsedDamagePacket) {
@@ -21,6 +22,14 @@ class DataStorage {
             .add(pdp)
         byTargetStorage.getOrPut(pdp.getTargetId()) { ConcurrentSkipListSet(compareBy<ParsedDamagePacket> { it.getTimeStamp() }.thenBy { it.getUuid() }) }
             .add(pdp)
+    }
+
+    fun appendHpData(targetId:Int,hp:Int){
+        hpData.put(targetId,hp)
+    }
+
+    fun getMobHp(targetId:Int):Int {
+        return hpData[targetId]?:0
     }
 
     fun appendMobCode(code: Int, name: String) {
