@@ -207,8 +207,7 @@
 .detailsPanel {
   position: absolute;
   color: white;
-  /* display: none; */
-  display: block;
+  display: none;
   /* left: calc(100% + 8px); */
   left: 358px;
   /* top: calc(100% + 4px); */

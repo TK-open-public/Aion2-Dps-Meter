@@ -122,7 +122,7 @@ class DpsApp {
 
     this.lastJson = raw;
 
-    const { rows, targetName, battleTimeMs } = this.buildRowsFromPayload(raw);
+    const { rows, targetName, battleTimeMs,mobHp } = this.buildRowsFromPayload(raw);
     this._lastBattleTimeMs = battleTimeMs;
 
     const showByServer = rows.length > 0;
@@ -164,13 +164,14 @@ class DpsApp {
     }
 
     // 렌더
-    this.elBossName.textContent = targetName ? targetName : "";
+    this.elBossName.textContent = mobHp ? mobHp : "";
     this.meterUI.updateFromRows(rowsToRender);
   }
 
   buildRowsFromPayload(raw) {
     const payload = this.safeParseJSON(raw, {});
     const targetName = typeof payload?.targetName === "string" ? payload.targetName : "";
+    const mobHp = typeof payload?.mobHp === "string" ? payload.mobHp : "";
 
     const mapObj = payload?.map && typeof payload.map === "object" ? payload.map : {};
     const rows = this.buildRowsFromMapObject(mapObj);
@@ -178,7 +179,7 @@ class DpsApp {
     const battleTimeMsRaw = payload?.battleTime;
     const battleTimeMs = Number.isFinite(Number(battleTimeMsRaw)) ? Number(battleTimeMsRaw) : null;
 
-    return { rows, targetName, battleTimeMs };
+    return { rows, targetName, battleTimeMs,mobHp };
   }
 
   buildRowsFromMapObject(mapObj) {
