@@ -17,6 +17,7 @@ class ParsedDamagePacket {
         private val timestamp = System.currentTimeMillis()
         private val id = UUID.randomUUID()
         private var specials:List<SpecialDamage> = arrayListOf()
+        private var dot = false
 
         fun setSpecials(specials: List<SpecialDamage>) {
                 this.specials = specials
@@ -97,6 +98,12 @@ class ParsedDamagePacket {
 
         fun isCrit():Boolean{
                 return this.type == 3
+        }
+        fun isDoT():Boolean{
+                return dot
+        }
+        fun setDot(dot: Boolean) {
+                this.dot = dot
         }
 
 

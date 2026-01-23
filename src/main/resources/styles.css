@@ -23,8 +23,8 @@
   font-family: "Spoqa Han Sans Neo", sans-serif;
   margin: 0;
   padding: 0;
-  -webkit-user-select: none;
-  user-select: none;
+  /* -webkit-user-select: none; */
+  /* user-select: none; */
 }
 
 .container {
@@ -207,17 +207,18 @@
 .detailsPanel {
   position: absolute;
   color: white;
-  display: none;
+  /* display: none; */
+  display: block;
   /* left: calc(100% + 8px); */
   left: 358px;
   /* top: calc(100% + 4px); */
   top: 0;
   font-weight: bold;
-  width: 940px;
+  width: 1080px;
   border: 1px solid var(--panel-border);
-  background: rgba(12, 22, 40, 0.7);
-  padding: 12px 24px;
-  border-radius: var(--rounded);
+  background: rgb(12, 22, 40);
+  padding: 16px 8px;
+  border-radius: var(--rounded-lg);
 
   &.open {
     display: block;
@@ -227,8 +228,9 @@
     align-items: center;
     color: var(--title);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0 28px;
     padding-bottom: 12px;
-    margin-bottom: 12px;
+
     .tooltip {
       opacity: 0.6;
       margin-left: 12px;
@@ -254,6 +256,8 @@
     display: grid;
     gap: 12px 24px;
     grid-template-columns: repeat(2, 1fr);
+    padding: 12px 28px;
+
     .stat {
       display: flex;
       justify-content: space-between;
@@ -262,7 +266,6 @@
   }
 
   .detailsSkills {
-    margin-top: 24px;
     .cell {
       min-width: 60px;
     }
@@ -290,45 +293,113 @@
       display: flex;
       align-items: center;
       gap: 24px;
-      padding: 8px 0;
+      padding: 12px 28px;
+
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       .cell.name {
         color: white;
       }
     }
-    .skillRow {
-      display: flex;
-      align-items: center;
-      gap: 24px;
-      padding: 6px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      &:last-child {
-        border-bottom: none;
+    .skills {
+      max-height: 624px;
+      padding: 0 28px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-gutter: stable;
+
+      &::-webkit-scrollbar {
+        width: 10px;
       }
 
-      .cell.dmg {
-        position: relative;
-        overflow: hidden;
-        height: 32px;
+      &::-webkit-scrollbar-track {
+        background: rgba(30, 30, 30);
+        border-radius: 999px;
+        margin-top: 8px;
+        margin-bottom: -8px;
+      }
 
-        .dmgFill {
-          position: absolute;
-          inset: 0;
-          background: var(--isUser-fill);
-          border-radius: var(--rounded-xs);
-          transform-origin: left center;
+      &::-webkit-scrollbar-thumb {
+        background-color: rgb(77, 77, 77);
+        border-radius: 999px;
+      }
+
+      &::-webkit-scrollbar-corner {
+        background: transparent;
+      }
+      .skillRow {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        padding: 6px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        &:last-child {
+          border-bottom: none;
         }
-        .dmgText {
+
+        .cell.dmg {
           position: relative;
-          z-index: 1;
-          height: 100%;
-          display: flex;
-          justify-content: end;
-          align-items: center;
-          text-shadow: var(--text-shadow);
-          color: var(--dps);
+          overflow: hidden;
+          height: 32px;
+
+          .dmgFill {
+            position: absolute;
+            inset: 0;
+            background: var(--isUser-fill);
+            border-radius: var(--rounded-xs);
+            transform-origin: left center;
+          }
+          .dmgText {
+            position: relative;
+            z-index: 1;
+            height: 100%;
+            display: flex;
+            justify-content: end;
+            align-items: center;
+            text-shadow: var(--text-shadow);
+            color: var(--dps);
+          }
         }
       }
+    }
+  }
+}
+
+.updateModal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  &.isOpen {
+    display: flex;
+  }
+
+  .updateModalCard {
+    width: 360px;
+    border-radius: 24px;
+    background: rgb(12, 22, 40);
+    padding: 24px;
+    font-weight: bold;
+    color: white;
+    .updateModalTitle {
+      font-size: 24px;
+    }
+    .updateModalText {
+      margin: 24px 0px;
+      white-space: pre-line;
+    }
+    .updateModalBtn {
+      border: none;
+      background: var(--error-fill);
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 8px;
+      padding: 8px;
+      width: 100%;
+      cursor: pointer;
+      color: white;
+      text-shadow: var(--text-shadow);
     }
   }
 }

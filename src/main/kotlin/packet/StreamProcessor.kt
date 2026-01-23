@@ -16,7 +16,6 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         val packetLengthInfo = readVarInt(packet)
         if (packet.size == packetLengthInfo.value) {
             logger.trace("현재 바이트길이와 예상 길이가 같음 : {}", toHex(packet.copyOfRange(0, packet.size - 3)))
-//            logger.info("패킷 {}", toHex(packet.copyOfRange(0, packet.size - 3)))
             parsePerfectPacket(packet.copyOfRange(0, packet.size - 3))
             //더이상 자를필요가 없는 최종 패킷뭉치
             return
@@ -25,7 +24,6 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         // 매직패킷 단일로 올때 무시
         if (packetLengthInfo.value > packet.size) {
             logger.trace("현재 바이트길이가 예상 길이보다 짧음 : {}", toHex(packet))
-//            logger.info("패킷(망가짐) {}", toHex(packet))
             parseBrokenLengthPacket(packet)
             //길이헤더가 실제패킷보다 김 보통 여기 닉네임이 몰려있는듯?
             return
@@ -39,7 +37,6 @@ class StreamProcessor(private val dataStorage: DataStorage) {
             if (packet.copyOfRange(0, packetLengthInfo.value - 3).size != 3) {
                 if (packet.copyOfRange(0, packetLengthInfo.value - 3).isNotEmpty()) {
                     logger.trace("패킷을 성공적으로 분리함 : {}", toHex(packet.copyOfRange(0, packetLengthInfo.value - 3)))
-//                    logger.info("패킷 {}", toHex(packet.copyOfRange(0, packetLengthInfo.value - 3)))
                     parsePerfectPacket(packet.copyOfRange(0, packetLengthInfo.value - 3))
                     //매직패킷이 빠져있는 패킷뭉치
                 }
@@ -55,6 +52,15 @@ class StreamProcessor(private val dataStorage: DataStorage) {
     }
 
     private fun parseBrokenLengthPacket(packet: ByteArray) {
+        if (packet[2] != 0xff.toByte() || packet[3] != 0xff.toByte()) {
+            parseNicknameFromBrokenLengthPacket(packet)
+            return
+        }
+        val newPacket = packet.copyOfRange(10,packet.size)
+        onPacketReceived(newPacket)
+    }
+
+    private fun parseNicknameFromBrokenLengthPacket(packet: ByteArray) {
         var originOffset = 0
         while (originOffset < packet.size) {
             val info = readVarInt(packet, originOffset)
@@ -127,9 +133,53 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         flag = parseSummonPacket(packet)
         if (flag) return
         parseMobPercent(packet)
+        parseDoTPacket(packet)
 
     }
 
+    private fun parseDoTPacket(packet:ByteArray){
+        var offset = 0
+        val pdp = ParsedDamagePacket()
+        pdp.setDot(true)
+        val packetLengthInfo = readVarInt(packet)
+        if (packetLengthInfo.length < 0) return
+        offset += packetLengthInfo.length
+
+        if (packet[offset] != 0x05.toByte()) return
+        if (packet[offset+1] != 0x38.toByte()) return
+        offset += 2
+        if (packet.size < offset) return
+
+        val targetInfo = readVarInt(packet,offset)
+        if (targetInfo.length < 0) return
+        offset += targetInfo.length
+        if (packet.size < offset) return
+        pdp.setTargetId(targetInfo)
+
+        offset += 1
+        if (packet.size < offset) return
+
+        val actorInfo = readVarInt(packet,offset)
+        if (actorInfo.length < 0) return
+        offset += actorInfo.length + 1
+        if (packet.size < offset) return
+        pdp.setActorId(actorInfo)
+
+        val skillCode:Int = parseUInt32le(packet,offset) / 100
+        offset += 4
+        if (packet.size < offset) return
+        pdp.setSkillCode(skillCode)
+
+        val damageInfo = readVarInt(packet,offset)
+        if (damageInfo.length < 0) return
+        pdp.setDamage(damageInfo)
+
+        logger.debug("도트데미지 공격자 {},피격자 {},스킬 {},데미지 {}",pdp.getActorId(),pdp.getTargetId(),pdp.getSkillCode1(),pdp.getDamage())
+        if (pdp.getActorId() != pdp.getTargetId()) {
+            dataStorage.appendDamage(pdp)
+        }
+
+    }
     private fun findArrayIndex(data: ByteArray, vararg pattern: Int): Int {
         if (pattern.isEmpty()) return 0
 

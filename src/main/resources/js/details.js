@@ -131,10 +131,10 @@ const createDetailsUI = ({
   };
 
   const renderSkills = (details) => {
+
     const skills = Array.isArray(details?.skills) ? details.skills : [];
-    const topSkills = [...skills]
-      .sort((a, b) => (Number(b?.dmg) || 0) - (Number(a?.dmg) || 0))
-      .slice(0, 12);
+    const topSkills = [...skills].sort((a, b) => (Number(b?.dmg) || 0) - (Number(a?.dmg) || 0));
+    // .slice(0, 12);
 
     const totalDamage = Number(details?.totalDmg);
     if (!Number.isFinite(totalDamage) || totalDamage <= 0) {
@@ -200,7 +200,7 @@ const createDetailsUI = ({
 
   const open = async (row, { force = false, restartOnSwitch = true } = {}) => {
     const rowId = row?.id ?? null;
-    if (!rowId) return;
+    // if (!rowId) return;
 
     const isOpen = detailsPanel.classList.contains("open");
     const isSame = isOpen && openedRowId === rowId;

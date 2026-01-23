@@ -5,6 +5,7 @@ import com.tbread.entity.DpsData
 import javafx.animation.KeyFrame
 import javafx.animation.Timeline
 import javafx.application.Application
+import javafx.application.HostServices
 import javafx.concurrent.Worker
 import javafx.scene.Scene
 import javafx.scene.paint.Color
@@ -12,8 +13,11 @@ import javafx.scene.web.WebView
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import javafx.util.Duration
+import javafx.application.Platform
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
+import kotlin.system.exitProcess
+
 import netscape.javascript.JSObject
 import org.slf4j.LoggerFactory
 import kotlin.system.exitProcess
@@ -22,7 +26,7 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
 
     private val logger = LoggerFactory.getLogger(BrowserApp::class.java)
 
-    class JSBridge(private val stage: Stage,private val dpsCalculator: DpsCalculator) {
+    class JSBridge(private val stage: Stage,private val dpsCalculator: DpsCalculator,private val hostServices: HostServices,) {
         fun moveWindow(x: Double, y: Double) {
             stage.x = x
             stage.y = y
@@ -30,6 +34,17 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
 
         fun resetDps(){
             dpsCalculator.resetDataStorage()
+        }
+        fun openBrowser(url: String) {
+            try {
+                hostServices.showDocument(url)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        fun exitApp() {
+          Platform.exit()     
+          exitProcess(0)       
         }
     }
 
@@ -49,7 +64,7 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
         val engine = webView.engine
         engine.load(javaClass.getResource("/index.html")?.toExternalForm())
 
-        val bridge = JSBridge(stage,dpsCalculator)
+        val bridge = JSBridge(stage, dpsCalculator, hostServices)
         engine.loadWorker.stateProperty().addListener { _, _, newState ->
             if (newState == Worker.State.SUCCEEDED) {
                 val window = engine.executeScript("window") as JSObject

@@ -9,6 +9,8 @@ import kotlinx.serialization.Transient
 data class AnalyzedSkill(
     @Transient val skillCode: Int = 0,
     var damageAmount: Int = 0,
+    var dotDamageAmount: Int = 0,
+    var dotTimes: Int = 0,
     var critTimes: Int = 0,
     var times: Int = 0,
     @Required val skillName:String,
@@ -17,5 +19,5 @@ data class AnalyzedSkill(
     var doubleTimes: Int = 0,
     var parryTimes: Int = 0
 ) {
-    constructor(pdp:ParsedDamagePacket) : this(pdp.getSkillCode1(),0,0,0,DpsCalculator.SKILL_MAP[pdp.getSkillCode1()] ?: "",0,0,0)
+    constructor(pdp:ParsedDamagePacket) : this(pdp.getSkillCode1(),0,0,0,0,0,DpsCalculator.SKILL_MAP[pdp.getSkillCode1()] ?: "",0,0,0)
 }

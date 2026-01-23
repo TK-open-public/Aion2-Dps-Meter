@@ -26,6 +26,8 @@
           <div class="bossNames">
             <span class="bossName"></span>
           </div>
+    
+
           <div class="headerBtns">
             <div class="headerBtn resetBtn"><i data-lucide="rotate-ccw"></i></div>
             <div class="headerBtn collapseBtn">
@@ -88,10 +90,26 @@
           display: none;
         "></div>
     </div>
-
+    <div
+      class="updateModal"
+      id="updateModal">
+      <div class="updateModalCard">
+        <div class="updateModalTitle">신규 업데이트</div>
+        <div
+          class="updateModalText"
+          id="updateModalText"></div>
+        <div class="updateModalActions">
+          <button class="updateModalBtn primary">확인</button>
+        </div>
+      </div>
+    </div>
     <script src="./js/battleTime.js"></script>
     <script src="./js/meter.js"></script>
     <script src="./js/details.js"></script>
+
+    <!-- 추가 -->
+    <script src="./js/checkRelease.js"></script>
+
     <script src="./js/core.js"></script>
     <script>
       lucide.createIcons();
