@@ -165,7 +165,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
 
         val skillCode:Int = parseUInt32le(packet,offset) / 100
         offset += 4
-        if (packet.size < offset) return
+        if (packet.size <= offset) return
         pdp.setSkillCode(skillCode)
 
         val damageInfo = readVarInt(packet,offset)
