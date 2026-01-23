@@ -532,9 +532,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         logger.debug("파싱대상: {}",targetInfo.value)
         logger.debug("남은 수치(uint32le): {}",amount)
         logger.debug("------------------------")
-        if (flag1 == 2 && flag2 == 1 && flag3 == 1){
-            dataStorage.appendHpData(targetInfo.value,amount)
-        }
+        dataStorage.appendHpData(targetInfo.value,amount)
 
     }
 }
