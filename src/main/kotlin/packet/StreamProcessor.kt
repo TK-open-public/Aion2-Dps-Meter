@@ -16,6 +16,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         val packetLengthInfo = readVarInt(packet)
         if (packet.size == packetLengthInfo.value) {
             logger.trace("현재 바이트길이와 예상 길이가 같음 : {}", toHex(packet.copyOfRange(0, packet.size - 3)))
+//            logger.info("패킷 {}", toHex(packet.copyOfRange(0, packet.size - 3)))
             parsePerfectPacket(packet.copyOfRange(0, packet.size - 3))
             //더이상 자를필요가 없는 최종 패킷뭉치
             return
@@ -24,6 +25,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         // 매직패킷 단일로 올때 무시
         if (packetLengthInfo.value > packet.size) {
             logger.trace("현재 바이트길이가 예상 길이보다 짧음 : {}", toHex(packet))
+//            logger.info("패킷(망가짐) {}", toHex(packet))
             parseBrokenLengthPacket(packet)
             //길이헤더가 실제패킷보다 김 보통 여기 닉네임이 몰려있는듯?
             return
@@ -37,6 +39,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
             if (packet.copyOfRange(0, packetLengthInfo.value - 3).size != 3) {
                 if (packet.copyOfRange(0, packetLengthInfo.value - 3).isNotEmpty()) {
                     logger.trace("패킷을 성공적으로 분리함 : {}", toHex(packet.copyOfRange(0, packetLengthInfo.value - 3)))
+//                    logger.info("패킷 {}", toHex(packet.copyOfRange(0, packetLengthInfo.value - 3)))
                     parsePerfectPacket(packet.copyOfRange(0, packetLengthInfo.value - 3))
                     //매직패킷이 빠져있는 패킷뭉치
                 }
@@ -123,6 +126,34 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         if (flag) return
         flag = parseSummonPacket(packet)
         if (flag) return
+        parseMobPercent(packet)
+
+    }
+
+    private fun parseMobPercent(packet: ByteArray) {
+        var offset = 0
+        val packetLengthInfo = readVarInt(packet)
+        if (packetLengthInfo.length < 0) return
+        offset += packetLengthInfo.length
+
+        if (packet[offset] != 0x00.toByte()) return
+        if (packet[offset + 1] != 0x8d.toByte()) return
+
+        offset += 2
+
+        if (packet.size < offset) return
+        val targetInfo = readVarInt(packet,offset)
+        if (targetInfo.length < 0) return
+        offset += targetInfo.length + 3
+        if (packet.size < offset) return
+
+        val amount = parseUInt32le(packet,offset)
+
+        logger.debug("------------------------")
+        logger.debug("플래그: {},{},{}",packet[offset-3],packet[offset-2],packet[offset-3])
+        logger.debug("파싱대상: {}",targetInfo.value)
+        logger.debug("남은 수치(uint32le): {}",amount)
+        logger.debug("------------------------")
 
     }
 
@@ -308,7 +339,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
             7 -> 14
             else -> return false
         }
-        pdp.setSpecials(parseSpecialDamageFlags(packet.copyOfRange(start,start+tempV)))
+        pdp.setSpecials(parseSpecialDamageFlags(packet.copyOfRange(start, start + tempV)))
         offset += tempV
 
 
