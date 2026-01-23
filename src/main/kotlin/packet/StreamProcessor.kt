@@ -50,8 +50,16 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         }
 
     }
-
     private fun parseBrokenLengthPacket(packet: ByteArray) {
+        if (packet[2] != 0xff.toByte() || packet[3] != 0xff.toByte()) {
+            parseNicknameFromBrokenLengthPacket(packet)
+            return
+        }
+        val newPacket = packet.copyOfRange(10,packet.size)
+        onPacketReceived(newPacket)
+    }
+
+    private fun parseNicknameFromBrokenLengthPacket(packet: ByteArray) {
         var originOffset = 0
         while (originOffset < packet.size) {
             val info = readVarInt(packet, originOffset)
