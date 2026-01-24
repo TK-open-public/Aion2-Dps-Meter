@@ -1,6 +1,5 @@
 package com.tbread.webview
 
-import com.sun.javafx.webkit.WebConsoleListener
 import com.tbread.DpsCalculator
 import com.tbread.entity.DpsData
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -11,7 +10,6 @@ import javafx.concurrent.Worker
 import javafx.scene.Scene
 import javafx.scene.image.Image
 import javafx.scene.paint.Color
-import javafx.scene.web.WebErrorEvent
 import javafx.scene.web.WebView
 import javafx.stage.Screen
 import javafx.stage.Stage
@@ -33,12 +31,8 @@ class JSBridge(private val stage: Stage, private val dpsCalculator: DpsCalculato
         dpsCalculator.resetDataStorage()
     }
 
-    fun log(level: String, message: String) {
-        when (level) {
-            "LOG" -> logger.info { message }
-            "ERROR" -> logger.error { message }
-            "WARN" -> logger.warn { message }
-        }
+    fun printLog(message: String) {
+        logger.debug { "[JS LOG] $message" }
     }
 }
 
@@ -65,26 +59,59 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
                 window.setMember("javaBridge", bridge)
                 window.setMember("dpsData", this)
 
-                // JS에서 console.log를 가로채도록 설정
+                // vue에게 자바준비 이벤트를 발생시킴
                 engine.executeScript(
                     """
                       (function() {
-                          window.dispatchEvent(new CustomEvent('javaReady'));
+                        function plog(message) {
+                        
+                        }
+                      
+                        console.log = function() {
+                            var message = Array.prototype.slice.call(arguments).map(function(arg) {
+                                return typeof arg === 'object' ? JSON.stringify(arg) : String(arg);
+                            }).join(' ');
+
+                            if (window.javaBridge) {
+                                window.javaBridge.printLog('[LOG] ' + message);
+                            }
+                        };
+                        
+                        console.warn = function() {
+                            var message = Array.prototype.slice.call(arguments).map(function(arg) {
+                                return typeof arg === 'object' ? JSON.stringify(arg) : String(arg);
+                            }).join(' ');
+
+                            if (window.javaBridge) {
+                                window.javaBridge.printLog('[LOG] ' + message);
+                            }
+                        };
+                        
+                        console.error = function() {
+                            var message = Array.prototype.slice.call(arguments).map(function(arg) {
+                                return typeof arg === 'object' ? JSON.stringify(arg) : String(arg);
+                            }).join(' ');
+
+                            if (window.javaBridge) {
+                                window.javaBridge.printLog('[LOG] ' + message);
+                            }
+                        };
+
+                        window.onerror = function(msg, url, line, col, error) {
+                            var errorMessage = 'ERROR: ' + msg + ' at ' + url + ':' + line + ':' + col;
+                            if (error && error.stack) {
+                                errorMessage += '\nStack: ' + error.stack;
+                            }
+                            if (window.javaBridge) {
+                                window.javaBridge.printLog(errorMessage);
+                            }
+                            return false;
+                        };
+                      
+                        window.dispatchEvent(new CustomEvent('javaReady'));
                       })();
                     """.trimIndent()
                 )
-
-                WebConsoleListener.setDefaultListener { _, message, _, _ ->
-                    val logMsg = "JS Console : $message"
-                    logger.info { logMsg }
-                    println(logMsg)
-                }
-
-                // 2. WebEngine 에러 이벤트 핸들러
-                engine.setOnError { event: WebErrorEvent ->
-                    logger.error { "WebEngine Error: ${event.message}" }
-                    System.err.println("❌ WebEngine Error: ${event.message}")
-                }
             } else if (newState == Worker.State.FAILED) {
                 logger.error { "Failed to load web page: ${engine.loadWorker.exception}" }
             }

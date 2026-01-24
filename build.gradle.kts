@@ -4,7 +4,7 @@ plugins {
     kotlin("jvm")
     id("org.jetbrains.compose")
     id("org.jetbrains.kotlin.plugin.compose")
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.0"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.3.0"
     id("org.openjfx.javafxplugin") version "0.1.0"
 }
 

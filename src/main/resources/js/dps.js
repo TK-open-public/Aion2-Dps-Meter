@@ -44,39 +44,43 @@ function buildRowsFromMapObject(mapObj) {
 
 function computedDps(serverRows) {
   if (!Array.isArray(serverRows) || serverRows.length === 0) {
-    const changed = prevDpsById.size > 0;
-    if (changed) {
-      nextDpsById.clear();
-      [prevDpsById, nextDpsById] = [nextDpsById, prevDpsById];
-    }
-    return changed;
+    return false;
   }
 
   nextDpsById.clear();
 
-  // 새 데이터 맵 생성
+  let changed = false;
+
   for (const row of serverRows) {
-    const id = row?.id || row?.name;
-    if (id) {
-      nextDpsById.set(id, Math.trunc(Number(row?.dps) || 0));
+    const id = row?.id ?? row?.name;
+    if (!id) continue;
+
+    const dps = Math.trunc(Number(row?.dps) || 0);
+    nextDpsById.set(id, dps);
+
+    const prev = prevDpsById.get(id);
+    if (prev === undefined || prev !== dps) {
+      changed = true;
     }
   }
 
-  // 크기 비교
-  if (prevDpsById.size !== nextDpsById.size) {
-    [prevDpsById, nextDpsById] = [nextDpsById, prevDpsById];
-    return true;
-  }
-
-  // 값 비교
-  for (const [id, dps] of nextDpsById) {
-    if (prevDpsById.get(id) !== dps) {
-      [prevDpsById, nextDpsById] = [nextDpsById, prevDpsById];
-      return true;
+  if (!changed) {
+    if (prevDpsById.size !== nextDpsById.size) {
+      changed = true;
+    } else {
+      for (const id of prevDpsById.keys()) {
+        if (!nextDpsById.has(id)) {
+          changed = true;
+          break;
+        }
+      }
     }
   }
 
-  [prevDpsById, nextDpsById] = [nextDpsById, prevDpsById];
-  return false;
+  const tmp = prevDpsById;
+  prevDpsById = nextDpsById;
+  nextDpsById = tmp;
+
+  return changed;
 }
 

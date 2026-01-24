@@ -28,7 +28,7 @@
 
 <script>
   const {createApp, ref, onMounted, onUnmounted, watch} = Vue;
-  const INACTIVE_MS = 20000;
+  const INACTIVE_MS = 10000;
 
   createApp({
     components: {
@@ -240,22 +240,6 @@
           <div class="status"></div>
           <div class="tick">{{ formatMMSS(isFight ? lastActiveAt - fightStartAt : fightEndAt) }}</div>
         </div>
-
-        <div class="console"
-             style="
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 0, 0, 0.8);
-            color: lime;
-            font-family: monospace;
-            font-size: 12px;
-            padding: 10px;
-            max-height: 200px;
-            overflow-y: auto;
-            display: none;
-          "></div>
       </div>
 
       <DetailArea  @closeClick="detailClose" :isDetailOpen="isDetailOpen" :id="detailRowId" :combatTime="formatMMSS(isFight ? lastActiveAt - fightStartAt : fightEndAt)"/>

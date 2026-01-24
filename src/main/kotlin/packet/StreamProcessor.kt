@@ -351,7 +351,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         }
 
         logger.trace { "가변패킷: ${toHex(packet.copyOfRange(start, start + tempV))}" }
-        logger.debug { "피격자: $pdp.getTargetId(),공격자: $pdp.getActorId(),스킬: $pdp.getSkillCode1(),타입: $pdp.getType(),데미지: $pdp.getDamage(),데미지플래그: $pdp.getSpecials()" }
+        logger.debug { "피격자: ${pdp.getTargetId()},공격자: ${pdp.getActorId()},스킬: ${pdp.getSkillCode1()},타입: ${pdp.getType()},데미지: ${pdp.getDamage()},데미지플래그: ${pdp.getSpecials()}" }
 
         if (pdp.getActorId() != pdp.getTargetId()) {
             //추후 hps 를 넣는다면 수정하기
