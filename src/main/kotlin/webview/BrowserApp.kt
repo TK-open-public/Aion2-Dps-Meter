@@ -6,6 +6,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import javafx.animation.KeyFrame
 import javafx.animation.Timeline
 import javafx.application.Application
+import javafx.application.HostServices
 import javafx.concurrent.Worker
 import javafx.scene.Scene
 import javafx.scene.image.Image
@@ -15,18 +16,37 @@ import javafx.stage.Screen
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import javafx.util.Duration
+import javafx.application.Platform
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.encodeToString
+import kotlin.system.exitProcess
+
 import netscape.javascript.JSObject
 import kotlin.system.exitProcess
 
-class JSBridge(private val stage: Stage, private val dpsCalculator: DpsCalculator) {
+class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
     private val logger = KotlinLogging.logger {}
 
-    fun moveWindow(x: Double, y: Double) {
-        stage.x = x
-        stage.y = y
-    }
+    class JSBridge(private val stage: Stage,private val dpsCalculator: DpsCalculator) {
+        fun moveWindow(x: Double, y: Double) {
+            stage.x = x
+            stage.y = y
+        }
 
+        fun resetDps(){
+            dpsCalculator.resetDataStorage()
+        }
+        fun openBrowser(url: String) {
+            try {
+                hostServices.showDocument(url)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        fun exitApp() {
+          Platform.exit()
+          exitProcess(0)
+        }
     fun resetDps() {
         dpsCalculator.resetDataStorage()
     }
@@ -44,6 +64,9 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
 
     private val debugMode = false
 
+    private val version = "0.2.4"
+
+
     override fun start(stage: Stage) {
         stage.setOnCloseRequest {
             exitProcess(0)
@@ -51,8 +74,9 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
 
         val webView = WebView()
         val engine = webView.engine
-        val bridge = JSBridge(stage, dpsCalculator)
+        engine.load(javaClass.getResource("/index.html")?.toExternalForm())
 
+        val bridge = JSBridge(stage, dpsCalculator, hostServices)
         engine.loadWorker.stateProperty().addListener { _, _, newState ->
             if (newState == Worker.State.SUCCEEDED) {
                 val window = engine.executeScript("window") as JSObject
@@ -171,4 +195,9 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
     fun getBattleDetail(uid: Int): String {
         return Json.encodeToString(dpsData.map[uid]?.analyzedData)
     }
+
+    fun getVersion():String{
+        return version
+    }
+
 }

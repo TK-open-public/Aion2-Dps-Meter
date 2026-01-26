@@ -11,7 +11,7 @@ data class PersonalData(
     @Transient var amount: Double = 0.0,
     @Required var damageContribution: Double = 0.0,
     @Transient val analyzedData: MutableMap<Int, AnalyzedSkill> = mutableMapOf(),
-    val nickname:String
+    val nickname: String
 ) {
     private fun addDamage(damage: Double) {
         amount += damage
@@ -24,12 +24,17 @@ data class PersonalData(
             analyzedData[pdp.getSkillCode1()] = analyzedSkill
         }
         val analyzedSkill = analyzedData[pdp.getSkillCode1()]!!
-        analyzedSkill.times++
-        analyzedSkill.damageAmount += pdp.getDamage()
-        if (pdp.isCrit()) analyzedSkill.critTimes++
-        if (pdp.getSpecials().contains(SpecialDamage.BACK)) analyzedSkill.backTimes++
-        if (pdp.getSpecials().contains(SpecialDamage.PARRY)) analyzedSkill.parryTimes++
-        if (pdp.getSpecials().contains(SpecialDamage.DOUBLE)) analyzedSkill.doubleTimes++
-        if (pdp.getSpecials().contains(SpecialDamage.PERFECT)) analyzedSkill.perfectTimes++
+        if (pdp.isDoT()) {
+            analyzedSkill.dotTimes ++
+            analyzedSkill.dotDamageAmount += pdp.getDamage()
+        } else {
+            analyzedSkill.times++
+            analyzedSkill.damageAmount += pdp.getDamage()
+            if (pdp.isCrit()) analyzedSkill.critTimes++
+            if (pdp.getSpecials().contains(SpecialDamage.BACK)) analyzedSkill.backTimes++
+            if (pdp.getSpecials().contains(SpecialDamage.PARRY)) analyzedSkill.parryTimes++
+            if (pdp.getSpecials().contains(SpecialDamage.DOUBLE)) analyzedSkill.doubleTimes++
+            if (pdp.getSpecials().contains(SpecialDamage.PERFECT)) analyzedSkill.perfectTimes++
+        }
     }
 }

@@ -1,0 +1,65 @@
+(() => {
+  const API = "https://api.github.com/repos/TK-open-public/Aion2-Dps-Meter/releases/latest";
+  const URL = "https://github.com/TK-open-public/Aion2-Dps-Meter/releases";
+  const START_DELAY = 800,
+    RETRY = 500,
+    LIMIT = 5;
+
+  const n = (v) => {
+    const [a = 0, b = 0, c = 0] = String(v || "")
+      .trim()
+      .replace(/^v/i, "")
+      .split(".")
+      .map(Number);
+    return a * 1e6 + b * 1e3 + c;
+  };
+
+  let modal;
+  let text;
+  let once = false;
+
+  const start = () =>
+    setTimeout(async () => {
+      if (once) {
+        return;
+      }
+      once = true;
+
+      modal = document.querySelector("#updateModal");
+      text = document.querySelector("#updateModalText");
+
+      document.querySelector(".updateModalBtn").onclick = () => {
+        modal.classList.remove("isOpen");
+        window.javaBridge.openBrowser(URL);
+        window.javaBridge.exitApp();
+      };
+
+      for (
+        let i = 0;
+        i < LIMIT && !(window.dpsData?.getVersion && window.javaBridge?.openBrowser);
+        i++
+      ) {
+        await new Promise((r) => setTimeout(r, RETRY));
+      }
+      if (!(window.dpsData?.getVersion && window.javaBridge?.openBrowser)) {
+        return;
+      }
+
+      const current = String(window.dpsData.getVersion() || "").trim();
+      const res = await fetch(API, {
+        headers: { Accept: "application/vnd.github+json" },
+        cache: "no-store",
+      });
+      if (!res.ok) {
+        return;
+      }
+
+      const latest = (await res.json()).tag_name;
+      if (latest && n(latest) > n(current)) {
+        text.textContent = `신규 업데이트가 있습니다!\n\n현재 버전 : v.${current}\n최신 버전 : v.${latest}\n\n 업데이트를 먼저 진행해주세요.`;
+        modal.classList.add("isOpen");
+      }
+    }, START_DELAY);
+
+  window.ReleaseChecker = { start };
+})();

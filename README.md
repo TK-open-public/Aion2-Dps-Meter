@@ -34,7 +34,7 @@ cd Aion2-Dps-Meter
 ### 위 빌드하기는 일반 사용자와는 무관합니다.
 
 1. npcap (https://npcap.com/#download) 를 설치합니다. (Install Npcap in WinPcap API-compatible Mode 필수 체크)
-2. [이동](https://github.com/TK-open-public/Aion2-Dps-Meter/releases) 해당 링크에서 aion2meter4j-0.2.0.msi을 다운받아 설치합니다.
+2. [이동](https://github.com/TK-open-public/Aion2-Dps-Meter/releases) 해당 링크에서 aion2meter4j-x.x.x.msi을 다운받아 설치합니다.
 3. **아이온이 켜져있는 상태라면 먼저 캐릭터 선택창으로 이동합니다**.
 4. 프로그램이 설치된 위치 (기본 설치 경로 C:\Program Files\aion2meter4j)의 aion2meter4j.exe 를 **반드시 관리자 권한으로 실행합니다.**
 
@@ -100,9 +100,6 @@ cd Aion2-Dps-Meter
 
 - 미터기엔 혼자 뜨는데 기여도가 100%가 아니에요
   - 미터기가 캐릭터명 수집에 실패하여 뜨지않고있는 기여자가 있을수있습니다.
-
-- 지속피해가 누락되는것같아요
-  - 누락되는게 맞습니다. 추후 수정예정이나 작업우선도는 낮습니다.
 
 - 커맨드 기능이 있나요?
   - 현재 커맨드 기능은 지원하지 않습니다. 추후 지원을 할 수도 있으나 작업우선도는 낮습니다.
