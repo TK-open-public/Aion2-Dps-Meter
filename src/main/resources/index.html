@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>DPS</title>
     <link
-        href="styles.css"
-        rel="stylesheet"
-        type="text/css"/>
+            href="styles.css"
+            rel="stylesheet"
+            type="text/css"/>
     <link
-        rel="stylesheet"
-        href="./lib/SpoqaHanSansNeo.min.css"/>
-    <script src="./lib/vue.global.js"></script>
-<!--    <script src="./lib/vue.min.js"></script>-->
+            rel="stylesheet"
+            href="./lib/SpoqaHanSansNeo.min.css"/>
+<!--    <script src="./lib/vue.global.js"></script>-->
+        <script src="./lib/vue.min.js"></script>
     <script src="./lib/lucide.min.js"></script>
 </head>
 
@@ -21,20 +21,22 @@
     <div id="app"></div>
 </div>
 
+<script src="./js/util.js"></script>
 <script src="./js/dps.js"></script>
 <script src="./components/headerArea.js"></script>
 <script src="./components/meterArea.js"></script>
 <script src="./components/detailArea.js"></script>
+<script src="./components/updateArea.js"></script>
 
 <script>
   const {createApp, ref, onMounted, onUnmounted, watch} = Vue;
-  const INACTIVE_MS = 10000;
 
   createApp({
     components: {
       HeaderArea: window.HeaderArea,
       MeterArea: window.MeterArea,
-      DetailArea: window.DetailArea
+      DetailArea: window.DetailArea,
+      UpdateArea: window.UpdateArea
     },
     setup() {
       const isCollapse = ref(false);
@@ -42,7 +44,7 @@
       const detailRowId = ref("");
       const dpsDatas = ref([]);
       const targetName = ref("");
-      let intervalId = null;
+      let intervalId = null;    // dps polling id
 
       const isDragging = ref(false);
       const startX = ref(0);
@@ -51,10 +53,9 @@
       const initialStageY = ref(0);
 
       const fightState = ref("state-grace");
-      const isFight = ref(false);
-      const fightStartAt = ref(0);
-      const lastActiveAt = ref(0);
-      const fightEndAt = ref(0);
+      const lastChangedAt = ref(0);
+      const lastBattleTimeMs = ref(null);
+      const battleTimeMs = ref(null);
 
       // 리셋버튼 이벤트
       const resetClick = () => {
@@ -64,11 +65,9 @@
         dpsDatas.value = [];
         targetName.value = "";
 
-        fightState.value = "";
-        isFight.value = false;
-        fightStartAt.value = 0;
-        lastActiveAt.value = 0;
-        fightEndAt.value = 0;
+        fightState.value = "state-grace";
+        lastBattleTimeMs.value = null;
+        lastChangedAt.value = 0;
       };
 
       // 정렬 이벤트
@@ -79,7 +78,7 @@
 
       //리스트에서 유저클릭시 이벤트
       const onClickUserRow = (row) => {
-        if(row.id) {
+        if (row.id) {
           detailRowId.value = row.id;
           isDetailOpen.value = true;
         }
@@ -119,13 +118,14 @@
                 return;
               }
 
-              const raw = window.dpsData.getDpsData() || [];
-              if (typeof raw !== "string") return;
+              const raw = window.dpsData.getDpsData();
+              if (!raw || typeof raw !== "string") return;
 
-              let { rows, targetName : newTargetName } = buildRowsFromPayload(raw);
+              let {rows, targetName: newTargetName, battleTimeMs: _battleTimeMs} = buildRowsFromPayload(raw);
 
               dpsDatas.value = rows;
               targetName.value = newTargetName;
+              battleTimeMs.value = _battleTimeMs;
             }, 200);
           } else {
             console.log("dpsData 없음");
@@ -141,7 +141,7 @@
           window.addEventListener('javaReady', () => {
             console.log("javaReady 이벤트 수신!");
             initPolling();
-          }, { once: true });
+          }, {once: true});
         }
       };
 
@@ -159,43 +159,25 @@
       }
 
       // 배틀 시간 계산
-      watch(dpsDatas, (newVal) => {
-        const isActivity = computedDps(newVal);
-        const now = performance.now() || Date.now();
+      watch(battleTimeMs, (newVal) => {
+        const now = Date.now();
 
-        if(isActivity) {
-          if(fightStartAt.value === 0) {
-            isFight.value = true;
-            fightStartAt.value = now;
-            lastActiveAt.value = now;
-            fightEndAt.value = 0;
-            fightState.value = "state-fighting";
-          } else {
-            if(isFight.value) {
-              lastActiveAt.value = now;
-            }
-          }
+        if (lastBattleTimeMs.value === null || lastBattleTimeMs.value !== newVal) {
+          lastBattleTimeMs.value = battleTimeMs.value;
+          lastChangedAt.value = now;
+          fightState.value = "state-fighting";
         } else {
-          if(isFight.value) {
-            const inactiveMs = now - lastActiveAt;
-            if (inactiveMs >= INACTIVE_MS) {
-              isFight.value = false;
-              fightEndAt.value = lastActiveAt - fightStartAt.value; // 전투시간
-              fightStartAt.value = 0;
-              fightState.value = "state-ended";
-            } else if (inactiveMs >= 1000) {
-              fightState.value = "state-grace";
-            }
+          const frozenMs = Math.max(0, now - lastChangedAt.value);
+
+          if (frozenMs >= 30000) {
+            fightState.value = "state-ended";
+          } else if (frozenMs >= 10000) {
+            fightState.value = "state-grace";
+          } else {
+            fightState.value = "state-fighting";
           }
         }
-      }, { deep: true });
-
-      const formatMMSS = (ms) => {
-        const sec = Math.max(0, Math.floor(ms / 1000));
-        const mm = String(Math.floor(sec / 60)).padStart(2, "0");
-        const ss = String(sec % 60).padStart(2, "0");
-        return `${mm}:${ss}`;
-      };
+      }, {deep: true});
 
       onMounted(() => {
         document.addEventListener("mousedown", handleMouseDown);
@@ -218,10 +200,8 @@
         targetName,
         detailRowId,
         fightState,
-        isFight,
-        fightStartAt,
-        lastActiveAt,
-        fightEndAt,
+        battleTimeMs,
+        lastBattleTimeMs,
         resetClick,
         collapseClick,
         onClickUserRow,
@@ -236,36 +216,18 @@
 
         <MeterArea @onClickUserRow="onClickUserRow" :rows="dpsDatas"/>
 
-        <div class="battleTime" :class="[fightState]">
-          <div class="status"></div>
-          <div class="tick">{{ formatMMSS(isFight ? lastActiveAt - fightStartAt : fightEndAt) }}</div>
+        <div class="battleTime" :class="[fightState]" v-if="battleTimeMs != null">
+          <div class="status" :data-state="fightState"></div>
+          <div class="tick">{{ formatMMSS(battleTimeMs) }}</div>
         </div>
       </div>
-      <div
-        class="console"
-        style="
-          position: fixed;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          background: rgba(0, 0, 0, 0.8);
-          color: lime;
-          font-family: monospace;
-          font-size: 12px;
-          padding: 10px;
-          max-height: 200px;
-          overflow-y: auto;
-          display: none;
-        "></div>
-    </div>
 
-    <script src="./js/battleTime.js"></script>
-    <script src="./js/meter.js"></script>
-    <script src="./js/details.js"></script>
-    <script src="./js/core.js"></script>
-    <script>
-      lucide.createIcons();
-      dpsApp.start();
-    </script>
-  </body>
+      <DetailArea @closeClick="detailClose" :isDetailOpen="isDetailOpen" :id="detailRowId"
+                  :combatTime="formatMMSS(lastBattleTimeMs || 0)"/>
+
+      <UpdateArea/>
+    `
+  }).mount('#app');
+</script>
+</body>
 </html>

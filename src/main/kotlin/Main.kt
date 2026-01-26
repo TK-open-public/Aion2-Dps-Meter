@@ -5,7 +5,7 @@ import com.tbread.packet.PcapCapturer
 import com.tbread.packet.StreamAssembler
 import com.tbread.packet.StreamProcessor
 import com.tbread.webview.BrowserApp
-import javafx.application.Application
+import com.tbread.webview.GitReleaseParser
 import javafx.application.Platform
 import javafx.stage.Stage
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +31,10 @@ fun main() = runBlocking {
         for (chunk in channel) {
             assembler.processChunk(chunk)
         }
+    }
+
+    launch(Dispatchers.Default) {
+        GitReleaseParser.parse()
     }
 
     launch(Dispatchers.IO) {

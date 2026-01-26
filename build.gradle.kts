@@ -29,6 +29,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.14")
     implementation("ch.qos.logback:logback-classic:1.5.25")
+    implementation("com.prof18.rssparser:rssparser:6.1.2")
 }
 
 compose.desktop {

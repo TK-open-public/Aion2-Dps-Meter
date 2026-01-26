@@ -6,7 +6,6 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import javafx.animation.KeyFrame
 import javafx.animation.Timeline
 import javafx.application.Application
-import javafx.application.HostServices
 import javafx.concurrent.Worker
 import javafx.scene.Scene
 import javafx.scene.image.Image
@@ -16,45 +15,9 @@ import javafx.stage.Screen
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import javafx.util.Duration
-import javafx.application.Platform
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.encodeToString
-import kotlin.system.exitProcess
-
 import netscape.javascript.JSObject
 import kotlin.system.exitProcess
-
-class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
-    private val logger = KotlinLogging.logger {}
-
-    class JSBridge(private val stage: Stage,private val dpsCalculator: DpsCalculator) {
-        fun moveWindow(x: Double, y: Double) {
-            stage.x = x
-            stage.y = y
-        }
-
-        fun resetDps(){
-            dpsCalculator.resetDataStorage()
-        }
-        fun openBrowser(url: String) {
-            try {
-                hostServices.showDocument(url)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-        fun exitApp() {
-          Platform.exit()
-          exitProcess(0)
-        }
-    fun resetDps() {
-        dpsCalculator.resetDataStorage()
-    }
-
-    fun printLog(message: String) {
-        logger.debug { "[JS LOG] $message" }
-    }
-}
 
 class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
     private val logger = KotlinLogging.logger {}
@@ -63,9 +26,6 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
     private var dpsData: DpsData = dpsCalculator.getDps()
 
     private val debugMode = false
-
-    private val version = "0.2.4"
-
 
     override fun start(stage: Stage) {
         stage.setOnCloseRequest {
@@ -87,10 +47,6 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
                 engine.executeScript(
                     """
                       (function() {
-                        function plog(message) {
-                        
-                        }
-                      
                         console.log = function() {
                             var message = Array.prototype.slice.call(arguments).map(function(arg) {
                                 return typeof arg === 'object' ? JSON.stringify(arg) : String(arg);
@@ -143,7 +99,7 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
 
         engine.load(javaClass.getResource("/index.html")?.toExternalForm())
 
-        val scene = Scene(webView, 1000.0, 1000.0)
+        val scene = Scene(webView, 1200.0, 1000.0)
         scene.fill = Color.TRANSPARENT
 
         try {
@@ -163,7 +119,7 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
         stage.isAlwaysOnTop = true
         stage.title = "Aion2 Dps Overlay"
 
-        val iconStream = javaClass.getResourceAsStream("/icon/icon.png")
+        val iconStream = javaClass.getResourceAsStream("/assets/icon.png")
         if (iconStream != null) {
             stage.icons.add(Image(iconStream))
         }
@@ -195,9 +151,4 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
     fun getBattleDetail(uid: Int): String {
         return Json.encodeToString(dpsData.map[uid]?.analyzedData)
     }
-
-    fun getVersion():String{
-        return version
-    }
-
 }

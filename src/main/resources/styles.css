@@ -368,12 +368,12 @@
 }
 
 .updateModal {
-  position: fixed;
+  position: relative;
   inset: 0;
-  display: none;
   align-items: center;
   justify-content: center;
   z-index: 999999;
+
   &.isOpen {
     display: flex;
   }

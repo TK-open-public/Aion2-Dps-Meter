@@ -52,7 +52,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
 
     private fun parseBrokenLengthPacket(packet: ByteArray, flag: Boolean = true) {
         if (packet[2] != 0xff.toByte() || packet[3] != 0xff.toByte()) {
-            logger.trace("b잔여패킷: {}", toHex(packet))
+            logger.trace { "b잔여패킷: ${toHex(packet)}" }
             val target = dataStorage.getCurrentTarget()
             var processed = false
             if (target != 0) {
@@ -62,17 +62,18 @@ class StreamProcessor(private val dataStorage: DataStorage) {
                 val damageKeyword = damageOpcodes + targetBytes
                 val dotKeyword = dotOpcodes + targetBytes
                 val damageIdx = findArrayIndex(packet, damageKeyword)
-                val dotIdx = findArrayIndex(packet,dotKeyword)
+                val dotIdx = findArrayIndex(packet, dotKeyword)
                 val (idx, handler) = when {
                     damageIdx > 0 && dotIdx > 0 -> {
                         if (damageIdx < dotIdx) damageIdx to ::parsingDamage
                         else dotIdx to ::parseDoTPacket
                     }
+
                     damageIdx > 0 -> damageIdx to ::parsingDamage
                     dotIdx > 0 -> dotIdx to ::parseDoTPacket
                     else -> -1 to null
                 }
-                if (idx > 0 && handler != null){
+                if (idx > 0 && handler != null) {
                     val packetLengthInfo = readVarInt(packet, idx - 1)
                     if (packetLengthInfo.length == 1) {
                         val startIdx = idx - 1
@@ -90,7 +91,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
                 }
             }
             if (flag && !processed) {
-                logger.debug("잔여패킷 {}",toHex(packet))
+                logger.debug { "잔여패킷 ${toHex(packet)}" }
                 parseNicknameFromBrokenLengthPacket(packet)
             }
             return
@@ -175,7 +176,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
 
     }
 
-    private fun parseDoTPacket(packet:ByteArray){
+    private fun parseDoTPacket(packet: ByteArray) {
         var offset = 0
         val pdp = ParsedDamagePacket()
         pdp.setDot(true)
@@ -184,11 +185,11 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         offset += packetLengthInfo.length
 
         if (packet[offset] != 0x05.toByte()) return
-        if (packet[offset+1] != 0x38.toByte()) return
+        if (packet[offset + 1] != 0x38.toByte()) return
         offset += 2
         if (packet.size < offset) return
 
-        val targetInfo = readVarInt(packet,offset)
+        val targetInfo = readVarInt(packet, offset)
         if (targetInfo.length < 0) return
         offset += targetInfo.length
         if (packet.size < offset) return
@@ -197,29 +198,29 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         offset += 1
         if (packet.size < offset) return
 
-        val actorInfo = readVarInt(packet,offset)
+        val actorInfo = readVarInt(packet, offset)
         if (actorInfo.length < 0) return
         if (actorInfo.value == targetInfo.value) return
         offset += actorInfo.length
         if (packet.size < offset) return
         pdp.setActorId(actorInfo)
 
-        val unknownInfo = readVarInt(packet,offset)
-        if (unknownInfo.length <0) return
+        val unknownInfo = readVarInt(packet, offset)
+        if (unknownInfo.length < 0) return
         offset += unknownInfo.length
 
-        val skillCode:Int = parseUInt32le(packet,offset) / 100
+        val skillCode: Int = parseUInt32le(packet, offset) / 100
         offset += 4
         if (packet.size <= offset) return
         pdp.setSkillCode(skillCode)
 
-        val damageInfo = readVarInt(packet,offset)
+        val damageInfo = readVarInt(packet, offset)
         if (damageInfo.length < 0) return
         pdp.setDamage(damageInfo)
 
-        logger.debug("{}",toHex(packet))
-        logger.debug("도트데미지 공격자 {},피격자 {},스킬 {},데미지 {}",pdp.getActorId(),pdp.getTargetId(),pdp.getSkillCode1(),pdp.getDamage())
-        logger.debug("----------------------------------")
+        logger.debug { "${toHex(packet)} " }
+        logger.debug { "도트데미지 공격자 ${pdp.getActorId()},피격자 ${pdp.getTargetId()},스킬 ${pdp.getSkillCode1()},데미지 ${pdp.getDamage()}" }
+        logger.debug { "----------------------------------" }
         if (pdp.getActorId() != pdp.getTargetId()) {
             dataStorage.appendDamage(pdp)
         }
@@ -432,7 +433,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
             7 -> 14
             else -> return false
         }
-        if (start+tempV > packet.size) return false
+        if (start + tempV > packet.size) return false
         pdp.setSpecials(parseSpecialDamageFlags(packet.copyOfRange(start, start + tempV)))
         offset += tempV
 
