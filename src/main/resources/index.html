@@ -29,6 +29,11 @@
 
           <div class="headerBtns">
             <div class="headerBtn resetBtn"><i data-lucide="rotate-ccw"></i></div>
+            <div
+              class="headerBtn settingsBtn"
+              title="설정">
+              <i data-lucide="cog"></i>
+            </div>
             <div class="headerBtn collapseBtn">
               <i
                 class="collapseIcon"
@@ -104,12 +109,34 @@
         </div>
       </div>
     </div>
+
+    <div
+      class="settingsOverlay"
+      aria-hidden="true">
+      <div
+        class="settingsModal"
+        role="dialog"
+        aria-modal="true">
+        <div class="settingsHeader">
+          <div class="settingsTitle">설정</div>
+          <div
+            class="headerBtn settingsClose"
+            title="닫기">
+            <i data-lucide="x"></i>
+          </div>
+        </div>
+
+        <div class="settingsList"></div>
+      </div>
+    </div>
+
     <script src="./js/battleTime.js"></script>
     <script src="./js/meter.js"></script>
     <script src="./js/details.js"></script>
 
-    <!-- 추가 -->
     <script src="./js/checkRelease.js"></script>
+
+    <script src="./js/settings.js"></script>
 
     <script src="./js/core.js"></script>
     <script>

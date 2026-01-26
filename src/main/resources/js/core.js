@@ -20,10 +20,10 @@ class DpsApp {
     this.GRACE_MS = 30000;
     this.GRACE_ARM_MS = 1000;
 
-    //자동리셋 시간
+    // 자동리셋 시간
     this.AUTO_RESET_AFTER_ENDED_MS = 60000; // ended 이후 1분
 
-    //자동리셋 관련
+    // 자동리셋 관련
     this._endedAt = null;
     this._rawLastChangedAt = 0;
     this._hadCombat = false;
@@ -35,6 +35,10 @@ class DpsApp {
     // battleTime 캐시
     this._battleTimeVisible = false;
     this._lastBattleTimeMs = null;
+
+    // settings
+    this.autoResetEnabled = true;
+    this.settingsUI = null;
 
     this._pollTimer = null;
 
@@ -64,15 +68,18 @@ class DpsApp {
       onClickUserRow: (row) => this.detailsUI.open(row),
     });
 
+    // battleTime element 보관(ended 판정에 사용)
+    this.elBattleTime = document.querySelector(".battleTime");
+
     this.battleTime = createBattleTimeUI({
-      rootEl: document.querySelector(".battleTime"),
+      rootEl: this.elBattleTime,
       tickSelector: ".tick",
       statusSelector: ".status",
       graceMs: this.GRACE_MS,
       graceArmMs: this.GRACE_ARM_MS,
       visibleClass: "isVisible",
     });
-    this.battleTime.setVisible(false);
+    this.battleTime?.setVisible?.(false);
 
     this.detailsPanel = document.querySelector(".detailsPanel");
     this.detailsClose = document.querySelector(".detailsClose");
@@ -89,6 +96,32 @@ class DpsApp {
       dpsFormatter: this.dpsFormatter,
       getDetails: (row) => this.getDetails(row),
     });
+
+    this.settingsUI = createSettingsUI({
+      items: [
+        {
+          key: "autoResetEnabled",
+          type: "toggle",
+          label: "자동 초기화",
+          default: true,
+          tooltip:
+            "전투 종료(회색) 상태 진입 이후, raw 데이터가 1분간 동일하면 reset을 수행합니다.\n" +
+            "상세 패널이 열려 있으면 카운트다운이 일시정지되고, 닫힌 뒤 이어서 진행됩니다.",
+        },
+      ],
+      onChange: (s) => {
+        const next = !!s.autoResetEnabled;
+        if (this.autoResetEnabled === next) return;
+
+        this.autoResetEnabled = next;
+        this._resetAutoResetState();
+      },
+    });
+
+    if (this.settingsUI?.getState) {
+      this.autoResetEnabled = !!this.settingsUI.getState().autoResetEnabled;
+    }
+
     window.ReleaseChecker?.start?.();
 
     this.startPolling();
@@ -100,9 +133,7 @@ class DpsApp {
   }
 
   safeParseJSON(raw, fallback = {}) {
-    if (typeof raw !== "string") {
-      return fallback;
-    }
+    if (typeof raw !== "string") return fallback;
     try {
       const value = JSON.parse(raw);
       return value && typeof value === "object" ? value : fallback;
@@ -125,7 +156,7 @@ class DpsApp {
   resetAll({ callBackend = true } = {}) {
     this.resetPending = !!callBackend;
 
-    this._resetAutoResetState?.();
+    this._resetAutoResetState();
 
     this.lastSnapshot = null;
     this.lastJson = null;
@@ -158,10 +189,15 @@ class DpsApp {
 
   // 전투 끝난 후 (회색불) AUTO_RESET_AFTER_ENDED_MS 이후 초기화
   // detail 열려있으면 잠시 중단
-
   _tickAutoReset(now, { rawChanged = false, hasRows = false } = {}) {
     if (this.isCollapse) return;
     if (this.resetPending) return;
+
+    // settings 토글 OFF면 카운트/상태를 유지할 이유가 없으므로 리셋 후 종료
+    if (!this.autoResetEnabled) {
+      this._resetAutoResetState();
+      return;
+    }
 
     if (rawChanged) {
       this._rawLastChangedAt = now;
@@ -173,10 +209,9 @@ class DpsApp {
       this._hadCombat = true;
     }
 
-    // 전투 종료는 isEnded(회색불)로 변한 순간
-    const endedNow = !!this.battleTime?.isEnded?.();
+    const endedNow = !!this.elBattleTime?.classList?.contains?.("state-ended");
 
-    // ended가 아니면 카운트다운 초기화
+    // ended가 아니면 초기화
     if (!endedNow) {
       this._endedAt = null;
       this._autoResetStableStart = null;
@@ -185,30 +220,31 @@ class DpsApp {
       return;
     }
 
-    if (!this._hadCombat) {
-      return;
-    }
+    // 전투를 시작한 적이 없으면(auto reset 불필요)
+    if (!this._hadCombat) return;
 
     // 전투 종료 시점 (회색불 들어온 순간)
     if (this._endedAt === null) {
       this._endedAt = now;
     }
 
-    // 전투 종료 후 1분간 raw가 완전히 동일하면 리셋
-
     const paused = !!this.detailsUI?.isOpen?.();
-    const stableStartCandidate = Math.max(this._endedAt, this._rawLastChangedAt || this._endedAt);
 
-    // raw가 바뀌었거나 endedAt이 갱신되면 시간초 초기화
+    const stableStartCandidate = Math.max(
+      this._endedAt,
+      this._rawLastChangedAt || this._endedAt
+    );
+
+    // raw가 바뀌었거나 endedAt이 갱신되면 카운트다운 리셋
     if (this._autoResetStableStart !== stableStartCandidate) {
       this._autoResetStableStart = stableStartCandidate;
       this._autoResetElapsedMs = 0;
       this._autoResetLastAt = now;
     }
 
-    // details가 열려 있으면 잠깐 멈춤.
+    // details가 열려 있으면 잠깐 멈춤
     if (paused) {
-      this._autoResetLastAt = now; // 멈춘동안 delta가 누적되지 않게 고정
+      this._autoResetLastAt = now; // pause 동안 delta 누적 방지
       return;
     }
 
@@ -223,9 +259,9 @@ class DpsApp {
 
   fetchDps() {
     if (this.isCollapse) return;
+
     const now = this.nowMs();
     const raw = window.dpsData?.getDpsData?.();
-    // globalThis.uiDebug?.log?.("getBattleDetail", raw);
 
     // 값이 없으면 타이머 숨김
     if (typeof raw !== "string") {
@@ -233,21 +269,23 @@ class DpsApp {
 
       this._lastBattleTimeMs = null;
       this._battleTimeVisible = false;
-      this.battleTime.setVisible(false);
+      this.battleTime?.setVisible?.(false);
       return;
     }
 
     if (raw === this.lastJson) {
       const shouldBeVisible = this._battleTimeVisible && !this.isCollapse;
 
-      this.battleTime.setVisible(shouldBeVisible);
+      this.battleTime?.setVisible?.(shouldBeVisible);
       if (shouldBeVisible) {
-        this.battleTime.update(now, this._lastBattleTimeMs);
+        this.battleTime?.update?.(now, this._lastBattleTimeMs);
       }
-      this._tickAutoReset(now, this._lastBattleTimeMs, {
+
+      this._tickAutoReset(now, {
         rawChanged: false,
         hasRows: !!(this.lastSnapshot && this.lastSnapshot.length),
       });
+
       return;
     }
 
@@ -256,14 +294,18 @@ class DpsApp {
     const { rows, targetName, battleTimeMs } = this.buildRowsFromPayload(raw);
     this._lastBattleTimeMs = battleTimeMs;
 
-    this._tickAutoReset(now, battleTimeMs, { rawChanged: true, hasRows: rows.length > 0 });
+    this._tickAutoReset(now, {
+      rawChanged: true,
+      hasRows: rows.length > 0,
+    });
 
     const showByServer = rows.length > 0;
+
     if (this.resetPending) {
       const resetAck = rows.length === 0;
 
       this._battleTimeVisible = false;
-      this.battleTime.setVisible(false);
+      this.battleTime?.setVisible?.(false);
 
       if (!resetAck) {
         return;
@@ -271,13 +313,14 @@ class DpsApp {
 
       this.resetPending = false;
     }
+
     // 빈값은 ui 안덮어씀
     let rowsToRender = rows;
     if (rows.length === 0) {
       if (this.lastSnapshot) rowsToRender = this.lastSnapshot;
       else {
         this._battleTimeVisible = false;
-        this.battleTime.setVisible(false);
+        this.battleTime?.setVisible?.(false);
         return;
       }
     } else {
@@ -293,10 +336,10 @@ class DpsApp {
     this._battleTimeVisible = eligible;
     const shouldBeVisible = eligible && !this.isCollapse;
 
-    this.battleTime.setVisible(shouldBeVisible);
+    this.battleTime?.setVisible?.(shouldBeVisible);
 
     if (shouldBeVisible) {
-      this.battleTime.update(now, battleTimeMs);
+      this.battleTime?.update?.(now, battleTimeMs);
     }
 
     // 렌더
@@ -336,9 +379,7 @@ class DpsApp {
         ? Math.round(contribRaw * 10) / 10
         : NaN;
 
-      if (!Number.isFinite(dps)) {
-        continue;
-      }
+      if (!Number.isFinite(dps)) continue;
 
       rows.push({
         id: String(id),
@@ -356,7 +397,6 @@ class DpsApp {
   async getDetails(row) {
     const raw = await window.dpsData?.getBattleDetail?.(row.id);
     let detailObj = raw;
-    // globalThis.uiDebug?.log?.("getBattleDetail", detailObj);
 
     if (typeof raw === "string") detailObj = this.safeParseJSON(raw, {});
     if (!detailObj || typeof detailObj !== "object") detailObj = {};
@@ -377,7 +417,6 @@ class DpsApp {
       const nameRaw = typeof value.skillName === "string" ? value.skillName.trim() : "";
       const baseName = nameRaw ? nameRaw : `스킬 ${code}`;
 
-      // 공통 
       const pushSkill = ({
         codeKey,
         name,
@@ -391,9 +430,7 @@ class DpsApp {
         countForTotals = true,
       }) => {
         const dmgInt = Math.trunc(Number(String(dmg ?? "").replace(/,/g, ""))) || 0;
-        if (dmgInt <= 0) {
-          return;
-        }
+        if (dmgInt <= 0) return;
 
         const t = Number(time) || 0;
 
@@ -406,6 +443,7 @@ class DpsApp {
           totalPerfect += Number(perfect) || 0;
           totalDouble += Number(double) || 0;
         }
+
         skills.push({
           code: String(codeKey),
           name,
@@ -435,7 +473,7 @@ class DpsApp {
       // 도트피해
       if (Number(String(value.dotDamageAmount ?? "").replace(/,/g, "")) > 0) {
         pushSkill({
-          codeKey: `${code}-dot`, // 유니크키
+          codeKey: `${code}-dot`,
           name: `${baseName} - 지속피해`,
           time: value.dotTimes,
           dmg: value.dotDamageAmount,
@@ -448,6 +486,7 @@ class DpsApp {
       if (den <= 0) return 0;
       return Math.round((num / den) * 1000) / 10;
     };
+
     const contributionPct = Number(row?.damageContribution);
     const combatTime = this.battleTime?.getCombatTimeText?.() ?? "00:00";
 
@@ -460,7 +499,6 @@ class DpsApp {
       totalPerfectPct: pct(totalPerfect, totalTimes),
       totalDoublePct: pct(totalDouble, totalTimes),
       combatTime,
-
       skills,
     };
   }
@@ -484,26 +522,31 @@ class DpsApp {
       const iconName = this.isCollapse ? "arrow-down-wide-narrow" : "arrow-up-wide-narrow";
       const iconEl =
         this.collapseBtn.querySelector("svg") || this.collapseBtn.querySelector("[data-lucide]");
-      if (!iconEl) {
-        return;
-      }
+      if (!iconEl) return;
 
       iconEl.setAttribute("data-lucide", iconName);
       lucide.createIcons({ root: this.collapseBtn });
     });
+
     this.resetBtn?.addEventListener("click", () => {
       this.resetAll({ callBackend: true });
     });
   }
 
   bindDragToMoveWindow() {
+    const header = document.querySelector(".header");
+    if (!header) return;
+
     let isDragging = false;
     let startX = 0,
       startY = 0;
     let initialStageX = 0,
       initialStageY = 0;
 
-    document.addEventListener("mousedown", (e) => {
+    header.addEventListener("mousedown", (e) => {
+      // 헤더 버튼은 드래그 금지
+      if (e.target.closest(".headerBtns")) return;
+
       isDragging = true;
       startX = e.screenX;
       startY = e.screenY;
@@ -528,7 +571,6 @@ class DpsApp {
 
 // 디버그콘솔
 const setupDebugConsole = () => {
-  const g = globalThis;
   if (globalThis.uiDebug?.log) return globalThis.uiDebug;
 
   const consoleDiv = document.querySelector(".console");
