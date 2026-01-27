@@ -42,9 +42,15 @@ class DpsApp {
 
     this.resetBtn = document.querySelector(".resetBtn");
     this.collapseBtn = document.querySelector(".collapseBtn");
+    this.settingsBtn = document.querySelector(".settingsBtn");
+    this.settingsPanel = document.querySelector(".settingsPanel");
+    this.settingsClose = document.querySelector(".settingsClose");
+    this.settingsSave = document.querySelector(".settingsSave");
+    this.settingsInput = document.querySelector(".settingsInput");
 
     this.bindHeaderButtons();
     this.bindDragToMoveWindow();
+    this.bindSettingsUI();
     this.bindNativeKeyEvents();
 
     this.meterUI = createMeterUI({
@@ -79,7 +85,6 @@ class DpsApp {
       dpsFormatter: this.dpsFormatter,
       getDetails: (row) => this.getDetails(row),
     });
-    this.ensureDefaultHotkeyRegistered();
     window.ReleaseChecker?.start?.();
 
     this.startPolling();
@@ -380,6 +385,10 @@ class DpsApp {
   }
 
   bindHeaderButtons() {
+    this.settingsBtn?.addEventListener("click", () => {
+      if (!this.settingsUI) this.bindSettingsUI();
+      this.settingsUI?.open?.();
+    });
     this.collapseBtn?.addEventListener("click", () => {
       this.isCollapse = !this.isCollapse;
 
@@ -410,39 +419,22 @@ class DpsApp {
     });
   }
 
-  bindNativeKeyEvents() {
-    window.addEventListener("nativeKey", (event) => {
-      const detail = event?.detail;
-      if (!detail) return;
-      const { keyText, keyCode, rawCode, ctrl, alt, shift, meta } = detail;
-      globalThis.uiDebug?.log?.(
-        `nativeKey: ${keyText} (code=${keyCode} raw=${rawCode}) ctrl=${!!ctrl} alt=${!!alt} shift=${!!shift} meta=${!!meta}`
-      );
-      if (typeof this.onNativeKey === "function") {
-        this.onNativeKey(detail);
-      }
+  bindSettingsUI() {
+    if (this.settingsUI || typeof window.createSettingsUI !== "function") return;
+    this.settingsUI = window.createSettingsUI({
+      panel: this.settingsPanel,
+      closeBtn: this.settingsClose,
+      saveBtn: this.settingsSave,
+      input: this.settingsInput,
     });
   }
 
-  ensureDefaultHotkeyRegistered() {
-    const mods = 0x0002; // MOD_CONTROL
-    const vk = 0x52; // R
-    const maxAttempts = 20;
-    let attempts = 0;
-    const tryRegister = () => {
-      attempts += 1;
-      if (window.javaBridge?.setHotkey) {
-        window.javaBridge.setHotkey(mods, vk);
-        globalThis.uiDebug?.log?.(`hotkey registered mods=${mods} vk=${vk}`);
-        return;
-      }
-      if (attempts < maxAttempts) {
-        setTimeout(tryRegister, 250);
-      } else {
-        globalThis.uiDebug?.log?.("hotkey register failed: javaBridge not ready");
-      }
-    };
-    tryRegister();
+  bindNativeKeyEvents() {
+    window.addEventListener("nativeResetHotKey", (event) => {
+      const detail = event?.detail;
+      if (!detail) return;
+      this.resetAll({ callBackend: true });
+    });
   }
 
   bindDragToMoveWindow() {
@@ -453,6 +445,10 @@ class DpsApp {
       initialStageY = 0;
 
     document.addEventListener("mousedown", (e) => {
+      const ignoreTarget = e.target.closest(
+        ".headerBtns, .settingsPanel, .detailsPanel, .console, input, button"
+      );
+      if (ignoreTarget) return;
       isDragging = true;
       startX = e.screenX;
       startY = e.screenY;

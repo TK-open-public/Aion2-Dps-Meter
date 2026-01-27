@@ -28,12 +28,36 @@
           </div>
 
           <div class="headerBtns">
+            <div class="headerBtn settingsBtn"><i data-lucide="settings"></i></div>
             <div class="headerBtn resetBtn"><i data-lucide="rotate-ccw"></i></div>
             <div class="headerBtn collapseBtn">
               <i
                 class="collapseIcon"
                 data-lucide="arrow-up-wide-narrow"></i>
             </div>
+          </div>
+        </div>
+        <div
+          class="settingsPanel"
+          role="dialog"
+          aria-modal="true">
+          <div class="settingsHeader">
+            <div class="settingsTitle">설정</div>
+            <div class="closeX settingsClose">×</div>
+          </div>
+          <div class="settingsBody">
+            <div class="settingsRow">
+              <div class="settingsLabel">리셋 단축키</div>
+              <input
+                class="settingsInput"
+                type="text"
+                placeholder="단축키를 입력하세요"
+                readonly />
+              <div class="settingsHint">모디파이어 + 키 1개 또는 단일 키</div>
+            </div>
+          </div>
+          <div class="settingsFooter">
+            <button class="settingsBtnPrimary settingsSave">저장</button>
           </div>
         </div>
         <div
@@ -108,8 +132,8 @@
     <script src="./js/meter.js"></script>
     <script src="./js/details.js"></script>
 
-    <!-- 추가 -->
     <script src="./js/checkRelease.js"></script>
+    <script src="./js/settings.js"></script>
 
     <script src="./js/core.js"></script>
     <script>

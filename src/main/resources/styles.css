@@ -23,8 +23,8 @@
   font-family: "Spoqa Han Sans Neo", sans-serif;
   margin: 0;
   padding: 0;
-  -webkit-user-select: none;
-  user-select: none;
+  /* -webkit-user-select: none; */
+  /* user-select: none; */
 }
 
 .container {
@@ -38,6 +38,7 @@
   /* background-color: rgba(255, 255, 255, 0.1); */
   border: 1px solid rgba(209, 213, 219, 0.3);
   border-radius: var(--rounded);
+  position: relative;
 }
 
 .header {
@@ -237,19 +238,6 @@
 
       font-size: 12px;
     }
-    .closeX {
-      cursor: pointer;
-      margin-left: auto;
-      user-select: none;
-      font-size: 22px;
-      padding: 2px 8px;
-      border-radius: 6px;
-      transition: 0.2s;
-      border-radius: 4px;
-    }
-    .closeX:hover {
-      background: rgba(255, 255, 255, 0.08);
-    }
   }
 
   .detailsStats {
@@ -363,6 +351,101 @@
     }
   }
 }
+.closeX {
+  cursor: pointer;
+  margin-left: auto;
+  user-select: none;
+  font-size: 22px;
+  border-radius: 8px;
+  padding: 2px 8px;
+  transition: 0.2s;
+  opacity: 0.8;
+}
+.closeX:hover {
+  opacity: 1;
+
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.settingsPanel {
+  position: absolute;
+  top: 0px;
+  left: calc(100% + 8px);
+  width: 320px;
+  background: rgb(12, 22, 40);
+  border-radius: var(--rounded);
+  color: var(--text-color);
+  display: none;
+  z-index: 1200;
+
+  &.isVisible,
+  &.open {
+    display: block;
+  }
+
+  .settingsHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--panel-border);
+
+    .settingsTitle {
+      font-size: 18px;
+      font-weight: bold;
+    }
+  }
+
+  .settingsBody {
+    padding: 18px;
+
+    .settingsRow {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .settingsLabel {
+      font-size: 14px;
+    }
+
+    .settingsInput {
+      background: rgba(14, 18, 22, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-color);
+      padding: 12px;
+      border-radius: var(--rounded-xs);
+      font-size: 14px;
+      outline: none;
+    }
+
+    .settingsInput.isCapturing {
+      border-color: var(--dps);
+      box-shadow: 0 0 0 1px rgba(41, 255, 111, 0.4);
+    }
+
+    .settingsHint {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+  }
+
+  .settingsFooter {
+    padding: 0 18px;
+    padding-bottom: 18px;
+    .settingsBtnPrimary {
+      border: none;
+      background: #1877f2;
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+      border-radius: 8px;
+      padding: 8px;
+      width: 100%;
+      cursor: pointer;
+    }
+  }
+}
 
 .updateModal {
   position: fixed;
@@ -383,7 +466,7 @@
     font-weight: bold;
     color: white;
     .updateModalTitle {
-      font-size: 24px;
+      font-size: 18px;
     }
     .updateModalText {
       margin: 24px 0px;
@@ -391,7 +474,7 @@
     }
     .updateModalBtn {
       border: none;
-      background: var(--error-fill);
+      background: #1877f2;
       font-size: 18px;
       font-weight: bold;
       border-radius: 8px;
