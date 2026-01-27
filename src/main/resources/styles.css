@@ -472,6 +472,10 @@
       margin: 24px 0px;
       white-space: pre-line;
     }
+    .updateModalActions {
+      display: flex;
+      gap: 12px;
+    }
     .updateModalBtn {
       border: none;
       background: #1877f2;
@@ -483,6 +487,10 @@
       cursor: pointer;
       color: white;
       text-shadow: var(--text-shadow);
+    }
+    .updateModalBtn.secondary {
+      background: rgba(255, 255, 255, 0.16);
+      color: white;
     }
   }
 }

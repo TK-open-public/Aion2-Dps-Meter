@@ -83,6 +83,9 @@
       const detail = event?.detail || {};
       const label = labelFromDetail(detail);
       const mods = modsFromDetail(detail);
+      if (!(mods & 0x0002 || mods & 0x0001)) {
+        return;
+      }
       const vk = Number(detail?.keyCode);
       if (!Number.isFinite(vk) || !label) return;
       current = { mods, vk, label };
