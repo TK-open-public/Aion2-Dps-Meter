@@ -899,7 +899,7 @@ class DpsCalculator(private val dataStorage: DataStorage) {
             if (dpsData.map[uid]!!.job == "") {
                 val origSkillCode = inferOriginalSkillCode(pdp.getSkillCode1()) ?: -1
                 val job = JobClass.convertFromSkill(origSkillCode)
-                if (job != null) {
+                if (job != null && dataStorage.getSummonData()[uid] == null) {
                     dpsData.map[uid]!!.job = job.className
                 }
             }

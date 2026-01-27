@@ -10,9 +10,33 @@ enum class JobClass(val className: String, val basicSkillCode: Int) {
     ELEMENTALIST("정령성", 16010000),
     CHANTER("호법성", 18010000);
 
-    companion object{
-        fun convertFromSkill(skillCode:Int):JobClass?{
-            return entries.find { it.basicSkillCode == skillCode }
+    companion object {
+        fun convertFromSkill(skillCode: Int): JobClass? {
+            if (skillCode in 11000000..11999999) {
+                return GLADIATOR
+            }
+            if (skillCode in 12000000..12999999) {
+                return TEMPLAR
+            }
+            if (skillCode in 13000000..13999999) {
+                return ASSASSIN
+            }
+            if (skillCode in 14000000..14999999) {
+                return RANGER
+            }
+            if (skillCode in 15000000..15999999) {
+                return SORCERER
+            }
+            if (skillCode in 16000000..16999999) {
+                return ELEMENTALIST
+            }
+            if (skillCode in 17000000..17999999) {
+                return CLERIC
+            }
+            if (skillCode in 18000000..18999999) {
+                return CHANTER
+            }
+            return null
         }
     }
 }
