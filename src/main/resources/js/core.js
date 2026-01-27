@@ -45,6 +45,7 @@ class DpsApp {
 
     this.bindHeaderButtons();
     this.bindDragToMoveWindow();
+    this.bindNativeKeyEvents();
 
     this.meterUI = createMeterUI({
       elList: this.elList,
@@ -78,6 +79,7 @@ class DpsApp {
       dpsFormatter: this.dpsFormatter,
       getDetails: (row) => this.getDetails(row),
     });
+    this.ensureDefaultHotkeyRegistered();
     window.ReleaseChecker?.start?.();
 
     this.startPolling();
@@ -406,6 +408,41 @@ class DpsApp {
     this.resetBtn?.addEventListener("click", () => {
       this.resetAll({ callBackend: true });
     });
+  }
+
+  bindNativeKeyEvents() {
+    window.addEventListener("nativeKey", (event) => {
+      const detail = event?.detail;
+      if (!detail) return;
+      const { keyText, keyCode, rawCode, ctrl, alt, shift, meta } = detail;
+      globalThis.uiDebug?.log?.(
+        `nativeKey: ${keyText} (code=${keyCode} raw=${rawCode}) ctrl=${!!ctrl} alt=${!!alt} shift=${!!shift} meta=${!!meta}`
+      );
+      if (typeof this.onNativeKey === "function") {
+        this.onNativeKey(detail);
+      }
+    });
+  }
+
+  ensureDefaultHotkeyRegistered() {
+    const mods = 0x0002; // MOD_CONTROL
+    const vk = 0x52; // R
+    const maxAttempts = 20;
+    let attempts = 0;
+    const tryRegister = () => {
+      attempts += 1;
+      if (window.javaBridge?.setHotkey) {
+        window.javaBridge.setHotkey(mods, vk);
+        globalThis.uiDebug?.log?.(`hotkey registered mods=${mods} vk=${vk}`);
+        return;
+      }
+      if (attempts < maxAttempts) {
+        setTimeout(tryRegister, 250);
+      } else {
+        globalThis.uiDebug?.log?.("hotkey register failed: javaBridge not ready");
+      }
+    };
+    tryRegister();
   }
 
   bindDragToMoveWindow() {
