@@ -153,7 +153,7 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
 
     private val debugMode = false
 
-    private val version = "0.2.4"
+    private val version = "0.2.5"
     private var engineRef: WebEngine? = null
     @Volatile private var hotkeyThread: Thread? = null
     @Volatile private var hotkeyRunning = false
