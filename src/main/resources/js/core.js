@@ -24,6 +24,7 @@ class DpsApp {
     // battleTime 캐시
     this._battleTimeVisible = false;
     this._lastBattleTimeMs = null;
+    this._lastEncounterToken = null;
 
     this._pollTimer = null;
 
@@ -124,6 +125,7 @@ class DpsApp {
 
     this.lastSnapshot = null;
     this.lastJson = null;
+    this._lastEncounterToken = null;
 
     this._battleTimeVisible = false;
     this._lastBattleTimeMs = null;
@@ -173,8 +175,15 @@ class DpsApp {
 
     this.lastJson = raw;
 
-    const { rows, targetName, battleTimeMs } = this.buildRowsFromPayload(raw);
+    const { rows, targetName, battleTimeMs, encounterToken } = this.buildRowsFromPayload(raw);
     this._lastBattleTimeMs = battleTimeMs;
+
+    if (encounterToken !== null && encounterToken !== this._lastEncounterToken) {
+      this._lastEncounterToken = encounterToken;
+      this.lastSnapshot = null;
+      this.detailsUI?.close?.();
+      this.meterUI?.onResetMeterUi?.();
+    }
 
 
     const showByServer = rows.length > 0;
@@ -232,8 +241,12 @@ class DpsApp {
 
     const battleTimeMsRaw = payload?.battleTime;
     const battleTimeMs = Number.isFinite(Number(battleTimeMsRaw)) ? Number(battleTimeMsRaw) : null;
+    const encounterTokenRaw = payload?.encounterToken;
+    const encounterToken = Number.isFinite(Number(encounterTokenRaw))
+      ? Number(encounterTokenRaw)
+      : null;
 
-    return { rows, targetName, battleTimeMs };
+    return { rows, targetName, battleTimeMs, encounterToken };
   }
 
   buildRowsFromMapObject(mapObj) {

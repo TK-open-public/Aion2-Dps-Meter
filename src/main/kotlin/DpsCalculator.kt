@@ -847,10 +847,32 @@ class DpsCalculator(private val dataStorage: DataStorage) {
             ).apply { sort() }
     }
 
+    private data class TargetScore(
+        val targetId: Int,
+        val recentDamage: Long,
+        val totalDamage: Long,
+        val lastDamageTime: Long,
+        val recentWindowStart: Long,
+    )
+
     private val targetInfoMap = hashMapOf<Int, TargetInfo>()
 
     private var mode: Mode = Mode.BOSS_ONLY
     private var currentTarget: Int = 0
+    private var currentEncounterStartAt: Long = 0L
+    private var currentEncounterKey: String = ""
+    private var lastObservedTargetHitAt: Long = 0L
+    private var encounterSequence: Long = 0L
+    private var currentEncounterToken: Long = 0L
+
+    private val recentDamageWindowMs = 6_000L
+    private val activeTargetIdleMs = 7_000L
+    private val stickyTargetIdleMs = 2_500L
+    private val switchAdvantageRatio = 1.35
+    private val minRecentDamageToSwitch = 10_000L
+    private val encounterBreakIdleMs = 15_000L
+    private val sameEncounterGapMs = 8_000L
+    private val encounterStartLookbackMs = 12_000L
 
     fun setMode(mode: Mode) {
         this.mode = mode
@@ -859,80 +881,207 @@ class DpsCalculator(private val dataStorage: DataStorage) {
 
     fun getDps(): DpsData {
         val pdpMap = dataStorage.getBossModeData()
-
-        pdpMap.forEach { (target, data) ->
-            var flag = false
+        pdpMap.forEach { (target, packets) ->
             var targetInfo = targetInfoMap[target]
-            if (!targetInfoMap.containsKey(target)) {
-                flag = true
-            }
-            data.forEach { pdp ->
-                if (flag) {
-                    flag = false
-                    targetInfo = TargetInfo(target, 0, pdp.getTimeStamp(), pdp.getTimeStamp())
+            packets.forEach { pdp ->
+                if (targetInfo == null) {
+                    targetInfo = TargetInfo(
+                        targetId = target,
+                        targetDamageStarted = pdp.getTimeStamp(),
+                        targetDamageEnded = pdp.getTimeStamp(),
+                    )
                     targetInfoMap[target] = targetInfo!!
                 }
                 targetInfo!!.processPdp(pdp)
-                //그냥 아래에서 재계산하는거 여기서 해놓고 아래에선 그냥 골라서 주는게 맞는거같은데 나중에 고민할필요있을듯
             }
         }
-        val dpsData = DpsData()
-        val targetData = decideTarget()
-        dpsData.targetName = targetData.second
-        val battleTime = targetInfoMap[currentTarget]?.parseBattleTime() ?: 0
+
+        val now = System.currentTimeMillis()
+        val targetData = decideTarget(now)
+        val dpsData = DpsData(
+            targetName = targetData.second,
+            encounterToken = currentEncounterToken,
+        )
+        val currentTargetPackets = pdpMap[currentTarget] ?: return dpsData
+        if (currentEncounterStartAt <= 0L) return dpsData
+
         val nicknameData = dataStorage.getNickname()
         var totalDamage = 0.0
-        if (battleTime == 0L) {
-            return dpsData
-        }
-        val currentTargetPackets = pdpMap[currentTarget] ?: return dpsData
-        currentTargetPackets.forEach lastPdpLoop@{ pdp ->
+        var firstPacketTs = Long.MAX_VALUE
+        var lastPacketTs = 0L
+
+        currentTargetPackets.forEach { pdp ->
+            if (pdp.getTimeStamp() < currentEncounterStartAt) return@forEach
             totalDamage += pdp.getDamage()
+            if (pdp.getTimeStamp() < firstPacketTs) {
+                firstPacketTs = pdp.getTimeStamp()
+            }
+            if (pdp.getTimeStamp() > lastPacketTs) {
+                lastPacketTs = pdp.getTimeStamp()
+            }
+
             val uid = dataStorage.getSummonData()[pdp.getActorId()] ?: pdp.getActorId()
-            val nickname:String = nicknameData[uid]
-                ?: nicknameData[dataStorage.getSummonData()[uid]?:uid]
+            val nickname: String = nicknameData[uid]
+                ?: nicknameData[dataStorage.getSummonData()[uid] ?: uid]
                 ?: uid.toString()
+
             if (!dpsData.map.containsKey(uid)) {
                 dpsData.map[uid] = PersonalData(nickname = nickname)
             }
-            pdp.setSkillCode(inferOriginalSkillCode(pdp.getSkillCode1()) ?: pdp.getSkillCode1())
+
+            val inferredSkillCode = inferOriginalSkillCode(pdp.getSkillCode1()) ?: pdp.getSkillCode1()
+            pdp.setSkillCode(inferredSkillCode)
             dpsData.map[uid]!!.processPdp(pdp)
+
             if (dpsData.map[uid]!!.job == "") {
-                val origSkillCode = inferOriginalSkillCode(pdp.getSkillCode1()) ?: -1
-                val job = JobClass.convertFromSkill(origSkillCode)
+                val job = JobClass.convertFromSkill(inferredSkillCode)
                 if (job != null) {
                     dpsData.map[uid]!!.job = job.className
                 }
             }
         }
+
+        if (firstPacketTs == Long.MAX_VALUE || totalDamage <= 0.0) {
+            return dpsData
+        }
+
+        val rawBattleTime = (lastPacketTs - firstPacketTs).coerceAtLeast(1L)
+        val dpsBattleTime = rawBattleTime.coerceAtLeast(1000L)
+
         val iterator = dpsData.map.iterator()
         while (iterator.hasNext()) {
             val (_, data) = iterator.next()
             if (data.job == "") {
                 iterator.remove()
             } else {
-                data.dps = data.amount / battleTime * 1000
+                data.dps = data.amount / dpsBattleTime * 1000
                 data.damageContribution = data.amount / totalDamage * 100
             }
         }
-        dpsData.battleTime = battleTime
+        dpsData.battleTime = rawBattleTime
         return dpsData
     }
 
-    private fun decideTarget(): Pair<Int, String> {
-        val target: Int = targetInfoMap.maxByOrNull { it.value.damagedAmount() }?.key ?: 0
-        var targetName = ""
-        currentTarget = target
-        dataStorage.setCurrentTarget(target)
-        //데미지 누계말고도 건수누적방식도 추가하는게 좋을지도? 지금방식은 정복같은데선 타겟변경에 너무 오랜시간이듬
-        if (dataStorage.getMobData().containsKey(target)) {
-            val mobCode = dataStorage.getMobData()[target]
-            if (dataStorage.getMobCodeData().containsKey(mobCode)) {
-                targetName = dataStorage.getMobCodeData()[mobCode]!!
+    private fun decideTarget(now: Long): Pair<Int, String> {
+        val scoreComparator =
+            compareBy<TargetScore> { it.recentDamage }
+                .thenBy { it.lastDamageTime }
+                .thenBy { it.totalDamage }
+        val scores = targetInfoMap.values.map { info ->
+            TargetScore(
+                targetId = info.targetId(),
+                recentDamage = info.recentDamage(now, recentDamageWindowMs),
+                totalDamage = info.damagedAmount(),
+                lastDamageTime = info.lastDamageTime(),
+                recentWindowStart = info.recentWindowStart(now, encounterStartLookbackMs),
+            )
+        }
+        if (scores.isEmpty()) {
+            currentTarget = 0
+            currentEncounterStartAt = 0L
+            currentEncounterKey = ""
+            lastObservedTargetHitAt = 0L
+            dataStorage.setCurrentTarget(0)
+            return Pair(0, "")
+        }
+
+        val activeScores = scores.filter { now - it.lastDamageTime <= activeTargetIdleMs }
+        val bestActive = activeScores.maxWithOrNull(scoreComparator)
+        val fallbackLatest = scores.maxWithOrNull(
+            compareBy<TargetScore> { it.lastDamageTime }
+                .thenBy { it.recentDamage }
+                .thenBy { it.totalDamage }
+        )
+        var selected = bestActive ?: fallbackLatest
+        val currentScore = scores.firstOrNull { it.targetId == currentTarget }
+        if (currentScore != null && now - currentScore.lastDamageTime <= stickyTargetIdleMs) {
+            selected = if (bestActive == null || bestActive.targetId == currentTarget) {
+                currentScore
+            } else {
+                val switchPressure = bestActive.recentDamage >= minRecentDamageToSwitch &&
+                    bestActive.recentDamage.toDouble() >=
+                    currentScore.recentDamage.coerceAtLeast(1L) * switchAdvantageRatio
+                if (switchPressure) bestActive else currentScore
             }
         }
 
+        val target = selected?.targetId ?: 0
+        if (target == 0) {
+            return Pair(0, "")
+        }
+
+        val selectedScore = selected!!
+        val selectedEncounterKey = encounterKeyForTarget(target)
+        val previousTarget = currentTarget
+        if (previousTarget != target) {
+            val previousLastDamageTime = targetInfoMap[previousTarget]?.lastDamageTime() ?: 0L
+            val targetSwitchGap = selectedScore.lastDamageTime - previousLastDamageTime
+            val continueSameEncounter = currentEncounterStartAt > 0L &&
+                currentEncounterKey == selectedEncounterKey &&
+                previousLastDamageTime > 0L &&
+                targetSwitchGap in 0..sameEncounterGapMs
+            currentTarget = target
+            dataStorage.setCurrentTarget(target)
+            if (!continueSameEncounter) {
+                startEncounter(
+                    startAt = selectedScore.recentWindowStart.coerceAtLeast(1L),
+                    encounterKey = selectedEncounterKey
+                )
+            } else {
+                currentEncounterKey = selectedEncounterKey
+            }
+            logger.info("대상 전환 {} -> {} (sameEncounter={})", previousTarget, target, continueSameEncounter)
+        } else {
+            if (currentEncounterStartAt <= 0L) {
+                startEncounter(
+                    startAt = selectedScore.recentWindowStart.coerceAtLeast(1L),
+                    encounterKey = selectedEncounterKey
+                )
+            } else {
+                val restartByLongIdle =
+                    lastObservedTargetHitAt > 0L &&
+                        (selectedScore.lastDamageTime - lastObservedTargetHitAt) > encounterBreakIdleMs
+                if (restartByLongIdle) {
+                    startEncounter(
+                        startAt = selectedScore.recentWindowStart.coerceAtLeast(1L),
+                        encounterKey = selectedEncounterKey
+                    )
+                    logger.info("장시간 공백 이후 동일 대상 재전투 감지 target={}", target)
+                } else {
+                    currentEncounterKey = selectedEncounterKey
+                }
+            }
+        }
+        lastObservedTargetHitAt = selectedScore.lastDamageTime
+        val targetName = resolveTargetName(target)
         return Pair(target, targetName)
+    }
+
+    private fun resolveTargetName(target: Int): String {
+        val mobCode = dataStorage.getMobData()[target] ?: return ""
+        return dataStorage.getMobCodeData()[mobCode] ?: ""
+    }
+
+    private fun encounterKeyForTarget(target: Int): String {
+        val mobCode = dataStorage.getMobData()[target]
+        return if (mobCode != null) {
+            "mob:$mobCode"
+        } else {
+            "target:$target"
+        }
+    }
+
+    private fun startEncounter(startAt: Long, encounterKey: String) {
+        currentEncounterStartAt = startAt
+        currentEncounterKey = encounterKey
+        encounterSequence += 1
+        currentEncounterToken = encounterSequence
+        logger.info(
+            "엔카운터 시작 token={} key={} startAt={}",
+            currentEncounterToken,
+            currentEncounterKey,
+            currentEncounterStartAt
+        )
     }
 
     private fun inferOriginalSkillCode(skillCode: Int): Int? {
@@ -950,6 +1099,12 @@ class DpsCalculator(private val dataStorage: DataStorage) {
     fun resetDataStorage() {
         dataStorage.flushDamageStorage()
         targetInfoMap.clear()
+        currentTarget = 0
+        currentEncounterStartAt = 0L
+        currentEncounterKey = ""
+        lastObservedTargetHitAt = 0L
+        encounterSequence += 1
+        currentEncounterToken = encounterSequence
         logger.info("대상 데미지 누적 데이터 초기화 완료")
     }
 
