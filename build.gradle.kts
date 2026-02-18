@@ -9,7 +9,10 @@ plugins {
 }
 
 group = "com.tbread"
-version = "1.0-SNAPSHOT"
+val appVersion = "0.2.5"
+version = appVersion
+
+val generatedBuildConfigDir = layout.buildDirectory.dir("generated/source/buildConfig/kotlin")
 
 repositories {
     mavenCentral()
@@ -42,9 +45,43 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:1.7.26")
     implementation("net.java.dev.jna:jna:5.14.0")
     implementation("net.java.dev.jna:jna-platform:5.14.0")
+    testImplementation(kotlin("test"))
 
 
 
+}
+
+val generateBuildConfig by tasks.registering {
+    outputs.dir(generatedBuildConfigDir)
+    doLast {
+        val outputFile = generatedBuildConfigDir.get().file("com/tbread/BuildConfig.kt").asFile
+        outputFile.parentFile.mkdirs()
+        outputFile.writeText(
+            """
+            package com.tbread
+
+            object BuildConfig {
+                const val APP_VERSION = "$appVersion"
+            }
+            """.trimIndent() + "\n"
+        )
+    }
+}
+
+kotlin {
+    sourceSets {
+        val main by getting {
+            kotlin.srcDir(generatedBuildConfigDir)
+        }
+    }
+}
+
+tasks.named("compileKotlin") {
+    dependsOn(generateBuildConfig)
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 compose.desktop {
@@ -58,7 +95,7 @@ compose.desktop {
             }
             targetFormats(TargetFormat.Msi)
             packageName = "aion2meter4j"
-            packageVersion = "0.2.5"
+            packageVersion = appVersion
             copyright = "Copyright 2026 TK open public Licensed under MIT License"
         }
 

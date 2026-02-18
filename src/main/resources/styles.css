@@ -20,7 +20,7 @@
 }
 
 * {
-  font-family: "Spoqa Han Sans Neo", sans-serif;
+  font-family: "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
   margin: 0;
   padding: 0;
   /* -webkit-user-select: none; */
@@ -83,8 +83,18 @@
     .headerBtn {
       display: flex;
       align-items: center;
-      width: 20px;
-      height: 20px;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      transition: background-color 0.15s ease;
+      &:hover {
+        background: rgba(255, 255, 255, 0.12);
+      }
+      .headerBtnIcon {
+        line-height: 1;
+        font-size: 14px;
+      }
     }
   }
 }

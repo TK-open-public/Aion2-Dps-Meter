@@ -10,10 +10,6 @@
       href="styles.css"
       rel="stylesheet"
       type="text/css" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/spoqa-han-sans@3.3.0/css/SpoqaHanSansNeo.min.css" />
-    <script src="https://unpkg.com/lucide@latest"></script>
   </head>
 
   <body>
@@ -28,12 +24,16 @@
           </div>
 
           <div class="headerBtns">
-            <div class="headerBtn settingsBtn"><i data-lucide="settings"></i></div>
-            <div class="headerBtn resetBtn"><i data-lucide="rotate-ccw"></i></div>
+            <div class="headerBtn settingsBtn" title="설정">
+              <span class="headerBtnIcon">⚙</span>
+            </div>
+            <div class="headerBtn resetBtn" title="초기화">
+              <span class="headerBtnIcon">↺</span>
+            </div>
             <div class="headerBtn collapseBtn">
-              <i
-                class="collapseIcon"
-                data-lucide="arrow-up-wide-narrow"></i>
+              <span
+                class="collapseIcon headerBtnIcon"
+                title="접기/펼치기">▴</span>
             </div>
           </div>
         </div>
@@ -138,7 +138,6 @@
 
     <script src="./js/core.js"></script>
     <script>
-      lucide.createIcons();
       dpsApp.start();
     </script>
   </body>

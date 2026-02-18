@@ -404,15 +404,12 @@ class DpsApp {
         this.fetchDps();
       }
 
-      const iconName = this.isCollapse ? "arrow-down-wide-narrow" : "arrow-up-wide-narrow";
-      const iconEl =
-        this.collapseBtn.querySelector("svg") || this.collapseBtn.querySelector("[data-lucide]");
+      const iconEl = this.collapseBtn.querySelector(".collapseIcon");
       if (!iconEl) {
         return;
       }
 
-      iconEl.setAttribute("data-lucide", iconName);
-      lucide.createIcons({ root: this.collapseBtn });
+      iconEl.textContent = this.isCollapse ? "▾" : "▴";
     });
     this.resetBtn?.addEventListener("click", () => {
       this.resetAll({ callBackend: true });

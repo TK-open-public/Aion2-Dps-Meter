@@ -12,15 +12,21 @@ class StreamProcessor(private val dataStorage: DataStorage) {
 
     private val mask = 0x0f
 
+    private fun hasBytes(packet: ByteArray, offset: Int, length: Int): Boolean {
+        if (offset < 0 || length < 0) return false
+        return offset + length <= packet.size
+    }
+
     fun onPacketReceived(packet: ByteArray) {
         val packetLengthInfo = readVarInt(packet)
+        if (packetLengthInfo.length < 0) return
+        if (packet.size <= 3) return
         if (packet.size == packetLengthInfo.value) {
             logger.trace("현재 바이트길이와 예상 길이가 같음 : {}", toHex(packet.copyOfRange(0, packet.size - 3)))
             parsePerfectPacket(packet.copyOfRange(0, packet.size - 3))
             //더이상 자를필요가 없는 최종 패킷뭉치
             return
         }
-        if (packet.size <= 3) return
         // 매직패킷 단일로 올때 무시
         if (packetLengthInfo.value > packet.size) {
             logger.trace("현재 바이트길이가 예상 길이보다 짧음 : {}", toHex(packet))
@@ -52,6 +58,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
     }
 
     private fun parseBrokenLengthPacket(packet: ByteArray, flag: Boolean = true) {
+        if (!hasBytes(packet, 2, 2)) return
         if (packet[2] != 0xff.toByte() || packet[3] != 0xff.toByte()) {
             logger.trace("b잔여패킷: {}", toHex(packet))
             val target = dataStorage.getCurrentTarget()
@@ -96,6 +103,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
             }
             return
         }
+        if (!hasBytes(packet, 10, 1)) return
         val newPacket = packet.copyOfRange(10, packet.size)
         onPacketReceived(newPacket)
     }
@@ -184,34 +192,36 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         if (packetLengthInfo.length < 0) return
         offset += packetLengthInfo.length
 
+        if (!hasBytes(packet, offset, 2)) return
         if (packet[offset] != 0x05.toByte()) return
         if (packet[offset+1] != 0x38.toByte()) return
         offset += 2
-        if (packet.size < offset) return
+        if (!hasBytes(packet, offset, 1)) return
 
         val targetInfo = readVarInt(packet,offset)
         if (targetInfo.length < 0) return
         offset += targetInfo.length
-        if (packet.size < offset) return
+        if (!hasBytes(packet, offset, 1)) return
         pdp.setTargetId(targetInfo)
 
         offset += 1
-        if (packet.size < offset) return
+        if (!hasBytes(packet, offset, 1)) return
 
         val actorInfo = readVarInt(packet,offset)
         if (actorInfo.length < 0) return
         if (actorInfo.value == targetInfo.value) return
         offset += actorInfo.length
-        if (packet.size < offset) return
+        if (!hasBytes(packet, offset, 1)) return
         pdp.setActorId(actorInfo)
 
         val unknownInfo = readVarInt(packet,offset)
         if (unknownInfo.length <0) return
         offset += unknownInfo.length
 
+        if (!hasBytes(packet, offset, 4)) return
         val skillCode:Int = parseUInt32le(packet,offset) / 100
         offset += 4
-        if (packet.size <= offset) return
+        if (!hasBytes(packet, offset, 1)) return
         pdp.setSkillCode(skillCode)
 
         val damageInfo = readVarInt(packet,offset)
@@ -285,6 +295,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         if (packetLengthInfo.length < 0) return false
         offset += packetLengthInfo.length
 
+        if (!hasBytes(packet, offset, 2)) return false
 
         if (packet[offset] != 0x40.toByte()) return false
         if (packet[offset + 1] != 0x36.toByte()) return false
@@ -293,11 +304,11 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         val summonInfo = readVarInt(packet, offset)
         if (summonInfo.length < 0) return false
         offset += summonInfo.length + 28
-        if (packet.size > offset) {
+        if (hasBytes(packet, offset, 1)) {
             val mobInfo = readVarInt(packet, offset)
             if (mobInfo.length < 0) return false
             offset += mobInfo.length
-            if (packet.size > offset) {
+            if (hasBytes(packet, offset, 1)) {
                 val mobInfo2 = readVarInt(packet, offset)
                 if (mobInfo2.length < 0) return false
                 if (mobInfo.value == mobInfo2.value) {
@@ -316,7 +327,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         if (opcodeIdx == -1) return false
         offset = keyIdx + opcodeIdx + 11
 
-        if (offset + 2 > packet.size) return false
+        if (!hasBytes(packet, offset, 2)) return false
         val realActorId = parseUInt16le(packet, offset)
 
         logger.debug("소환몹 맵핑 성공 {},{}", realActorId, summonInfo.value)
@@ -344,21 +355,22 @@ class StreamProcessor(private val dataStorage: DataStorage) {
 //        if (packetLengthInfo.value < 32) return
         //좀더 검증필요 대부분이 0x20,0x23 정도였음
 
+        if (!hasBytes(packet, offset, 2)) return false
         if (packet[offset] != 0x04.toByte()) return false
         if (packet[offset + 1] != 0x8d.toByte()) return false
         offset = 10
 
-        if (offset >= packet.size) return false
+        if (!hasBytes(packet, offset, 1)) return false
 
         val playerInfo = readVarInt(packet, offset)
         if (playerInfo.length <= 0) return false
         offset += playerInfo.length
 
-        if (offset >= packet.size) return false
+        if (!hasBytes(packet, offset, 1)) return false
 
-        val nicknameLength = packet[offset]
-        if (nicknameLength < 0 || nicknameLength > 72) return false
-        if (nicknameLength + offset > packet.size) return false
+        val nicknameLength = packet[offset].toInt() and 0xff
+        if (nicknameLength > 72) return false
+        if (!hasBytes(packet, offset + 1, nicknameLength)) return false
 
         val np = packet.copyOfRange(offset + 1, offset + nicknameLength + 1)
 
@@ -369,6 +381,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
     }
 
     private fun parsingDamage(packet: ByteArray): Boolean {
+        if (!hasBytes(packet, 0, 1)) return false
         if (packet[0] == 0x20.toByte()) return false
         var offset = 0
         val packetLengthInfo = readVarInt(packet)
@@ -377,36 +390,36 @@ class StreamProcessor(private val dataStorage: DataStorage) {
 
         offset += packetLengthInfo.length
 
-        if (offset >= packet.size) return false
+        if (!hasBytes(packet, offset, 2)) return false
         if (packet[offset] != 0x04.toByte()) return false
         if (packet[offset + 1] != 0x38.toByte()) return false
         offset += 2
-        if (offset >= packet.size) return false
+        if (!hasBytes(packet, offset, 1)) return false
         val targetInfo = readVarInt(packet, offset)
         if (targetInfo.length < 0) return false
         pdp.setTargetId(targetInfo)
         offset += targetInfo.length //타겟
-        if (offset >= packet.size) return false
+        if (!hasBytes(packet, offset, 1)) return false
 
         val switchInfo = readVarInt(packet, offset)
         if (switchInfo.length < 0) return false
         pdp.setSwitchVariable(switchInfo)
         offset += switchInfo.length //점프용
-        if (offset >= packet.size) return false
+        if (!hasBytes(packet, offset, 1)) return false
 
         val flagInfo = readVarInt(packet, offset)
         if (flagInfo.length < 0) return false
         pdp.setFlag(flagInfo)
         offset += flagInfo.length //플래그
-        if (offset >= packet.size) return false
+        if (!hasBytes(packet, offset, 1)) return false
 
         val actorInfo = readVarInt(packet, offset)
         if (actorInfo.length < 0) return false
         pdp.setActorId(actorInfo)
         offset += actorInfo.length
-        if (offset >= packet.size) return false
+        if (!hasBytes(packet, offset, 1)) return false
 
-        if (offset + 5 >= packet.size) return false
+        if (!hasBytes(packet, offset, 5)) return false
 
         val temp = offset
 
@@ -419,7 +432,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         if (typeInfo.length < 0) return false
         pdp.setType(typeInfo)
         offset += typeInfo.length
-        if (offset >= packet.size) return false
+        if (!hasBytes(packet, offset, 1)) return false
 
         val damageType = packet[offset]
 
@@ -438,19 +451,19 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         offset += tempV
 
 
-        if (offset >= packet.size) return false
+        if (!hasBytes(packet, offset, 1)) return false
 
         val unknownInfo = readVarInt(packet, offset)
         if (unknownInfo.length < 0) return false
         pdp.setUnknown(unknownInfo)
         offset += unknownInfo.length
-        if (offset >= packet.size) return false
+        if (!hasBytes(packet, offset, 1)) return false
 
         val damageInfo = readVarInt(packet, offset)
         if (damageInfo.length < 0) return false
         pdp.setDamage(damageInfo)
         offset += damageInfo.length
-        if (offset >= packet.size) return false
+        if (!hasBytes(packet, offset, 1)) return false
 
         val loopInfo = readVarInt(packet, offset)
         if (loopInfo.length < 0) return false

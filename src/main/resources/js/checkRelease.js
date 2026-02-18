@@ -3,7 +3,8 @@
   const URL = "https://github.com/TK-open-public/Aion2-Dps-Meter/releases";
   const START_DELAY = 800,
     RETRY = 500,
-    LIMIT = 5;
+    LIMIT = 5,
+    FETCH_TIMEOUT_MS = 5000;
 
   const parseVersion = (value) => {
     const raw = String(value || "")
@@ -86,8 +87,8 @@
       if (confirmBtn) {
         confirmBtn.onclick = () => {
           modal.classList.remove("isOpen");
-          window.javaBridge.openBrowser(URL);
-          window.javaBridge.exitApp();
+          window.javaBridge?.openBrowser?.(URL);
+          window.javaBridge?.exitApp?.();
         };
       }
       if (cancelBtn) {
@@ -110,13 +111,31 @@
       const current = parseVersion(window.dpsData.getVersion());
       if (!current) return;
 
-      const res = await fetch(API, {
-        headers: { Accept: "application/vnd.github+json" },
-        cache: "no-store",
-      });
+      let res;
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+        try {
+          res = await fetch(API, {
+            headers: { Accept: "application/vnd.github+json" },
+            cache: "no-store",
+            signal: controller.signal,
+          });
+        } finally {
+          clearTimeout(timeout);
+        }
+      } catch {
+        return;
+      }
       if (!res.ok) return;
 
-      const list = await res.json();
+      let list;
+      try {
+        list = await res.json();
+      } catch {
+        return;
+      }
+      if (!Array.isArray(list)) return;
       const latestStable = pickLatest(list, false);
       const latestBeta = pickLatest(list, true);
 

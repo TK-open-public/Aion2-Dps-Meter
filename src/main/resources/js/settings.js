@@ -1,6 +1,8 @@
 ﻿(function () {
   const storageKey = "aion2.hotkey.reset";
   const defaultHotkey = { mods: 0x0002, vk: 0x52, label: "CTRL + R" };
+  const BRIDGE_RETRY_MS = 200;
+  const BRIDGE_RETRY_LIMIT = 50;
   const modifierLabels = [
     { bit: 0x0002, label: "CTRL" },
     { bit: 0x0001, label: "ALT" },
@@ -41,7 +43,13 @@
     try {
       const raw = localStorage.getItem(storageKey);
       if (!raw) return null;
-      return JSON.parse(raw);
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== "object") return null;
+      const mods = Number(parsed.mods);
+      const vk = Number(parsed.vk);
+      const label = String(parsed.label ?? "").trim();
+      if (!Number.isFinite(mods) || !Number.isFinite(vk) || !label) return null;
+      return { mods, vk, label };
     } catch {
       return null;
     }
@@ -67,12 +75,13 @@
     if (!stored) saveHotkey(current);
     input.value = current.label || "";
 
-    const ensureBridge = () => {
+    const ensureBridge = (attempt = 0) => {
       if (window.javaBridge?.setHotkey) {
         applyHotkey(current);
-      } else {
-        setTimeout(ensureBridge, 200);
+        return;
       }
+      if (attempt >= BRIDGE_RETRY_LIMIT) return;
+      setTimeout(() => ensureBridge(attempt + 1), BRIDGE_RETRY_MS);
     };
     ensureBridge();
 

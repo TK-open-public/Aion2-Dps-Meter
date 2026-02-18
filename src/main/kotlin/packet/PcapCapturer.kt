@@ -11,12 +11,18 @@ import org.pcap4j.packet.TcpPacket
 import org.slf4j.LoggerFactory
 import java.net.DatagramSocket
 import java.net.InetAddress
+import java.util.concurrent.atomic.AtomicLong
 import kotlin.system.exitProcess
 
 class PcapCapturer(private val config: PcapCapturerConfig, private val channel: Channel<ByteArray>) {
+    private val acceptedChunks = AtomicLong(0)
+    private val droppedChunks = AtomicLong(0)
+    @Volatile
+    private var lastBackpressureLogAt = System.currentTimeMillis()
 
     companion object {
         private val logger = LoggerFactory.getLogger(javaClass.enclosingClass)
+        private const val BACKPRESSURE_LOG_INTERVAL_MS = 5000L
 
         private fun getAllDevices(): List<PcapNetworkInterface> {
             return try {
@@ -45,9 +51,10 @@ class PcapCapturer(private val config: PcapCapturerConfig, private val channel: 
 
 
     fun start() {
-        val socket = DatagramSocket()
-        socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
-        val ip = socket.localAddress.hostAddress
+        val ip = DatagramSocket().use { socket ->
+            socket.connect(InetAddress.getByName("8.8.8.8"), 10002)
+            socket.localAddress.hostAddress
+        }
         if (ip == null) {
             logger.error("ip 검색에 실패했습니다.")
             exitProcess(1)
@@ -69,7 +76,13 @@ class PcapCapturer(private val config: PcapCapturerConfig, private val channel: 
                 if (payload != null) {
                     val data = payload.rawData
                     if (data.isNotEmpty()) {
-                        channel.trySend(data)
+                        val sendResult = channel.trySend(data)
+                        if (sendResult.isSuccess) {
+                            acceptedChunks.incrementAndGet()
+                        } else {
+                            droppedChunks.incrementAndGet()
+                            logBackpressureIfNeeded()
+                        }
                     }
                 }
             }
@@ -81,6 +94,21 @@ class PcapCapturer(private val config: PcapCapturerConfig, private val channel: 
         } catch (e: InterruptedException) {
             logger.error("채널 소비에서 문제가 발생했습니다.",e)
         }
+    }
+
+    private fun logBackpressureIfNeeded() {
+        val now = System.currentTimeMillis()
+        val elapsed = now - lastBackpressureLogAt
+        if (elapsed < BACKPRESSURE_LOG_INTERVAL_MS) {
+            return
+        }
+        lastBackpressureLogAt = now
+        val dropped = droppedChunks.getAndSet(0)
+        if (dropped <= 0) {
+            return
+        }
+        val accepted = acceptedChunks.getAndSet(0)
+        logger.warn("채널 백프레셔 발생: 최근 {}ms 동안 drop={} accepted={}", elapsed, dropped, accepted)
     }
 
 

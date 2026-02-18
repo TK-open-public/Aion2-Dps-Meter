@@ -1,5 +1,6 @@
 package com.tbread.webview
 
+import com.tbread.BuildConfig
 import com.tbread.DpsCalculator
 import com.tbread.entity.DpsData
 import com.sun.jna.platform.win32.Kernel32
@@ -19,6 +20,7 @@ import javafx.application.HostServices
 import javafx.application.Platform
 import javafx.concurrent.Worker
 import javafx.scene.Scene
+import javafx.scene.control.Alert
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.paint.Color
@@ -33,6 +35,7 @@ import kotlinx.serialization.encodeToString
 import kotlin.system.exitProcess
 import java.io.File
 import java.net.InetSocketAddress
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import com.sun.net.httpserver.HttpServer
 
@@ -120,7 +123,7 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
             try {
                 hostServices.showDocument(url)
             } catch (e: Exception) {
-                e.printStackTrace()
+                logger.warn("브라우저 열기 실패: {}", url, e)
             }
         }
         fun exitApp() {
@@ -153,7 +156,6 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
 
     private val debugMode = false
 
-    private val version = "0.2.5"
     private var engineRef: WebEngine? = null
     @Volatile private var hotkeyThread: Thread? = null
     @Volatile private var hotkeyRunning = false
@@ -161,7 +163,22 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
     private val hotkeyTargetProcess = "Aion2.exe"
     private val hotkeyTargetTitle = "Aion2"
     private var httpServer: HttpServer? = null
-    private val httpPort = 57941
+    private var httpExecutor: ExecutorService? = null
+    @Volatile
+    private var httpPort = 0
+
+    companion object {
+        internal fun shouldRegisterHotkey(
+            keyCaptureEnabled: Boolean,
+            shouldRegister: Boolean,
+            modifiers: Int,
+            keyCode: Int,
+        ): Boolean {
+            if (keyCaptureEnabled) return false
+            if (!shouldRegister) return false
+            return !(modifiers == 0 && keyCode == 0)
+        }
+    }
 
 
     override fun start(stage: Stage) {
@@ -175,12 +192,15 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
         val engine = webView.engine
         configureWebViewStorage(engine)
         engineRef = engine
-        if (!startLocalServer()) {
+        val boundPort = startLocalServer()
+        if (boundPort == null) {
             logger.error("로컬 HTTP 서버 시작 실패")
+            showStartupErrorDialog("로컬 UI 서버를 시작하지 못했습니다.\n프로그램을 재실행해주세요.")
+            Platform.exit()
             return
         }
-        // 고정 포트로 로드해서 localStorage origin을 유지한다.
-        engine.load("http://127.0.0.1:$httpPort/index.html")
+        // localhost origin으로 로드해서 localStorage를 안정적으로 유지한다.
+        engine.load("http://127.0.0.1:$boundPort/index.html")
 
         val bridge = JSBridge(stage, dpsCalculator, hostServices)
         engine.loadWorker.stateProperty().addListener { _, _, newState ->
@@ -255,7 +275,7 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
     }
 
     fun getVersion():String{
-        return version
+        return BuildConfig.APP_VERSION
     }
 
     override fun stop() {
@@ -275,8 +295,6 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
             return
         }
         startHotkeyThread(modifiers, keyCode)
-        registeredHotkeyMods = modifiers
-        registeredHotkeyKey = keyCode
     }
 
     private fun dispatchResetHotKey(payload: NativeKeyPayload) {
@@ -317,12 +335,20 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
         logger.info("webview userDataDirectory={}", userDataDir.absolutePath)
     }
 
-    private fun startLocalServer(): Boolean {
-        if (httpServer != null) {
-            return true
+    private fun showStartupErrorDialog(message: String) {
+        Alert(Alert.AlertType.ERROR).apply {
+            title = "Aion2 Meter"
+            headerText = "초기화 실패"
+            contentText = message
+        }.showAndWait()
+    }
+
+    private fun startLocalServer(): Int? {
+        if (httpServer != null && httpPort > 0) {
+            return httpPort
         }
         return try {
-            val server = HttpServer.create(InetSocketAddress("127.0.0.1", httpPort), 0)
+            val server = HttpServer.create(InetSocketAddress("127.0.0.1", 0), 0)
             server.createContext("/") { exchange ->
                 val rawPath = exchange.requestURI?.path ?: "/"
                 val path = when {
@@ -350,16 +376,20 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
                     exchange.responseBody.use { it.write(bytes) }
                 }
             }
-            server.executor = Executors.newSingleThreadExecutor { runnable ->
+            val executor = Executors.newSingleThreadExecutor { runnable ->
                 Thread(runnable, "local-http-server").apply { isDaemon = true }
             }
+            server.executor = executor
             server.start()
+            val boundPort = server.address.port
             httpServer = server
-            logger.info("local http server started http://127.0.0.1:{}", httpPort)
-            true
+            httpExecutor = executor
+            httpPort = boundPort
+            logger.info("local http server started http://127.0.0.1:{}", boundPort)
+            boundPort
         } catch (e: Exception) {
             logger.error("로컬 HTTP 서버 시작 실패", e)
-            false
+            null
         }
     }
 
@@ -370,6 +400,9 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
             logger.warn("로컬 HTTP 서버 종료 실패", e)
         } finally {
             httpServer = null
+            httpExecutor?.shutdownNow()
+            httpExecutor = null
+            httpPort = 0
         }
     }
 
@@ -387,50 +420,67 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
         }
     }
 
+    @Synchronized
     private fun startHotkeyThread(modifiers: Int, keyCode: Int) {
         stopHotkeyThread()
         hotkeyRunning = true
         hotkeyThread = Thread {
             val registeredMods = modifiers or WinUser.MOD_NOREPEAT
-            val registered = User32.INSTANCE.RegisterHotKey(null, hotkeyId, registeredMods, keyCode)
-            if (!registered) {
-                val err = Kernel32.INSTANCE.GetLastError()
-                logger.warn("RegisterHotKey 실패 mods={} vk={} err={}", registeredMods, keyCode, err)
-            } else {
-                logger.info("RegisterHotKey 등록 mods={} vk={}", registeredMods, keyCode)
-            }
-
-            val msg = WinUser.MSG()
-            while (hotkeyRunning) {
-                while (User32.INSTANCE.PeekMessage(msg, null, 0, 0, pmRemoveFlag)) {
-                    if (msg.message == WinUser.WM_HOTKEY) {
-                        val foreground = User32.INSTANCE.GetForegroundWindow()
-                        if (foreground == null || !isAion2Window(foreground)) {
-                            continue
-                        }
-                        val lParam = msg.lParam.toInt()
-                        val recvMods = lParam and 0xFFFF
-                        val recvVk = (lParam ushr 16) and 0xFFFF
-                        val payload = NativeKeyPayload(
-                            keyCode = recvVk,
-                            keyText = java.awt.event.KeyEvent.getKeyText(recvVk),
-                            ctrl = (recvMods and WinUser.MOD_CONTROL) != 0,
-                            alt = (recvMods and WinUser.MOD_ALT) != 0,
-                            shift = (recvMods and WinUser.MOD_SHIFT) != 0,
-                            meta = (recvMods and WinUser.MOD_WIN) != 0
-                        )
-                        logger.info(
-                            "hotkey received mods={} vk={} keyText={}",
-                            recvMods,
-                            recvVk,
-                            payload.keyText
-                        )
-                        dispatchResetHotKey(payload)
-                    }
+            var registered = false
+            try {
+                registered = User32.INSTANCE.RegisterHotKey(null, hotkeyId, registeredMods, keyCode)
+                if (!registered) {
+                    val err = Kernel32.INSTANCE.GetLastError()
+                    logger.warn("RegisterHotKey 실패 mods={} vk={} err={}", registeredMods, keyCode, err)
+                    return@Thread
                 }
-                Thread.sleep(25)
+                registeredHotkeyMods = modifiers
+                registeredHotkeyKey = keyCode
+                logger.info("RegisterHotKey 등록 mods={} vk={}", registeredMods, keyCode)
+
+                val msg = WinUser.MSG()
+                while (hotkeyRunning && !Thread.currentThread().isInterrupted) {
+                    while (User32.INSTANCE.PeekMessage(msg, null, 0, 0, pmRemoveFlag)) {
+                        if (msg.message == WinUser.WM_HOTKEY) {
+                            val foreground = User32.INSTANCE.GetForegroundWindow()
+                            if (foreground == null || !isAion2Window(foreground)) {
+                                continue
+                            }
+                            val lParam = msg.lParam.toInt()
+                            val recvMods = lParam and 0xFFFF
+                            val recvVk = (lParam ushr 16) and 0xFFFF
+                            val payload = NativeKeyPayload(
+                                keyCode = recvVk,
+                                keyText = java.awt.event.KeyEvent.getKeyText(recvVk),
+                                ctrl = (recvMods and WinUser.MOD_CONTROL) != 0,
+                                alt = (recvMods and WinUser.MOD_ALT) != 0,
+                                shift = (recvMods and WinUser.MOD_SHIFT) != 0,
+                                meta = (recvMods and WinUser.MOD_WIN) != 0
+                            )
+                            logger.info(
+                                "hotkey received mods={} vk={} keyText={}",
+                                recvMods,
+                                recvVk,
+                                payload.keyText
+                            )
+                            dispatchResetHotKey(payload)
+                        }
+                    }
+                    Thread.sleep(25)
+                }
+            } catch (e: InterruptedException) {
+                Thread.currentThread().interrupt()
+            } catch (e: Exception) {
+                logger.warn("hotkey-thread 실행 중 예외", e)
+            } finally {
+                if (registered) {
+                    User32.INSTANCE.UnregisterHotKey(null, hotkeyId)
+                    logger.info("RegisterHotKey 해제 mods={} vk={}", registeredMods, keyCode)
+                }
+                registeredHotkeyMods = 0
+                registeredHotkeyKey = 0
+                hotkeyRunning = false
             }
-            User32.INSTANCE.UnregisterHotKey(null, hotkeyId)
         }.apply {
             isDaemon = true
             name = "hotkey-thread"
@@ -483,10 +533,24 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
         }
     }
 
+    @Synchronized
     private fun stopHotkeyThread() {
         hotkeyRunning = false
-        hotkeyThread?.interrupt()
+        val thread = hotkeyThread
         hotkeyThread = null
+        if (thread != null) {
+            thread.interrupt()
+            if (Thread.currentThread() != thread) {
+                try {
+                    thread.join(500)
+                } catch (e: InterruptedException) {
+                    Thread.currentThread().interrupt()
+                }
+                if (thread.isAlive) {
+                    logger.warn("hotkey-thread 종료 대기 시간 초과")
+                }
+            }
+        }
         registeredHotkeyMods = 0
         registeredHotkeyKey = 0
     }
@@ -494,15 +558,7 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
     @Synchronized
     private fun updateHotkeyRegistration(shouldRegister: Boolean) {
         // 포커스/캡처 상태에 따라 전역 핫키 등록을 유지/해제한다.
-        if (keyCaptureEnabled) {
-            stopHotkeyThread()
-            return
-        }
-        if (!shouldRegister) {
-            stopHotkeyThread()
-            return
-        }
-        if (lastHotkeyMods == 0 && lastHotkeyKey == 0) {
+        if (!shouldRegisterHotkey(keyCaptureEnabled, shouldRegister, lastHotkeyMods, lastHotkeyKey)) {
             stopHotkeyThread()
             return
         }

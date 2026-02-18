@@ -5,20 +5,20 @@ import com.tbread.packet.PcapCapturer
 import com.tbread.packet.StreamAssembler
 import com.tbread.packet.StreamProcessor
 import com.tbread.webview.BrowserApp
-import javafx.application.Application
 import javafx.application.Platform
 import javafx.stage.Stage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.slf4j.LoggerFactory
 
 fun main() = runBlocking {
+    val logger = LoggerFactory.getLogger("Main")
     Thread.setDefaultUncaughtExceptionHandler { t, e ->
-        println("thread dead ${t.name}")
-        e.printStackTrace()
+        logger.error("thread dead {}", t.name, e)
     }
-    val channel = Channel<ByteArray>(Channel.UNLIMITED)
+    val channel = Channel<ByteArray>(capacity = 4096)
     val config = PcapCapturerConfig.loadFromProperties()
 
     val dataStorage = DataStorage()
@@ -42,5 +42,3 @@ fun main() = runBlocking {
         browserApp.start(Stage())
     }
 }
-
-

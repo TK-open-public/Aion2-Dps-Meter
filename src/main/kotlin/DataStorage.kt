@@ -4,17 +4,18 @@ import com.tbread.entity.ParsedDamagePacket
 import org.slf4j.LoggerFactory
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentSkipListSet
+import java.util.concurrent.atomic.AtomicInteger
 
 class DataStorage {
     private val logger = LoggerFactory.getLogger(DataStorage::class.java)
     private val byTargetStorage = ConcurrentHashMap<Int, ConcurrentSkipListSet<ParsedDamagePacket>>()
     private val byActorStorage = ConcurrentHashMap<Int, ConcurrentSkipListSet<ParsedDamagePacket>>()
     private val nicknameStorage = ConcurrentHashMap<Int, String>()
-    private val summonStorage = HashMap<Int, Int>()
-    private val skillCodeData = HashMap<Int, String>()
-    private val mobCodeData = HashMap<Int, String>()
-    private val mobStorage = HashMap<Int, Int>()
-    private var currentTarget:Int = 0
+    private val summonStorage = ConcurrentHashMap<Int, Int>()
+    private val skillCodeData = ConcurrentHashMap<Int, String>()
+    private val mobCodeData = ConcurrentHashMap<Int, String>()
+    private val mobStorage = ConcurrentHashMap<Int, Int>()
+    private val currentTarget = AtomicInteger(0)
 
     @Synchronized
     fun appendDamage(pdp: ParsedDamagePacket) {
@@ -25,11 +26,11 @@ class DataStorage {
     }
 
     fun setCurrentTarget(targetId:Int){
-        currentTarget = targetId
+        currentTarget.set(targetId)
     }
 
     fun getCurrentTarget():Int{
-        return currentTarget
+        return currentTarget.get()
     }
 
     fun appendMobCode(code: Int, name: String) {
@@ -74,23 +75,23 @@ class DataStorage {
         return skillCodeData[skillCode] ?: skillCode.toString()
     }
 
-    fun getBossModeData(): ConcurrentHashMap<Int, ConcurrentSkipListSet<ParsedDamagePacket>> {
+    fun getBossModeData(): Map<Int, ConcurrentSkipListSet<ParsedDamagePacket>> {
         return byTargetStorage
     }
 
-    fun getNickname(): ConcurrentHashMap<Int, String> {
+    fun getNickname(): Map<Int, String> {
         return nicknameStorage
     }
 
-    fun getSummonData(): HashMap<Int, Int> {
+    fun getSummonData(): Map<Int, Int> {
         return summonStorage
     }
 
-    fun getMobCodeData(): HashMap<Int, String> {
+    fun getMobCodeData(): Map<Int, String> {
         return mobCodeData
     }
 
-    fun getMobData(): HashMap<Int, Int> {
+    fun getMobData(): Map<Int, Int> {
         return mobStorage
     }
 }

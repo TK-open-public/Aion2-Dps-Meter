@@ -885,7 +885,8 @@ class DpsCalculator(private val dataStorage: DataStorage) {
         if (battleTime == 0L) {
             return dpsData
         }
-        pdpMap[currentTarget]!!.forEach lastPdpLoop@{ pdp ->
+        val currentTargetPackets = pdpMap[currentTarget] ?: return dpsData
+        currentTargetPackets.forEach lastPdpLoop@{ pdp ->
             totalDamage += pdp.getDamage()
             val uid = dataStorage.getSummonData()[pdp.getActorId()] ?: pdp.getActorId()
             val nickname:String = nicknameData[uid]
