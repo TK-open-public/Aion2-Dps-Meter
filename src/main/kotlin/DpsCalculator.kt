@@ -1,10 +1,12 @@
 package com.tbread
 
 import com.tbread.entity.DpsData
+import com.tbread.entity.EncounterHistoryParticipant
 import com.tbread.entity.EncounterHistoryItem
 import com.tbread.entity.JobClass
 import com.tbread.entity.PersonalData
 import com.tbread.entity.TargetInfo
+import com.tbread.entity.AnalyzedSkill
 import org.slf4j.LoggerFactory
 import kotlin.math.roundToInt
 
@@ -873,6 +875,7 @@ class DpsCalculator(private val dataStorage: DataStorage) {
     private var currentEncounterToken: Long = 0L
     private val encounterHistory = ArrayDeque<EncounterHistoryItem>()
     private val archivedEncounterTokens = hashSetOf<Long>()
+    private val encounterBattleDetailStore = hashMapOf<Long, Map<Int, Map<Int, AnalyzedSkill>>>()
 
     private val recentDamageWindowMs = 6_000L
     private val activeTargetIdleMs = 7_000L
@@ -883,6 +886,7 @@ class DpsCalculator(private val dataStorage: DataStorage) {
     private val sameEncounterGapMs = 8_000L
     private val encounterStartLookbackMs = 12_000L
     private val maxEncounterHistory = 80
+    private val minStoredEncounterMs = 60_000L
 
     fun setMode(mode: Mode) {
         this.mode = mode
@@ -891,6 +895,10 @@ class DpsCalculator(private val dataStorage: DataStorage) {
 
     fun getEncounterHistory(): List<EncounterHistoryItem> {
         return encounterHistory.toList()
+    }
+
+    fun getEncounterBattleDetail(token: Long, uid: Int): Map<Int, AnalyzedSkill> {
+        return encounterBattleDetailStore[token]?.get(uid) ?: emptyMap()
     }
 
     fun getDps(): DpsData {
@@ -1164,6 +1172,29 @@ class DpsCalculator(private val dataStorage: DataStorage) {
             encounterToken = currentEncounterToken,
             targetName = resolveTargetName(currentTarget)
         ) ?: return
+        if (encounterData.dpsData.battleTime < minStoredEncounterMs) {
+            logger.info(
+                "엔카운터 기록 스킵 token={} reason={} battleTime={}ms (<{}ms)",
+                currentEncounterToken,
+                reason,
+                encounterData.dpsData.battleTime,
+                minStoredEncounterMs
+            )
+            return
+        }
+
+        val participants = encounterData.dpsData.map.entries
+            .sortedByDescending { it.value.amount }
+            .map { (uid, pData) ->
+                EncounterHistoryParticipant(
+                    uid = uid,
+                    nickname = pData.nickname,
+                    job = pData.job,
+                    dps = pData.dps,
+                    damageContribution = pData.damageContribution,
+                    totalDamage = pData.amount.toLong(),
+                )
+            }
 
         val historyItem = EncounterHistoryItem(
             token = currentEncounterToken,
@@ -1173,12 +1204,18 @@ class DpsCalculator(private val dataStorage: DataStorage) {
             battleTime = encounterData.dpsData.battleTime,
             totalDamage = encounterData.totalDamage,
             participantCount = encounterData.participantCount,
+            participants = participants,
         )
         encounterHistory.addFirst(historyItem)
         archivedEncounterTokens.add(currentEncounterToken)
+        encounterBattleDetailStore[currentEncounterToken] =
+            encounterData.dpsData.map.mapValues { (_, pData) ->
+                pData.analyzedData.mapValues { (_, skill) -> skill.copy() }
+            }
         while (encounterHistory.size > maxEncounterHistory) {
             val removed = encounterHistory.removeLast()
             archivedEncounterTokens.remove(removed.token)
+            encounterBattleDetailStore.remove(removed.token)
         }
         logger.info(
             "엔카운터 기록 저장 token={} target={} reason={} historySize={}",

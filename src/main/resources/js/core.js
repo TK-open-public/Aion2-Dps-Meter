@@ -322,10 +322,12 @@ class DpsApp {
     this.historyEntries.forEach((entry) => {
       const item = entry && typeof entry === "object" ? entry : {};
       const targetName = String(item.targetName ?? "").trim() || "알 수 없음";
+      const encounterToken = Number(item.token);
       const endedAt = Number(item.endedAt);
       const battleTimeMs = Math.max(0, Math.trunc(Number(item.battleTime) || 0));
       const totalDamage = Math.max(0, Math.trunc(Number(item.totalDamage) || 0));
       const participantCount = Math.max(0, Math.trunc(Number(item.participantCount) || 0));
+      const participants = Array.isArray(item.participants) ? item.participants : [];
 
       const rowEl = document.createElement("div");
       rowEl.className = "historyItem";
@@ -350,7 +352,35 @@ class DpsApp {
       partyEl.textContent = `참여 ${participantCount}명`;
       bottomEl.append(battleEl, damageEl, partyEl);
 
-      rowEl.append(topEl, bottomEl);
+      const membersEl = document.createElement("div");
+      membersEl.className = "historyMembers";
+      if (Number.isFinite(encounterToken)) {
+        participants.forEach((memberRaw) => {
+        const member = memberRaw && typeof memberRaw === "object" ? memberRaw : {};
+        const uid = Number(member.uid);
+        if (!Number.isFinite(uid)) return;
+        const nickname = String(member.nickname ?? "").trim() || String(uid);
+        const contrib = Number(member.damageContribution);
+        const contribText = Number.isFinite(contrib) ? `${contrib.toFixed(1)}%` : "-";
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "historyMember";
+        btn.textContent = `${nickname} (${contribText})`;
+        btn.addEventListener("click", () => {
+          this.detailsUI?.open?.({
+            id: `h-${encounterToken}-${uid}`,
+            uid,
+            name: nickname,
+            damageContribution: contrib,
+            historyToken: encounterToken,
+            historyBattleTime: battleTimeMs,
+          }, { force: true });
+        });
+        membersEl.appendChild(btn);
+        });
+      }
+
+      rowEl.append(topEl, bottomEl, membersEl);
       this.historyList.appendChild(rowEl);
     });
   }
@@ -399,7 +429,12 @@ class DpsApp {
   }
 
   async getDetails(row) {
-    const raw = await window.dpsData?.getBattleDetail?.(row.id);
+    const historyToken = Number(row?.historyToken);
+    const participantUid = Number(row?.uid);
+    const isHistoryRow = Number.isFinite(historyToken);
+    const raw = isHistoryRow
+      ? await window.dpsData?.getEncounterBattleDetail?.(historyToken, Number.isFinite(participantUid) ? participantUid : -1)
+      : await window.dpsData?.getBattleDetail?.(row.id);
     let detailObj = raw;
     // globalThis.uiDebug?.log?.("getBattleDetail", detailObj);
 
@@ -494,7 +529,10 @@ class DpsApp {
       return Math.round((num / den) * 1000) / 10;
     };
     const contributionPct = Number(row?.damageContribution);
-    const combatTime = this.battleTime?.getCombatTimeText?.() ?? "00:00";
+    const historyBattleTime = Number(row?.historyBattleTime);
+    const combatTime = Number.isFinite(historyBattleTime)
+      ? this.formatHistoryDuration(historyBattleTime)
+      : (this.battleTime?.getCombatTimeText?.() ?? "00:00");
 
     return {
       totalDmg,

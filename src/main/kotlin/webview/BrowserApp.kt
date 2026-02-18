@@ -278,6 +278,12 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
         return Json.encodeToString(dpsCalculator.getEncounterHistory())
     }
 
+    fun getEncounterBattleDetail(token: Any?, uid: Any?): String {
+        val tokenValue = token?.toString()?.toDoubleOrNull()?.toLong() ?: -1L
+        val uidValue = uid?.toString()?.toDoubleOrNull()?.toInt() ?: -1
+        return Json.encodeToString(dpsCalculator.getEncounterBattleDetail(tokenValue, uidValue))
+    }
+
     fun getVersion():String{
         return BuildConfig.APP_VERSION
     }

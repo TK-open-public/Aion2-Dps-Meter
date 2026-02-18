@@ -1,6 +1,6 @@
 ﻿(function () {
   const storageKey = "aion2.hotkey.reset";
-  const defaultHotkey = { mods: 0x0002, vk: 0x52, label: "CTRL + R" };
+  const defaultHotkey = { mods: 0x0002, vk: 0x54, label: "CTRL + T" };
   const BRIDGE_RETRY_MS = 200;
   const BRIDGE_RETRY_LIMIT = 50;
   const modifierLabels = [
@@ -71,8 +71,12 @@
     }
 
     const stored = loadHotkey();
-    let current = stored ?? { ...defaultHotkey };
-    if (!stored) saveHotkey(current);
+    const needsMigrateDefault =
+      stored &&
+      Number(stored.mods) === 0x0002 &&
+      Number(stored.vk) === 0x52;
+    let current = needsMigrateDefault ? { ...defaultHotkey } : (stored ?? { ...defaultHotkey });
+    if (!stored || needsMigrateDefault) saveHotkey(current);
     input.value = current.label || "";
 
     const ensureBridge = (attempt = 0) => {

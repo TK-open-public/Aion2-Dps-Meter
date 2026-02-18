@@ -11,4 +11,5 @@ data class EncounterHistoryItem(
     val battleTime: Long,
     val totalDamage: Long,
     val participantCount: Int,
+    val participants: List<EncounterHistoryParticipant> = emptyList(),
 )

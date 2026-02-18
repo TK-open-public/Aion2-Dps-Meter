@@ -547,6 +547,27 @@
     opacity: 0.9;
   }
 
+  .historyMembers {
+    display: grid;
+    gap: 6px;
+  }
+
+  .historyMember {
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-color);
+    border-radius: var(--rounded-xs);
+    padding: 6px 8px;
+    text-align: left;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  .historyMember:hover {
+    border-color: rgba(255, 255, 255, 0.28);
+    background: rgba(255, 255, 255, 0.1);
+  }
+
   .historyFooter {
     padding: 0 18px 16px;
   }
