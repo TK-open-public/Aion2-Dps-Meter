@@ -1,12 +1,11 @@
 package com.tbread
 
 import com.tbread.entity.DpsData
+import com.tbread.entity.EncounterHistoryItem
 import com.tbread.entity.JobClass
 import com.tbread.entity.PersonalData
 import com.tbread.entity.TargetInfo
-import kotlinx.coroutines.Job
 import org.slf4j.LoggerFactory
-import kotlin.math.log
 import kotlin.math.roundToInt
 
 class DpsCalculator(private val dataStorage: DataStorage) {
@@ -855,6 +854,14 @@ class DpsCalculator(private val dataStorage: DataStorage) {
         val recentWindowStart: Long,
     )
 
+    private data class EncounterBuildResult(
+        val dpsData: DpsData,
+        val totalDamage: Long,
+        val participantCount: Int,
+        val startedAt: Long,
+        val endedAt: Long,
+    )
+
     private val targetInfoMap = hashMapOf<Int, TargetInfo>()
 
     private var mode: Mode = Mode.BOSS_ONLY
@@ -864,6 +871,8 @@ class DpsCalculator(private val dataStorage: DataStorage) {
     private var lastObservedTargetHitAt: Long = 0L
     private var encounterSequence: Long = 0L
     private var currentEncounterToken: Long = 0L
+    private val encounterHistory = ArrayDeque<EncounterHistoryItem>()
+    private val archivedEncounterTokens = hashSetOf<Long>()
 
     private val recentDamageWindowMs = 6_000L
     private val activeTargetIdleMs = 7_000L
@@ -873,10 +882,15 @@ class DpsCalculator(private val dataStorage: DataStorage) {
     private val encounterBreakIdleMs = 15_000L
     private val sameEncounterGapMs = 8_000L
     private val encounterStartLookbackMs = 12_000L
+    private val maxEncounterHistory = 80
 
     fun setMode(mode: Mode) {
         this.mode = mode
         //모드 변경시 이전기록 초기화?
+    }
+
+    fun getEncounterHistory(): List<EncounterHistoryItem> {
+        return encounterHistory.toList()
     }
 
     fun getDps(): DpsData {
@@ -898,26 +912,58 @@ class DpsCalculator(private val dataStorage: DataStorage) {
 
         val now = System.currentTimeMillis()
         val targetData = decideTarget(now)
-        val dpsData = DpsData(
-            targetName = targetData.second,
+        val targetId = targetData.first
+        val targetName = targetData.second
+        if (targetId == 0 || currentEncounterStartAt <= 0L) {
+            return DpsData(
+                targetName = targetName,
+                encounterToken = currentEncounterToken,
+            )
+        }
+
+        val encounterData = buildEncounterData(
+            targetId = targetId,
+            encounterStartAt = currentEncounterStartAt,
+            encounterEndAtInclusive = null,
+            encounterToken = currentEncounterToken,
+            targetName = targetName
+        )?.dpsData
+
+        return encounterData ?: DpsData(
+            targetName = targetName,
             encounterToken = currentEncounterToken,
         )
-        val currentTargetPackets = pdpMap[currentTarget] ?: return dpsData
-        if (currentEncounterStartAt <= 0L) return dpsData
+    }
+
+    private fun buildEncounterData(
+        targetId: Int,
+        encounterStartAt: Long,
+        encounterEndAtInclusive: Long?,
+        encounterToken: Long,
+        targetName: String,
+    ): EncounterBuildResult? {
+        val currentTargetPackets = dataStorage.getBossModeData()[targetId] ?: return null
+        val dpsData = DpsData(
+            targetName = targetName,
+            encounterToken = encounterToken,
+        )
 
         val nicknameData = dataStorage.getNickname()
-        var totalDamage = 0.0
+        var totalDamage = 0L
         var firstPacketTs = Long.MAX_VALUE
         var lastPacketTs = 0L
 
         currentTargetPackets.forEach { pdp ->
-            if (pdp.getTimeStamp() < currentEncounterStartAt) return@forEach
-            totalDamage += pdp.getDamage()
-            if (pdp.getTimeStamp() < firstPacketTs) {
-                firstPacketTs = pdp.getTimeStamp()
+            val ts = pdp.getTimeStamp()
+            if (ts < encounterStartAt) return@forEach
+            if (encounterEndAtInclusive != null && ts > encounterEndAtInclusive) return@forEach
+
+            totalDamage += pdp.getDamage().toLong()
+            if (ts < firstPacketTs) {
+                firstPacketTs = ts
             }
-            if (pdp.getTimeStamp() > lastPacketTs) {
-                lastPacketTs = pdp.getTimeStamp()
+            if (ts > lastPacketTs) {
+                lastPacketTs = ts
             }
 
             val uid = dataStorage.getSummonData()[pdp.getActorId()] ?: pdp.getActorId()
@@ -941,8 +987,8 @@ class DpsCalculator(private val dataStorage: DataStorage) {
             }
         }
 
-        if (firstPacketTs == Long.MAX_VALUE || totalDamage <= 0.0) {
-            return dpsData
+        if (firstPacketTs == Long.MAX_VALUE || totalDamage <= 0L) {
+            return null
         }
 
         val rawBattleTime = (lastPacketTs - firstPacketTs).coerceAtLeast(1L)
@@ -955,11 +1001,17 @@ class DpsCalculator(private val dataStorage: DataStorage) {
                 iterator.remove()
             } else {
                 data.dps = data.amount / dpsBattleTime * 1000
-                data.damageContribution = data.amount / totalDamage * 100
+                data.damageContribution = data.amount / totalDamage.toDouble() * 100
             }
         }
         dpsData.battleTime = rawBattleTime
-        return dpsData
+        return EncounterBuildResult(
+            dpsData = dpsData,
+            totalDamage = totalDamage,
+            participantCount = dpsData.map.size,
+            startedAt = firstPacketTs,
+            endedAt = lastPacketTs,
+        )
     }
 
     private fun decideTarget(now: Long): Pair<Int, String> {
@@ -1014,12 +1066,18 @@ class DpsCalculator(private val dataStorage: DataStorage) {
         val selectedEncounterKey = encounterKeyForTarget(target)
         val previousTarget = currentTarget
         if (previousTarget != target) {
-            val previousLastDamageTime = targetInfoMap[previousTarget]?.lastDamageTime() ?: 0L
+            val previousLastDamageTime = targetInfoMap[previousTarget]?.lastDamageTime() ?: lastObservedTargetHitAt
             val targetSwitchGap = selectedScore.lastDamageTime - previousLastDamageTime
             val continueSameEncounter = currentEncounterStartAt > 0L &&
                 currentEncounterKey == selectedEncounterKey &&
                 previousLastDamageTime > 0L &&
                 targetSwitchGap in 0..sameEncounterGapMs
+            if (!continueSameEncounter) {
+                archiveCurrentEncounterIfNeeded(
+                    encounterEndAt = previousLastDamageTime,
+                    reason = "target_switched"
+                )
+            }
             currentTarget = target
             dataStorage.setCurrentTarget(target)
             if (!continueSameEncounter) {
@@ -1042,6 +1100,10 @@ class DpsCalculator(private val dataStorage: DataStorage) {
                     lastObservedTargetHitAt > 0L &&
                         (selectedScore.lastDamageTime - lastObservedTargetHitAt) > encounterBreakIdleMs
                 if (restartByLongIdle) {
+                    archiveCurrentEncounterIfNeeded(
+                        encounterEndAt = lastObservedTargetHitAt,
+                        reason = "target_idle"
+                    )
                     startEncounter(
                         startAt = selectedScore.recentWindowStart.coerceAtLeast(1L),
                         encounterKey = selectedEncounterKey
@@ -1084,6 +1146,49 @@ class DpsCalculator(private val dataStorage: DataStorage) {
         )
     }
 
+    private fun archiveCurrentEncounterIfNeeded(encounterEndAt: Long, reason: String) {
+        if (currentTarget == 0 || currentEncounterStartAt <= 0L || currentEncounterToken == 0L) return
+        if (archivedEncounterTokens.contains(currentEncounterToken)) return
+
+        val normalizedEndAt = when {
+            encounterEndAt > 0L -> encounterEndAt
+            lastObservedTargetHitAt > 0L -> lastObservedTargetHitAt
+            else -> 0L
+        }
+        if (normalizedEndAt <= 0L || normalizedEndAt < currentEncounterStartAt) return
+
+        val encounterData = buildEncounterData(
+            targetId = currentTarget,
+            encounterStartAt = currentEncounterStartAt,
+            encounterEndAtInclusive = normalizedEndAt,
+            encounterToken = currentEncounterToken,
+            targetName = resolveTargetName(currentTarget)
+        ) ?: return
+
+        val historyItem = EncounterHistoryItem(
+            token = currentEncounterToken,
+            targetName = encounterData.dpsData.targetName.ifBlank { "알 수 없음" },
+            startedAt = encounterData.startedAt,
+            endedAt = encounterData.endedAt,
+            battleTime = encounterData.dpsData.battleTime,
+            totalDamage = encounterData.totalDamage,
+            participantCount = encounterData.participantCount,
+        )
+        encounterHistory.addFirst(historyItem)
+        archivedEncounterTokens.add(currentEncounterToken)
+        while (encounterHistory.size > maxEncounterHistory) {
+            val removed = encounterHistory.removeLast()
+            archivedEncounterTokens.remove(removed.token)
+        }
+        logger.info(
+            "엔카운터 기록 저장 token={} target={} reason={} historySize={}",
+            historyItem.token,
+            historyItem.targetName,
+            reason,
+            encounterHistory.size
+        )
+    }
+
     private fun inferOriginalSkillCode(skillCode: Int): Int? {
         for (offset in POSSIBLE_OFFSETS) {
             val possibleOrigin = skillCode - offset
@@ -1097,6 +1202,10 @@ class DpsCalculator(private val dataStorage: DataStorage) {
     }
 
     fun resetDataStorage() {
+        archiveCurrentEncounterIfNeeded(
+            encounterEndAt = lastObservedTargetHitAt,
+            reason = "manual_reset"
+        )
         dataStorage.flushDamageStorage()
         targetInfoMap.clear()
         currentTarget = 0

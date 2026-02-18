@@ -27,6 +27,8 @@ class DpsApp {
     this._lastEncounterToken = null;
 
     this._pollTimer = null;
+    this.historyEntries = [];
+    this.historyPanelOpen = false;
 
     DpsApp.instance = this;
   }
@@ -43,13 +45,19 @@ class DpsApp {
 
     this.resetBtn = document.querySelector(".resetBtn");
     this.collapseBtn = document.querySelector(".collapseBtn");
+    this.historyBtn = document.querySelector(".historyBtn");
     this.settingsBtn = document.querySelector(".settingsBtn");
     this.settingsPanel = document.querySelector(".settingsPanel");
     this.settingsClose = document.querySelector(".settingsClose");
     this.settingsSave = document.querySelector(".settingsSave");
     this.settingsInput = document.querySelector(".settingsInput");
+    this.historyPanel = document.querySelector(".historyPanel");
+    this.historyClose = document.querySelector(".historyClose");
+    this.historyList = document.querySelector(".historyList");
+    this.historyRefresh = document.querySelector(".historyRefresh");
 
     this.bindHeaderButtons();
+    this.bindHistoryUI();
     this.bindDragToMoveWindow();
     this.bindSettingsUI();
     this.bindNativeKeyEvents();
@@ -86,6 +94,7 @@ class DpsApp {
       dpsFormatter: this.dpsFormatter,
       getDetails: (row) => this.getDetails(row),
     });
+    this.refreshEncounterHistory();
     window.ReleaseChecker?.start?.();
 
     this.startPolling();
@@ -183,6 +192,7 @@ class DpsApp {
       this.lastSnapshot = null;
       this.detailsUI?.close?.();
       this.meterUI?.onResetMeterUi?.();
+      this.refreshEncounterHistory();
     }
 
 
@@ -283,6 +293,109 @@ class DpsApp {
     }
 
     return rows;
+  }
+
+  refreshEncounterHistory() {
+    const raw = window.dpsData?.getEncounterHistory?.();
+    if (typeof raw !== "string") {
+      this.historyEntries = [];
+      this.renderEncounterHistory();
+      return;
+    }
+    const parsed = this.safeParseJSON(raw, []);
+    this.historyEntries = Array.isArray(parsed) ? parsed : [];
+    this.renderEncounterHistory();
+  }
+
+  renderEncounterHistory() {
+    if (!this.historyList) return;
+    this.historyList.replaceChildren();
+
+    if (!Array.isArray(this.historyEntries) || this.historyEntries.length === 0) {
+      const emptyEl = document.createElement("div");
+      emptyEl.className = "historyEmpty";
+      emptyEl.textContent = "아직 저장된 전투 기록이 없습니다.";
+      this.historyList.appendChild(emptyEl);
+      return;
+    }
+
+    this.historyEntries.forEach((entry) => {
+      const item = entry && typeof entry === "object" ? entry : {};
+      const targetName = String(item.targetName ?? "").trim() || "알 수 없음";
+      const endedAt = Number(item.endedAt);
+      const battleTimeMs = Math.max(0, Math.trunc(Number(item.battleTime) || 0));
+      const totalDamage = Math.max(0, Math.trunc(Number(item.totalDamage) || 0));
+      const participantCount = Math.max(0, Math.trunc(Number(item.participantCount) || 0));
+
+      const rowEl = document.createElement("div");
+      rowEl.className = "historyItem";
+
+      const topEl = document.createElement("div");
+      topEl.className = "historyTop";
+      const targetEl = document.createElement("div");
+      targetEl.className = "historyTarget";
+      targetEl.textContent = targetName;
+      const clockEl = document.createElement("div");
+      clockEl.className = "historyTime";
+      clockEl.textContent = this.formatHistoryClock(endedAt);
+      topEl.append(targetEl, clockEl);
+
+      const bottomEl = document.createElement("div");
+      bottomEl.className = "historyBottom";
+      const battleEl = document.createElement("div");
+      battleEl.textContent = `전투 ${this.formatHistoryDuration(battleTimeMs)}`;
+      const damageEl = document.createElement("div");
+      damageEl.textContent = `총딜 ${this.dpsFormatter.format(totalDamage)}`;
+      const partyEl = document.createElement("div");
+      partyEl.textContent = `참여 ${participantCount}명`;
+      bottomEl.append(battleEl, damageEl, partyEl);
+
+      rowEl.append(topEl, bottomEl);
+      this.historyList.appendChild(rowEl);
+    });
+  }
+
+  formatHistoryDuration(ms) {
+    const totalSec = Math.max(0, Math.floor((Number(ms) || 0) / 1000));
+    const mm = String(Math.floor(totalSec / 60)).padStart(2, "0");
+    const ss = String(totalSec % 60).padStart(2, "0");
+    return `${mm}:${ss}`;
+  }
+
+  formatHistoryClock(ts) {
+    if (!Number.isFinite(ts) || ts <= 0) return "--:--:--";
+    const date = new Date(ts);
+    const hh = String(date.getHours()).padStart(2, "0");
+    const mm = String(date.getMinutes()).padStart(2, "0");
+    const ss = String(date.getSeconds()).padStart(2, "0");
+    return `${hh}:${mm}:${ss}`;
+  }
+
+  openHistoryPanel() {
+    if (!this.historyPanel) return;
+    this.settingsUI?.close?.();
+    this.detailsUI?.close?.();
+    this.refreshEncounterHistory();
+    this.historyPanel.classList.add("open");
+    this.historyPanelOpen = true;
+  }
+
+  closeHistoryPanel() {
+    if (!this.historyPanel) return;
+    this.historyPanel.classList.remove("open");
+    this.historyPanelOpen = false;
+  }
+
+  bindHistoryUI() {
+    this.historyBtn?.addEventListener("click", () => {
+      if (this.historyPanelOpen) {
+        this.closeHistoryPanel();
+      } else {
+        this.openHistoryPanel();
+      }
+    });
+    this.historyClose?.addEventListener("click", () => this.closeHistoryPanel());
+    this.historyRefresh?.addEventListener("click", () => this.refreshEncounterHistory());
   }
 
   async getDetails(row) {
@@ -409,6 +522,7 @@ class DpsApp {
       if (this.isCollapse) {
         this.stopPolling();
         this.elList.style.display = "none";
+        this.closeHistoryPanel();
         this.resetAll({ callBackend: true });
       } else {
         // 펼치면 polling 재개하고 즉시 1회 fetch
@@ -456,7 +570,7 @@ class DpsApp {
 
     document.addEventListener("mousedown", (e) => {
       const ignoreTarget = e.target.closest(
-        ".headerBtns, .settingsPanel, .detailsPanel, .console, input, button"
+        ".headerBtns, .settingsPanel, .historyPanel, .detailsPanel, .console, input, button"
       );
       if (ignoreTarget) return;
       isDragging = true;

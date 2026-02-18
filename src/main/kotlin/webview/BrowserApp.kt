@@ -274,6 +274,10 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
         return Json.encodeToString(dpsData.map[uid]?.analyzedData)
     }
 
+    fun getEncounterHistory(): String {
+        return Json.encodeToString(dpsCalculator.getEncounterHistory())
+    }
+
     fun getVersion():String{
         return BuildConfig.APP_VERSION
     }
