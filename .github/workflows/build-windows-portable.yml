@@ -27,7 +27,7 @@ jobs:
 
       - name: Build portable app
         shell: pwsh
-        run: gradle.bat -Dorg.gradle.java.home="$env:JAVA_HOME" createDistributable --no-daemon --stacktrace
+        run: gradle.bat createDistributable --no-daemon --stacktrace
 
       - name: Upload portable artifact
         uses: actions/upload-artifact@v4
