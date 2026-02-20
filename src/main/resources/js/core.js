@@ -29,6 +29,8 @@ class DpsApp {
     this._pollTimer = null;
     this.historyEntries = [];
     this.historyPanelOpen = false;
+    this._floatingPanelZ = 1600;
+    this._panelPositionStoragePrefix = "aion2.panel.position.";
 
     DpsApp.instance = this;
   }
@@ -55,9 +57,15 @@ class DpsApp {
     this.historyClose = document.querySelector(".historyClose");
     this.historyList = document.querySelector(".historyList");
     this.historyRefresh = document.querySelector(".historyRefresh");
+    this.detailsPanel = document.querySelector(".detailsPanel");
+    this.detailsClose = document.querySelector(".detailsClose");
+    this.detailsTitle = document.querySelector(".detailsTitle");
+    this.detailsStatsEl = document.querySelector(".detailsStats");
+    this.skillsListEl = document.querySelector(".skills");
 
     this.bindHeaderButtons();
     this.bindHistoryUI();
+    this.bindFloatingPanels();
     this.bindDragToMoveWindow();
     this.bindSettingsUI();
     this.bindNativeKeyEvents();
@@ -66,7 +74,10 @@ class DpsApp {
       elList: this.elList,
       dpsFormatter: this.dpsFormatter,
       getUserName: () => this.USER_NAME,
-      onClickUserRow: (row) => this.detailsUI.open(row),
+      onClickUserRow: (row) => {
+        this.raiseFloatingPanel(this.detailsPanel);
+        this.detailsUI.open(row);
+      },
     });
 
     this.battleTime = createBattleTimeUI({
@@ -78,12 +89,6 @@ class DpsApp {
       visibleClass: "isVisible",
     });
     this.battleTime.setVisible(false);
-
-    this.detailsPanel = document.querySelector(".detailsPanel");
-    this.detailsClose = document.querySelector(".detailsClose");
-    this.detailsTitle = document.querySelector(".detailsTitle");
-    this.detailsStatsEl = document.querySelector(".detailsStats");
-    this.skillsListEl = document.querySelector(".skills");
 
     this.detailsUI = createDetailsUI({
       detailsPanel: this.detailsPanel,
@@ -367,6 +372,7 @@ class DpsApp {
         btn.className = "historyMember";
         btn.textContent = `${nickname} (${contribText})`;
         btn.addEventListener("click", () => {
+          this.raiseFloatingPanel(this.detailsPanel);
           this.detailsUI?.open?.({
             id: `h-${encounterToken}-${uid}`,
             uid,
@@ -407,6 +413,7 @@ class DpsApp {
     this.detailsUI?.close?.();
     this.refreshEncounterHistory();
     this.historyPanel.classList.add("open");
+    this.raiseFloatingPanel(this.historyPanel);
     this.historyPanelOpen = true;
   }
 
@@ -551,6 +558,7 @@ class DpsApp {
   bindHeaderButtons() {
     this.settingsBtn?.addEventListener("click", () => {
       if (!this.settingsUI) this.bindSettingsUI();
+      this.raiseFloatingPanel(this.settingsPanel);
       this.settingsUI?.open?.();
     });
     this.collapseBtn?.addEventListener("click", () => {
@@ -599,6 +607,123 @@ class DpsApp {
     });
   }
 
+  bindFloatingPanels() {
+    this.bindDraggablePanel({
+      panel: this.settingsPanel,
+      handleSelector: ".settingsHeader",
+      storageName: "settings",
+    });
+    this.bindDraggablePanel({
+      panel: this.historyPanel,
+      handleSelector: ".historyHeader",
+      storageName: "history",
+    });
+    this.bindDraggablePanel({
+      panel: this.detailsPanel,
+      handleSelector: ".detailsHeader",
+      storageName: "details",
+    });
+  }
+
+  panelStorageKey(name) {
+    return `${this._panelPositionStoragePrefix}${name}`;
+  }
+
+  loadPanelPosition(panel, storageName) {
+    if (!panel || !storageName) return;
+    try {
+      const raw = localStorage.getItem(this.panelStorageKey(storageName));
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      const left = Number(parsed?.left);
+      const top = Number(parsed?.top);
+      if (!Number.isFinite(left) || !Number.isFinite(top)) return;
+      panel.style.left = `${left}px`;
+      panel.style.top = `${top}px`;
+      panel.style.right = "auto";
+      panel.style.bottom = "auto";
+    } catch {
+      // noop
+    }
+  }
+
+  savePanelPosition(panel, storageName) {
+    if (!panel || !storageName) return;
+    const computed = window.getComputedStyle(panel);
+    const left = Number.parseFloat(computed.left);
+    const top = Number.parseFloat(computed.top);
+    if (!Number.isFinite(left) || !Number.isFinite(top)) return;
+    try {
+      localStorage.setItem(
+        this.panelStorageKey(storageName),
+        JSON.stringify({ left, top }),
+      );
+    } catch {
+      // noop
+    }
+  }
+
+  raiseFloatingPanel(panel) {
+    if (!panel) return;
+    this._floatingPanelZ += 1;
+    panel.style.zIndex = String(this._floatingPanelZ);
+  }
+
+  bindDraggablePanel({ panel, handleSelector, storageName }) {
+    if (!panel || !handleSelector) return;
+    this.loadPanelPosition(panel, storageName);
+    panel.addEventListener("mousedown", () => this.raiseFloatingPanel(panel));
+
+    let isDragging = false;
+    let startClientX = 0;
+    let startClientY = 0;
+    let startLeft = 0;
+    let startTop = 0;
+
+    panel.addEventListener("mousedown", (event) => {
+      if (event.button !== 0) return;
+      const targetEl = event.target instanceof Element ? event.target : null;
+      if (!targetEl) return;
+      const handle = targetEl.closest(handleSelector);
+      if (!handle || !panel.contains(handle)) return;
+      if (targetEl.closest(".closeX, button, input, select, textarea, a")) return;
+
+      this.raiseFloatingPanel(panel);
+      const computed = window.getComputedStyle(panel);
+      const offsetParentRect = panel.offsetParent?.getBoundingClientRect?.() ?? { left: 0, top: 0 };
+      const rect = panel.getBoundingClientRect();
+      const parsedLeft = Number.parseFloat(computed.left);
+      const parsedTop = Number.parseFloat(computed.top);
+
+      startLeft = Number.isFinite(parsedLeft) ? parsedLeft : rect.left - offsetParentRect.left;
+      startTop = Number.isFinite(parsedTop) ? parsedTop : rect.top - offsetParentRect.top;
+      startClientX = event.clientX;
+      startClientY = event.clientY;
+      isDragging = true;
+
+      document.body.style.userSelect = "none";
+      event.preventDefault();
+    });
+
+    document.addEventListener("mousemove", (event) => {
+      if (!isDragging) return;
+      const deltaX = event.clientX - startClientX;
+      const deltaY = event.clientY - startClientY;
+
+      panel.style.left = `${startLeft + deltaX}px`;
+      panel.style.top = `${startTop + deltaY}px`;
+      panel.style.right = "auto";
+      panel.style.bottom = "auto";
+    });
+
+    document.addEventListener("mouseup", () => {
+      if (!isDragging) return;
+      isDragging = false;
+      document.body.style.userSelect = "";
+      this.savePanelPosition(panel, storageName);
+    });
+  }
+
   bindDragToMoveWindow() {
     let isDragging = false;
     let startX = 0,
@@ -607,7 +732,9 @@ class DpsApp {
       initialStageY = 0;
 
     document.addEventListener("mousedown", (e) => {
-      const ignoreTarget = e.target.closest(
+      const targetEl = e.target instanceof Element ? e.target : null;
+      if (!targetEl) return;
+      const ignoreTarget = targetEl.closest(
         ".headerBtns, .settingsPanel, .historyPanel, .detailsPanel, .console, input, button"
       );
       if (ignoreTarget) return;

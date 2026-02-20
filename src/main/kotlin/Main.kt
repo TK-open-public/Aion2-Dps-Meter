@@ -13,32 +13,36 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 
-fun main() = runBlocking {
-    val logger = LoggerFactory.getLogger("Main")
-    Thread.setDefaultUncaughtExceptionHandler { t, e ->
-        logger.error("thread dead {}", t.name, e)
-    }
-    val channel = Channel<ByteArray>(capacity = 4096)
-    val config = PcapCapturerConfig.loadFromProperties()
+fun main(args: Array<String>) {
+    WindowsElevation.ensureRunAsAdminOrRelaunch(args)
 
-    val dataStorage = DataStorage()
-    val processor = StreamProcessor(dataStorage)
-    val assembler = StreamAssembler(processor)
-    val capturer = PcapCapturer(config, channel)
-    val calculator = DpsCalculator(dataStorage)
-
-    launch(Dispatchers.Default) {
-        for (chunk in channel) {
-            assembler.processChunk(chunk)
+    runBlocking {
+        val logger = LoggerFactory.getLogger("Main")
+        Thread.setDefaultUncaughtExceptionHandler { t, e ->
+            logger.error("thread dead {}", t.name, e)
         }
-    }
+        val channel = Channel<ByteArray>(capacity = 4096)
+        val config = PcapCapturerConfig.loadFromProperties()
 
-    launch(Dispatchers.IO) {
-        capturer.start()
-    }
+        val dataStorage = DataStorage()
+        val processor = StreamProcessor(dataStorage)
+        val assembler = StreamAssembler(processor)
+        val capturer = PcapCapturer(config, channel)
+        val calculator = DpsCalculator(dataStorage)
 
-    Platform.startup{
-        val browserApp = BrowserApp(calculator)
-        browserApp.start(Stage())
+        launch(Dispatchers.Default) {
+            for (chunk in channel) {
+                assembler.processChunk(chunk)
+            }
+        }
+
+        launch(Dispatchers.IO) {
+            capturer.start()
+        }
+
+        Platform.startup{
+            val browserApp = BrowserApp(calculator)
+            browserApp.start(Stage())
+        }
     }
 }

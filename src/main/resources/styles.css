@@ -230,6 +230,7 @@
   background: rgb(12, 22, 40);
   padding: 16px 8px;
   border-radius: var(--rounded-lg);
+  z-index: 1200;
 
   &.open {
     display: block;
@@ -237,6 +238,8 @@
   .detailsHeader {
     display: flex;
     align-items: center;
+    cursor: move;
+    user-select: none;
     color: var(--title);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     padding: 0 28px;
@@ -397,6 +400,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    cursor: move;
+    user-select: none;
     padding: 10px 18px;
     border-bottom: 1px solid var(--panel-border);
 
@@ -476,6 +481,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    cursor: move;
+    user-select: none;
     padding: 10px 18px;
     border-bottom: 1px solid var(--panel-border);
 
