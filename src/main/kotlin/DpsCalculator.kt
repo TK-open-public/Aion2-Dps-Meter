@@ -1076,11 +1076,11 @@ class DpsCalculator(private val dataStorage: DataStorage) {
         if (previousTarget != target) {
             val previousLastDamageTime = targetInfoMap[previousTarget]?.lastDamageTime() ?: lastObservedTargetHitAt
             val targetSwitchGap = selectedScore.lastDamageTime - previousLastDamageTime
-            val continueSameEncounter = currentEncounterStartAt > 0L &&
+            val shouldSplitEncounter = currentEncounterStartAt > 0L &&
                 previousLastDamageTime > 0L &&
-                // targetId/mobCode 매핑이 흔들려도 짧은 공백 내 전환은 같은 전투로 본다.
-                targetSwitchGap in 0..encounterBreakIdleMs
-            if (!continueSameEncounter) {
+                // 전투 분리는 "실제 공백이 충분히 긴 경우"에만 허용해 오탐을 최소화한다.
+                targetSwitchGap > encounterBreakIdleMs
+            if (shouldSplitEncounter) {
                 archiveCurrentEncounterIfNeeded(
                     encounterEndAt = previousLastDamageTime,
                     reason = "target_switched"
@@ -1088,7 +1088,7 @@ class DpsCalculator(private val dataStorage: DataStorage) {
             }
             currentTarget = target
             dataStorage.setCurrentTarget(target)
-            if (!continueSameEncounter) {
+            if (shouldSplitEncounter) {
                 startEncounter(
                     startAt = selectedScore.recentWindowStart.coerceAtLeast(1L),
                     encounterKey = selectedEncounterKey
@@ -1096,7 +1096,7 @@ class DpsCalculator(private val dataStorage: DataStorage) {
             } else {
                 currentEncounterKey = selectedEncounterKey
             }
-            logger.info("대상 전환 {} -> {} (sameEncounter={})", previousTarget, target, continueSameEncounter)
+            logger.info("대상 전환 {} -> {} (sameEncounter={})", previousTarget, target, !shouldSplitEncounter)
         } else {
             if (currentEncounterStartAt <= 0L) {
                 startEncounter(
