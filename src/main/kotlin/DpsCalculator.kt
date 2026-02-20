@@ -882,8 +882,8 @@ class DpsCalculator(private val dataStorage: DataStorage) {
     private val stickyTargetIdleMs = 2_500L
     private val switchAdvantageRatio = 1.35
     private val minRecentDamageToSwitch = 10_000L
-    // 보스 패턴/무적 기믹으로 짧게 사라지는 구간(15~30초)을 새 전투로 오판하지 않도록 여유를 둔다.
-    private val encounterBreakIdleMs = 45_000L
+    // 보스 패턴/무적/페이즈 전환으로 10~60초 공백이 자주 발생하므로 2분까지는 동일 전투로 유지한다.
+    private val encounterBreakIdleMs = 120_000L
     private val encounterStartLookbackMs = 12_000L
     private val maxEncounterHistory = 80
     private val minStoredEncounterMs = 60_000L
@@ -1077,9 +1077,8 @@ class DpsCalculator(private val dataStorage: DataStorage) {
             val previousLastDamageTime = targetInfoMap[previousTarget]?.lastDamageTime() ?: lastObservedTargetHitAt
             val targetSwitchGap = selectedScore.lastDamageTime - previousLastDamageTime
             val continueSameEncounter = currentEncounterStartAt > 0L &&
-                currentEncounterKey == selectedEncounterKey &&
                 previousLastDamageTime > 0L &&
-                // 동일 보스가 페이즈 전환으로 잠시 사라졌다가 새 targetId로 돌아오는 경우를 허용한다.
+                // targetId/mobCode 매핑이 흔들려도 짧은 공백 내 전환은 같은 전투로 본다.
                 targetSwitchGap in 0..encounterBreakIdleMs
             if (!continueSameEncounter) {
                 archiveCurrentEncounterIfNeeded(
