@@ -62,6 +62,7 @@ class DpsApp {
     this.detailsTitle = document.querySelector(".detailsTitle");
     this.detailsStatsEl = document.querySelector(".detailsStats");
     this.skillsListEl = document.querySelector(".skills");
+    this.consolePanel = document.querySelector(".console");
 
     this.bindHeaderButtons();
     this.bindHistoryUI();
@@ -623,13 +624,20 @@ class DpsApp {
       handleSelector: ".detailsHeader",
       storageName: "details",
     });
+    this.bindDraggablePanel({
+      panel: this.consolePanel,
+      handleSelector: ".console",
+      storageName: "console",
+      mode: "fixed",
+      dragTopAreaPx: 24,
+    });
   }
 
   panelStorageKey(name) {
     return `${this._panelPositionStoragePrefix}${name}`;
   }
 
-  loadPanelPosition(panel, storageName) {
+  loadPanelPosition(panel, storageName, mode = "absolute") {
     if (!panel || !storageName) return;
     try {
       const raw = localStorage.getItem(this.panelStorageKey(storageName));
@@ -642,6 +650,9 @@ class DpsApp {
       panel.style.top = `${top}px`;
       panel.style.right = "auto";
       panel.style.bottom = "auto";
+      if (mode === "fixed") {
+        panel.style.position = "fixed";
+      }
     } catch {
       // noop
     }
@@ -669,9 +680,9 @@ class DpsApp {
     panel.style.zIndex = String(this._floatingPanelZ);
   }
 
-  bindDraggablePanel({ panel, handleSelector, storageName }) {
+  bindDraggablePanel({ panel, handleSelector, storageName, mode = "absolute", dragTopAreaPx = 0 }) {
     if (!panel || !handleSelector) return;
-    this.loadPanelPosition(panel, storageName);
+    this.loadPanelPosition(panel, storageName, mode);
     panel.addEventListener("mousedown", () => this.raiseFloatingPanel(panel));
 
     let isDragging = false;
@@ -687,16 +698,24 @@ class DpsApp {
       const handle = targetEl.closest(handleSelector);
       if (!handle || !panel.contains(handle)) return;
       if (targetEl.closest(".closeX, button, input, select, textarea, a")) return;
+      if (dragTopAreaPx > 0) {
+        const panelRect = panel.getBoundingClientRect();
+        if (event.clientY > panelRect.top + dragTopAreaPx) return;
+      }
 
       this.raiseFloatingPanel(panel);
       const computed = window.getComputedStyle(panel);
-      const offsetParentRect = panel.offsetParent?.getBoundingClientRect?.() ?? { left: 0, top: 0 };
       const rect = panel.getBoundingClientRect();
       const parsedLeft = Number.parseFloat(computed.left);
       const parsedTop = Number.parseFloat(computed.top);
-
-      startLeft = Number.isFinite(parsedLeft) ? parsedLeft : rect.left - offsetParentRect.left;
-      startTop = Number.isFinite(parsedTop) ? parsedTop : rect.top - offsetParentRect.top;
+      if (mode === "fixed") {
+        startLeft = Number.isFinite(parsedLeft) ? parsedLeft : rect.left;
+        startTop = Number.isFinite(parsedTop) ? parsedTop : rect.top;
+      } else {
+        const offsetParentRect = panel.offsetParent?.getBoundingClientRect?.() ?? { left: 0, top: 0 };
+        startLeft = Number.isFinite(parsedLeft) ? parsedLeft : rect.left - offsetParentRect.left;
+        startTop = Number.isFinite(parsedTop) ? parsedTop : rect.top - offsetParentRect.top;
+      }
       startClientX = event.clientX;
       startClientY = event.clientY;
       isDragging = true;
@@ -709,6 +728,9 @@ class DpsApp {
       if (!isDragging) return;
       const deltaX = event.clientX - startClientX;
       const deltaY = event.clientY - startClientY;
+      if (mode === "fixed") {
+        panel.style.position = "fixed";
+      }
 
       panel.style.left = `${startLeft + deltaX}px`;
       panel.style.top = `${startTop + deltaY}px`;

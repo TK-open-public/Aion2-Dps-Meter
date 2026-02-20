@@ -592,6 +592,20 @@
   }
 }
 
+.console {
+  cursor: default;
+}
+
+.console::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: 24px;
+  cursor: move;
+}
+
 .updateModal {
   position: fixed;
   inset: 0;
