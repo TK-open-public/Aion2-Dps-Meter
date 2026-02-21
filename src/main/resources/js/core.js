@@ -439,10 +439,11 @@ class DpsApp {
   async getDetails(row) {
     const historyToken = Number(row?.historyToken);
     const participantUid = Number(row?.uid);
+    const liveUid = Number(row?.id);
     const isHistoryRow = Number.isFinite(historyToken);
     const raw = isHistoryRow
       ? await window.dpsData?.getEncounterBattleDetail?.(historyToken, Number.isFinite(participantUid) ? participantUid : -1)
-      : await window.dpsData?.getBattleDetail?.(row.id);
+      : await window.dpsData?.getBattleDetail?.(Number.isFinite(liveUid) ? liveUid : -1);
     let detailObj = raw;
     // globalThis.uiDebug?.log?.("getBattleDetail", detailObj);
 

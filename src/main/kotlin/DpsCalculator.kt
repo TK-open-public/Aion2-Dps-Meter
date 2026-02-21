@@ -1074,12 +1074,22 @@ class DpsCalculator(private val dataStorage: DataStorage) {
         val selectedEncounterKey = encounterKeyForTarget(target)
         val previousTarget = currentTarget
         if (previousTarget != target) {
+            val previousEncounterKey = if (currentEncounterKey.isNotBlank()) {
+                currentEncounterKey
+            } else {
+                encounterKeyForTarget(previousTarget)
+            }
             val previousLastDamageTime = targetInfoMap[previousTarget]?.lastDamageTime() ?: lastObservedTargetHitAt
             val targetSwitchGap = selectedScore.lastDamageTime - previousLastDamageTime
-            val shouldSplitEncounter = currentEncounterStartAt > 0L &&
+            val splitByBossKeyChange = currentEncounterStartAt > 0L &&
+                previousEncounterKey.isNotBlank() &&
+                selectedEncounterKey.isNotBlank() &&
+                previousEncounterKey != selectedEncounterKey
+            val splitByLongIdle = currentEncounterStartAt > 0L &&
                 previousLastDamageTime > 0L &&
                 // 전투 분리는 "실제 공백이 충분히 긴 경우"에만 허용해 오탐을 최소화한다.
                 targetSwitchGap > encounterBreakIdleMs
+            val shouldSplitEncounter = splitByBossKeyChange || splitByLongIdle
             if (shouldSplitEncounter) {
                 archiveCurrentEncounterIfNeeded(
                     encounterEndAt = previousLastDamageTime,
@@ -1094,9 +1104,21 @@ class DpsCalculator(private val dataStorage: DataStorage) {
                     encounterKey = selectedEncounterKey
                 )
             } else {
-                currentEncounterKey = selectedEncounterKey
+                if (selectedEncounterKey.isNotBlank()) {
+                    currentEncounterKey = selectedEncounterKey
+                }
             }
-            logger.info("대상 전환 {} -> {} (sameEncounter={})", previousTarget, target, !shouldSplitEncounter)
+            logger.info(
+                "대상 전환 {} -> {} (sameEncounter={} splitByBossKey={} splitByLongIdle={} prevKey={} nextKey={} gap={}ms)",
+                previousTarget,
+                target,
+                !shouldSplitEncounter,
+                splitByBossKeyChange,
+                splitByLongIdle,
+                previousEncounterKey.ifBlank { "-" },
+                selectedEncounterKey.ifBlank { "-" },
+                targetSwitchGap
+            )
         } else {
             if (currentEncounterStartAt <= 0L) {
                 startEncounter(
@@ -1118,7 +1140,9 @@ class DpsCalculator(private val dataStorage: DataStorage) {
                     )
                     logger.info("장시간 공백 이후 동일 대상 재전투 감지 target={}", target)
                 } else {
-                    currentEncounterKey = selectedEncounterKey
+                    if (selectedEncounterKey.isNotBlank()) {
+                        currentEncounterKey = selectedEncounterKey
+                    }
                 }
             }
         }
@@ -1133,12 +1157,8 @@ class DpsCalculator(private val dataStorage: DataStorage) {
     }
 
     private fun encounterKeyForTarget(target: Int): String {
-        val mobCode = dataStorage.getMobData()[target]
-        return if (mobCode != null) {
-            "mob:$mobCode"
-        } else {
-            "target:$target"
-        }
+        val mobCode = dataStorage.getMobData()[target] ?: return ""
+        return "mob:$mobCode"
     }
 
     private fun startEncounter(startAt: Long, encounterKey: String) {
