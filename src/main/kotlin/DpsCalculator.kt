@@ -7,7 +7,12 @@ import com.tbread.entity.JobClass
 import com.tbread.entity.PersonalData
 import com.tbread.entity.TargetInfo
 import com.tbread.entity.AnalyzedSkill
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import org.slf4j.LoggerFactory
+import java.io.File
 import kotlin.math.roundToInt
 
 class DpsCalculator(private val dataStorage: DataStorage) {
@@ -15,6 +20,18 @@ class DpsCalculator(private val dataStorage: DataStorage) {
 
     enum class Mode {
         ALL, BOSS_ONLY
+    }
+
+    enum class HistoryRetentionPolicy(val wireValue: String) {
+        ON_EXIT_DELETE("on_exit_delete"),
+        PERMANENT("permanent");
+
+        companion object {
+            fun fromWire(value: String?): HistoryRetentionPolicy {
+                val normalized = value?.trim()?.lowercase()
+                return entries.firstOrNull { it.wireValue == normalized } ?: ON_EXIT_DELETE
+            }
+        }
     }
 
     companion object {
@@ -864,6 +881,13 @@ class DpsCalculator(private val dataStorage: DataStorage) {
         val endedAt: Long,
     )
 
+    @Serializable
+    private data class EncounterHistorySnapshot(
+        val history: List<EncounterHistoryItem> = emptyList(),
+        val battleDetail: Map<Long, Map<Int, Map<Int, AnalyzedSkill>>> = emptyMap(),
+        val encounterSequence: Long = 0L,
+    )
+
     private val targetInfoMap = hashMapOf<Int, TargetInfo>()
 
     private var mode: Mode = Mode.BOSS_ONLY
@@ -887,6 +911,17 @@ class DpsCalculator(private val dataStorage: DataStorage) {
     private val encounterStartLookbackMs = 12_000L
     private val maxEncounterHistory = 80
     private val minStoredEncounterMs = 60_000L
+    private val historyJson = Json {
+        ignoreUnknownKeys = true
+    }
+    private val appDataRootDir = File(System.getenv("APPDATA") ?: System.getProperty("user.home"), "aion2meter4j")
+    private val historyStoreFile = File(appDataRootDir, "encounter-history.json")
+    private val historyPolicyFile = File(appDataRootDir, "encounter-history-policy.txt")
+    private var historyRetentionPolicy: HistoryRetentionPolicy = loadHistoryRetentionPolicy()
+
+    init {
+        applyHistoryRetentionPolicyOnStartup()
+    }
 
     fun setMode(mode: Mode) {
         this.mode = mode
@@ -899,6 +934,43 @@ class DpsCalculator(private val dataStorage: DataStorage) {
 
     fun getEncounterBattleDetail(token: Long, uid: Int): Map<Int, AnalyzedSkill> {
         return encounterBattleDetailStore[token]?.get(uid) ?: emptyMap()
+    }
+
+    @Synchronized
+    fun getHistoryRetentionPolicy(): String {
+        return historyRetentionPolicy.wireValue
+    }
+
+    @Synchronized
+    fun setHistoryRetentionPolicy(policyValue: String?) {
+        val nextPolicy = HistoryRetentionPolicy.fromWire(policyValue)
+        if (nextPolicy == historyRetentionPolicy) {
+            if (nextPolicy == HistoryRetentionPolicy.PERMANENT) {
+                loadPersistedEncounterHistory()
+                persistEncounterHistoryIfNeeded()
+            }
+            return
+        }
+        historyRetentionPolicy = nextPolicy
+        saveHistoryRetentionPolicy()
+        when (historyRetentionPolicy) {
+            HistoryRetentionPolicy.PERMANENT -> {
+                loadPersistedEncounterHistory()
+                persistEncounterHistoryIfNeeded()
+            }
+            HistoryRetentionPolicy.ON_EXIT_DELETE -> {
+                clearPersistedEncounterHistory()
+            }
+        }
+        logger.info("전투기록 보관정책 변경: {}", historyRetentionPolicy.wireValue)
+    }
+
+    @Synchronized
+    fun handleAppShutdown() {
+        when (historyRetentionPolicy) {
+            HistoryRetentionPolicy.PERMANENT -> persistEncounterHistoryIfNeeded()
+            HistoryRetentionPolicy.ON_EXIT_DELETE -> clearPersistedEncounterHistory()
+        }
     }
 
     fun getDps(): DpsData {
@@ -1244,6 +1316,107 @@ class DpsCalculator(private val dataStorage: DataStorage) {
             reason,
             encounterHistory.size
         )
+        persistEncounterHistoryIfNeeded()
+    }
+
+    private fun ensureHistoryStorageDirectory() {
+        if (!appDataRootDir.exists()) {
+            appDataRootDir.mkdirs()
+        }
+    }
+
+    private fun loadHistoryRetentionPolicy(): HistoryRetentionPolicy {
+        return try {
+            if (!historyPolicyFile.exists()) {
+                HistoryRetentionPolicy.ON_EXIT_DELETE
+            } else {
+                HistoryRetentionPolicy.fromWire(historyPolicyFile.readText(Charsets.UTF_8))
+            }
+        } catch (e: Exception) {
+            logger.warn("전투기록 보관정책 로드 실패, 기본값(on_exit_delete) 사용", e)
+            HistoryRetentionPolicy.ON_EXIT_DELETE
+        }
+    }
+
+    private fun saveHistoryRetentionPolicy() {
+        try {
+            ensureHistoryStorageDirectory()
+            historyPolicyFile.writeText(historyRetentionPolicy.wireValue, Charsets.UTF_8)
+        } catch (e: Exception) {
+            logger.warn("전투기록 보관정책 저장 실패 value={}", historyRetentionPolicy.wireValue, e)
+        }
+    }
+
+    private fun applyHistoryRetentionPolicyOnStartup() {
+        when (historyRetentionPolicy) {
+            HistoryRetentionPolicy.PERMANENT -> loadPersistedEncounterHistory()
+            HistoryRetentionPolicy.ON_EXIT_DELETE -> clearPersistedEncounterHistory()
+        }
+    }
+
+    @Synchronized
+    private fun loadPersistedEncounterHistory() {
+        if (historyRetentionPolicy != HistoryRetentionPolicy.PERMANENT) return
+        if (!historyStoreFile.exists()) return
+        try {
+            val snapshot = historyJson.decodeFromString<EncounterHistorySnapshot>(
+                historyStoreFile.readText(Charsets.UTF_8)
+            )
+            encounterHistory.clear()
+            snapshot.history
+                .sortedByDescending { it.endedAt }
+                .take(maxEncounterHistory)
+                .forEach { encounterHistory.addLast(it) }
+
+            archivedEncounterTokens.clear()
+            archivedEncounterTokens.addAll(encounterHistory.map { it.token })
+
+            encounterBattleDetailStore.clear()
+            val validTokens = encounterHistory.mapTo(hashSetOf()) { it.token }
+            snapshot.battleDetail.forEach { (token, byUid) ->
+                if (token !in validTokens) return@forEach
+                encounterBattleDetailStore[token] = byUid
+            }
+
+            val maxStoredToken = encounterHistory.maxOfOrNull { it.token } ?: 0L
+            encounterSequence = maxOf(encounterSequence, snapshot.encounterSequence, maxStoredToken)
+            currentEncounterToken = maxOf(currentEncounterToken, encounterSequence)
+            logger.info(
+                "저장된 전투기록 복원 완료 count={} detailCount={} token={}",
+                encounterHistory.size,
+                encounterBattleDetailStore.size,
+                currentEncounterToken
+            )
+        } catch (e: Exception) {
+            logger.warn("저장된 전투기록 복원 실패 file={}", historyStoreFile.absolutePath, e)
+        }
+    }
+
+    @Synchronized
+    private fun persistEncounterHistoryIfNeeded() {
+        if (historyRetentionPolicy != HistoryRetentionPolicy.PERMANENT) return
+        try {
+            ensureHistoryStorageDirectory()
+            val snapshot = EncounterHistorySnapshot(
+                history = encounterHistory.toList(),
+                battleDetail = encounterBattleDetailStore.toMap(),
+                encounterSequence = encounterSequence,
+            )
+            historyStoreFile.writeText(historyJson.encodeToString(snapshot), Charsets.UTF_8)
+        } catch (e: Exception) {
+            logger.warn("전투기록 저장 실패 file={}", historyStoreFile.absolutePath, e)
+        }
+    }
+
+    @Synchronized
+    private fun clearPersistedEncounterHistory() {
+        try {
+            if (historyStoreFile.exists()) {
+                historyStoreFile.delete()
+            }
+        } catch (e: Exception) {
+            logger.warn("전투기록 파일 삭제 실패 file={}", historyStoreFile.absolutePath, e)
+        }
     }
 
     private fun inferOriginalSkillCode(skillCode: Int): Int? {

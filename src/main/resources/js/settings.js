@@ -1,6 +1,11 @@
 ﻿(function () {
   const storageKey = "aion2.hotkey.reset";
+  const historyRetentionStorageKey = "aion2.history.retention";
   const defaultHotkey = { mods: 0x0002, vk: 0x54, label: "CTRL + T" };
+  const HISTORY_RETENTION = {
+    ON_EXIT_DELETE: "on_exit_delete",
+    PERMANENT: "permanent",
+  };
   const BRIDGE_RETRY_MS = 200;
   const BRIDGE_RETRY_LIMIT = 50;
   const modifierLabels = [
@@ -59,13 +64,38 @@
     localStorage.setItem(storageKey, JSON.stringify(data));
   };
 
+  const normalizeHistoryRetention = (raw) => {
+    const value = String(raw ?? "").trim().toLowerCase();
+    if (value === HISTORY_RETENTION.PERMANENT) return HISTORY_RETENTION.PERMANENT;
+    return HISTORY_RETENTION.ON_EXIT_DELETE;
+  };
+
+  const loadHistoryRetention = () => {
+    try {
+      const raw = localStorage.getItem(historyRetentionStorageKey);
+      if (!raw) return null;
+      return normalizeHistoryRetention(raw);
+    } catch {
+      return null;
+    }
+  };
+
+  const saveHistoryRetention = (value) => {
+    localStorage.setItem(historyRetentionStorageKey, normalizeHistoryRetention(value));
+  };
+
   const applyHotkey = (data) => {
     if (!data || typeof data !== "object") return;
     if (!window.javaBridge?.setHotkey) return;
     window.javaBridge.setHotkey(data.mods, data.vk);
   };
 
-  const createSettingsUI = ({ panel, closeBtn, saveBtn, input }) => {
+  const applyHistoryRetention = (value) => {
+    const normalized = normalizeHistoryRetention(value);
+    window.javaBridge?.setHistoryRetentionPolicy?.(normalized);
+  };
+
+  const createSettingsUI = ({ panel, closeBtn, saveBtn, input, retentionSelect }) => {
     if (!panel || !closeBtn || !saveBtn || !input) {
       return null;
     }
@@ -78,10 +108,23 @@
     let current = needsMigrateDefault ? { ...defaultHotkey } : (stored ?? { ...defaultHotkey });
     if (!stored || needsMigrateDefault) saveHotkey(current);
     input.value = current.label || "";
+    let currentRetention = loadHistoryRetention() ?? HISTORY_RETENTION.ON_EXIT_DELETE;
+    currentRetention = normalizeHistoryRetention(currentRetention);
+    saveHistoryRetention(currentRetention);
+    if (retentionSelect) {
+      retentionSelect.value = currentRetention;
+    }
 
     const ensureBridge = (attempt = 0) => {
       if (window.javaBridge?.setHotkey) {
+        const bridgeRetentionRaw = window.javaBridge?.getHistoryRetentionPolicy?.();
+        currentRetention = normalizeHistoryRetention(bridgeRetentionRaw || currentRetention);
+        saveHistoryRetention(currentRetention);
+        if (retentionSelect) {
+          retentionSelect.value = currentRetention;
+        }
         applyHotkey(current);
+        applyHistoryRetention(currentRetention);
         return;
       }
       if (attempt >= BRIDGE_RETRY_LIMIT) return;
@@ -103,6 +146,11 @@
       if (!Number.isFinite(vk) || !label) return;
       current = { mods, vk, label };
       input.value = label;
+    };
+
+    const handleRetentionChange = () => {
+      if (!retentionSelect) return;
+      currentRetention = normalizeHistoryRetention(retentionSelect.value);
     };
 
     const startCapture = () => {
@@ -136,11 +184,14 @@
     saveBtn.addEventListener("click", () => {
       saveHotkey(current);
       applyHotkey(current);
+      saveHistoryRetention(currentRetention);
+      applyHistoryRetention(currentRetention);
       close();
     });
 
     input.addEventListener("focus", startCapture);
     input.addEventListener("blur", stopCapture);
+    retentionSelect?.addEventListener("change", handleRetentionChange);
 
     return { open, close };
   };

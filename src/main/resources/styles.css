@@ -384,7 +384,7 @@
   position: absolute;
   top: 0px;
   left: calc(100% + 8px);
-  width: 320px;
+  width: min(320px, calc(100vw - 12px));
   background: rgb(12, 22, 40);
   border-radius: var(--rounded);
   color: var(--text-color);
@@ -434,6 +434,16 @@
       outline: none;
     }
 
+    .settingsSelect {
+      background: rgba(14, 18, 22, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-color);
+      padding: 10px 12px;
+      border-radius: var(--rounded-xs);
+      font-size: 14px;
+      outline: none;
+    }
+
     .settingsInput.isCapturing {
       border-color: var(--dps);
       box-shadow: 0 0 0 1px rgba(41, 255, 111, 0.4);
@@ -466,7 +476,7 @@
   position: absolute;
   top: 0px;
   left: calc(100% + 8px);
-  width: 360px;
+  width: min(360px, calc(100vw - 12px));
   background: rgb(12, 22, 40);
   border-radius: var(--rounded);
   color: var(--text-color);
@@ -532,6 +542,7 @@
     justify-content: space-between;
     gap: 8px;
     font-size: 13px;
+    align-items: flex-start;
   }
 
   .historyTarget {
@@ -544,6 +555,10 @@
 
   .historyTime {
     opacity: 0.85;
+    text-align: right;
+    white-space: nowrap;
+    font-size: 11px;
+    line-height: 1.3;
   }
 
   .historyBottom {
@@ -568,6 +583,22 @@
     text-align: left;
     font-size: 12px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .historyMemberIcon {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    flex: 0 0 18px;
+  }
+
+  .historyMemberText {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .historyMember:hover {

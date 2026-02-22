@@ -58,6 +58,14 @@
                 readonly />
               <div class="settingsHint">Ctrl/Alt 조합만 사용 가능합니다</div>
             </div>
+            <div class="settingsRow">
+              <div class="settingsLabel">전투기록 보관</div>
+              <select class="settingsSelect settingsHistoryRetention">
+                <option value="on_exit_delete">프로그램 종료시 삭제</option>
+                <option value="permanent">영구 보관</option>
+              </select>
+              <div class="settingsHint">영구 보관 시 다음 실행에도 전투기록과 상세 로그가 유지됩니다.</div>
+            </div>
           </div>
           <div class="settingsFooter">
             <button class="settingsBtnPrimary settingsSave">저장</button>

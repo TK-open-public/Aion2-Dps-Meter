@@ -126,9 +126,19 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
                 logger.warn("브라우저 열기 실패: {}", url, e)
             }
         }
+
+        fun setHistoryRetentionPolicy(policy: String?) {
+            dpsCalculator.setHistoryRetentionPolicy(policy)
+        }
+
+        fun getHistoryRetentionPolicy(): String {
+            return dpsCalculator.getHistoryRetentionPolicy()
+        }
+
         fun exitApp() {
-          Platform.exit()     
-          exitProcess(0)       
+            performShutdown()
+            Platform.exit()
+            exitProcess(0)
         }
 
         fun setHotkey(modifiers: Int, keyCode: Int) {
@@ -166,6 +176,8 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
     private var httpExecutor: ExecutorService? = null
     @Volatile
     private var httpPort = 0
+    @Volatile
+    private var shutdownHandled = false
 
     companion object {
         internal fun shouldRegisterHotkey(
@@ -183,9 +195,7 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
 
     override fun start(stage: Stage) {
         stage.setOnCloseRequest {
-            stopHotkeyThread()
-            stopForegroundHook()
-            stopLocalServer()
+            performShutdown()
             exitProcess(0)
         }
         val webView = WebView()
@@ -289,10 +299,22 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
     }
 
     override fun stop() {
+        performShutdown()
+        super.stop()
+    }
+
+    @Synchronized
+    private fun performShutdown() {
+        if (shutdownHandled) return
+        shutdownHandled = true
+        try {
+            dpsCalculator.handleAppShutdown()
+        } catch (e: Exception) {
+            logger.warn("전투기록 종료 처리 실패", e)
+        }
         stopHotkeyThread()
         stopForegroundHook()
         stopLocalServer()
-        super.stop()
     }
 
     private fun registerHotkey(modifiers: Int, keyCode: Int) {

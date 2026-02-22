@@ -53,6 +53,7 @@ class DpsApp {
     this.settingsClose = document.querySelector(".settingsClose");
     this.settingsSave = document.querySelector(".settingsSave");
     this.settingsInput = document.querySelector(".settingsInput");
+    this.settingsHistoryRetention = document.querySelector(".settingsHistoryRetention");
     this.historyPanel = document.querySelector(".historyPanel");
     this.historyClose = document.querySelector(".historyClose");
     this.historyList = document.querySelector(".historyList");
@@ -78,6 +79,7 @@ class DpsApp {
       onClickUserRow: (row) => {
         this.raiseFloatingPanel(this.detailsPanel);
         this.detailsUI.open(row);
+        requestAnimationFrame(() => this.normalizePanelPosition(this.detailsPanel, "absolute"));
       },
     });
 
@@ -345,7 +347,7 @@ class DpsApp {
       targetEl.textContent = targetName;
       const clockEl = document.createElement("div");
       clockEl.className = "historyTime";
-      clockEl.textContent = this.formatHistoryClock(endedAt);
+      clockEl.textContent = this.formatHistoryDateTime(endedAt);
       topEl.append(targetEl, clockEl);
 
       const bottomEl = document.createElement("div");
@@ -366,12 +368,27 @@ class DpsApp {
         const uid = Number(member.uid);
         if (!Number.isFinite(uid)) return;
         const nickname = String(member.nickname ?? "").trim() || String(uid);
+        const job = String(member.job ?? "").trim();
         const contrib = Number(member.damageContribution);
         const contribText = Number.isFinite(contrib) ? `${contrib.toFixed(1)}%` : "-";
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "historyMember";
-        btn.textContent = `${nickname} (${contribText})`;
+        if (job) {
+          const iconEl = document.createElement("img");
+          iconEl.className = "historyMemberIcon";
+          iconEl.src = `./assets/${job}.png`;
+          iconEl.alt = job;
+          iconEl.draggable = false;
+          iconEl.addEventListener("error", () => {
+            iconEl.style.display = "none";
+          });
+          btn.appendChild(iconEl);
+        }
+        const textEl = document.createElement("span");
+        textEl.className = "historyMemberText";
+        textEl.textContent = `${nickname} (${contribText})`;
+        btn.appendChild(textEl);
         btn.addEventListener("click", () => {
           this.raiseFloatingPanel(this.detailsPanel);
           this.detailsUI?.open?.({
@@ -382,6 +399,7 @@ class DpsApp {
             historyToken: encounterToken,
             historyBattleTime: battleTimeMs,
           }, { force: true });
+          requestAnimationFrame(() => this.normalizePanelPosition(this.detailsPanel, "absolute"));
         });
         membersEl.appendChild(btn);
         });
@@ -399,13 +417,16 @@ class DpsApp {
     return `${mm}:${ss}`;
   }
 
-  formatHistoryClock(ts) {
-    if (!Number.isFinite(ts) || ts <= 0) return "--:--:--";
+  formatHistoryDateTime(ts) {
+    if (!Number.isFinite(ts) || ts <= 0) return "---- -- -- --:--:--";
     const date = new Date(ts);
+    const yyyy = String(date.getFullYear());
+    const MM = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
     const hh = String(date.getHours()).padStart(2, "0");
     const mm = String(date.getMinutes()).padStart(2, "0");
     const ss = String(date.getSeconds()).padStart(2, "0");
-    return `${hh}:${mm}:${ss}`;
+    return `${yyyy}-${MM}-${dd} ${hh}:${mm}:${ss}`;
   }
 
   openHistoryPanel() {
@@ -414,6 +435,7 @@ class DpsApp {
     this.detailsUI?.close?.();
     this.refreshEncounterHistory();
     this.historyPanel.classList.add("open");
+    this.normalizePanelPosition(this.historyPanel, "absolute");
     this.raiseFloatingPanel(this.historyPanel);
     this.historyPanelOpen = true;
   }
@@ -562,6 +584,7 @@ class DpsApp {
       if (!this.settingsUI) this.bindSettingsUI();
       this.raiseFloatingPanel(this.settingsPanel);
       this.settingsUI?.open?.();
+      this.normalizePanelPosition(this.settingsPanel, "absolute");
     });
     this.collapseBtn?.addEventListener("click", () => {
       this.isCollapse = !this.isCollapse;
@@ -598,6 +621,7 @@ class DpsApp {
       closeBtn: this.settingsClose,
       saveBtn: this.settingsSave,
       input: this.settingsInput,
+      retentionSelect: this.settingsHistoryRetention,
     });
   }
 
@@ -632,10 +656,64 @@ class DpsApp {
       mode: "fixed",
       dragTopAreaPx: 24,
     });
+    window.addEventListener("resize", () => {
+      this.normalizePanelPosition(this.settingsPanel, "absolute");
+      this.normalizePanelPosition(this.historyPanel, "absolute");
+      this.normalizePanelPosition(this.detailsPanel, "absolute");
+      this.normalizePanelPosition(this.consolePanel, "fixed");
+    });
   }
 
   panelStorageKey(name) {
     return `${this._panelPositionStoragePrefix}${name}`;
+  }
+
+  clampPanelPosition(panel, left, top, mode = "absolute") {
+    if (!panel) return { left, top };
+    const rect = panel.getBoundingClientRect();
+    const panelWidth = Math.max(0, rect.width || panel.offsetWidth || 0);
+    const panelHeight = Math.max(0, rect.height || panel.offsetHeight || 0);
+
+    let minLeft = 0;
+    let minTop = 0;
+    let maxLeft = 0;
+    let maxTop = 0;
+
+    if (mode === "fixed") {
+      minLeft = 0;
+      minTop = 0;
+      maxLeft = window.innerWidth - panelWidth;
+      maxTop = window.innerHeight - panelHeight;
+    } else {
+      const parentRect = panel.offsetParent?.getBoundingClientRect?.() ?? { left: 0, top: 0 };
+      minLeft = -parentRect.left;
+      minTop = -parentRect.top;
+      maxLeft = window.innerWidth - parentRect.left - panelWidth;
+      maxTop = window.innerHeight - parentRect.top - panelHeight;
+    }
+
+    if (!Number.isFinite(maxLeft)) maxLeft = minLeft;
+    if (!Number.isFinite(maxTop)) maxTop = minTop;
+    if (maxLeft < minLeft) maxLeft = minLeft;
+    if (maxTop < minTop) maxTop = minTop;
+
+    return {
+      left: Math.min(Math.max(left, minLeft), maxLeft),
+      top: Math.min(Math.max(top, minTop), maxTop),
+    };
+  }
+
+  normalizePanelPosition(panel, mode = "absolute") {
+    if (!panel) return;
+    const computed = window.getComputedStyle(panel);
+    const left = Number.parseFloat(computed.left);
+    const top = Number.parseFloat(computed.top);
+    if (!Number.isFinite(left) || !Number.isFinite(top)) return;
+    const clamped = this.clampPanelPosition(panel, left, top, mode);
+    panel.style.left = `${clamped.left}px`;
+    panel.style.top = `${clamped.top}px`;
+    panel.style.right = "auto";
+    panel.style.bottom = "auto";
   }
 
   loadPanelPosition(panel, storageName, mode = "absolute") {
@@ -647,8 +725,9 @@ class DpsApp {
       const left = Number(parsed?.left);
       const top = Number(parsed?.top);
       if (!Number.isFinite(left) || !Number.isFinite(top)) return;
-      panel.style.left = `${left}px`;
-      panel.style.top = `${top}px`;
+      const clamped = this.clampPanelPosition(panel, left, top, mode);
+      panel.style.left = `${clamped.left}px`;
+      panel.style.top = `${clamped.top}px`;
       panel.style.right = "auto";
       panel.style.bottom = "auto";
       if (mode === "fixed") {
@@ -684,6 +763,7 @@ class DpsApp {
   bindDraggablePanel({ panel, handleSelector, storageName, mode = "absolute", dragTopAreaPx = 0 }) {
     if (!panel || !handleSelector) return;
     this.loadPanelPosition(panel, storageName, mode);
+    this.normalizePanelPosition(panel, mode);
     panel.addEventListener("mousedown", () => this.raiseFloatingPanel(panel));
 
     let isDragging = false;
@@ -733,8 +813,9 @@ class DpsApp {
         panel.style.position = "fixed";
       }
 
-      panel.style.left = `${startLeft + deltaX}px`;
-      panel.style.top = `${startTop + deltaY}px`;
+      const clamped = this.clampPanelPosition(panel, startLeft + deltaX, startTop + deltaY, mode);
+      panel.style.left = `${clamped.left}px`;
+      panel.style.top = `${clamped.top}px`;
       panel.style.right = "auto";
       panel.style.bottom = "auto";
     });
@@ -743,6 +824,7 @@ class DpsApp {
       if (!isDragging) return;
       isDragging = false;
       document.body.style.userSelect = "";
+      this.normalizePanelPosition(panel, mode);
       this.savePanelPosition(panel, storageName);
     });
   }
