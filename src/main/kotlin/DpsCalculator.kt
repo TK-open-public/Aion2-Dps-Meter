@@ -908,6 +908,8 @@ class DpsCalculator(private val dataStorage: DataStorage) {
     private val minRecentDamageToSwitch = 10_000L
     // 보스 패턴/무적/페이즈 전환으로 10~60초 공백이 자주 발생하므로 2분까지는 동일 전투로 유지한다.
     private val encounterBreakIdleMs = 120_000L
+    // mobCode가 바뀌더라도 소환몹/짧은 페이즈 전환에서 즉시 분리되지 않도록 최소 간격을 둔다.
+    private val encounterBossKeySwitchMinGapMs = 30_000L
     private val encounterStartLookbackMs = 12_000L
     private val maxEncounterHistory = 80
     private val minStoredEncounterMs = 60_000L
@@ -1156,7 +1158,9 @@ class DpsCalculator(private val dataStorage: DataStorage) {
             val splitByBossKeyChange = currentEncounterStartAt > 0L &&
                 previousEncounterKey.isNotBlank() &&
                 selectedEncounterKey.isNotBlank() &&
-                previousEncounterKey != selectedEncounterKey
+                previousEncounterKey != selectedEncounterKey &&
+                previousLastDamageTime > 0L &&
+                targetSwitchGap >= encounterBossKeySwitchMinGapMs
             val splitByLongIdle = currentEncounterStartAt > 0L &&
                 previousLastDamageTime > 0L &&
                 // 전투 분리는 "실제 공백이 충분히 긴 경우"에만 허용해 오탐을 최소화한다.
