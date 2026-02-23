@@ -910,6 +910,8 @@ class DpsCalculator(private val dataStorage: DataStorage) {
     private val encounterBreakIdleMs = 120_000L
     // mobCode가 바뀌더라도 소환몹/짧은 페이즈 전환에서 즉시 분리되지 않도록 최소 간격을 둔다.
     private val encounterBossKeySwitchMinGapMs = 30_000L
+    // 전투시간 표시/집계용 시간은 긴 무딜 구간을 일부 압축해 과대 계산을 줄인다.
+    private val encounterBattleTimeGapCapMs = 12_000L
     private val encounterStartLookbackMs = 12_000L
     private val maxEncounterHistory = 80
     private val minStoredEncounterMs = 60_000L
@@ -1034,6 +1036,9 @@ class DpsCalculator(private val dataStorage: DataStorage) {
         var totalDamage = 0L
         var firstPacketTs = Long.MAX_VALUE
         var lastPacketTs = 0L
+        var previousDamageTs = -1L
+        var activeBattleTime = 0L
+        var includedPacketCount = 0
 
         currentTargetPackets.forEach { pdp ->
             val ts = pdp.getTimeStamp()
@@ -1047,6 +1052,12 @@ class DpsCalculator(private val dataStorage: DataStorage) {
             if (ts > lastPacketTs) {
                 lastPacketTs = ts
             }
+            if (previousDamageTs >= 0L) {
+                val gap = (ts - previousDamageTs).coerceAtLeast(0L)
+                activeBattleTime += gap.coerceAtMost(encounterBattleTimeGapCapMs)
+            }
+            previousDamageTs = ts
+            includedPacketCount++
 
             val uid = dataStorage.getSummonData()[pdp.getActorId()] ?: pdp.getActorId()
             val nickname: String = nicknameData[uid]
@@ -1074,19 +1085,21 @@ class DpsCalculator(private val dataStorage: DataStorage) {
         }
 
         val rawBattleTime = (lastPacketTs - firstPacketTs).coerceAtLeast(1L)
-        val dpsBattleTime = rawBattleTime.coerceAtLeast(1000L)
+        val effectiveBattleTime =
+            if (includedPacketCount <= 1) {
+                rawBattleTime
+            } else {
+                activeBattleTime.coerceAtLeast(1L).coerceAtMost(rawBattleTime)
+            }
+        val dpsBattleTime = effectiveBattleTime.coerceAtLeast(1000L)
 
         val iterator = dpsData.map.iterator()
         while (iterator.hasNext()) {
             val (_, data) = iterator.next()
-            if (data.job == "") {
-                iterator.remove()
-            } else {
-                data.dps = data.amount / dpsBattleTime * 1000
-                data.damageContribution = data.amount / totalDamage.toDouble() * 100
-            }
+            data.dps = data.amount / dpsBattleTime * 1000
+            data.damageContribution = data.amount / totalDamage.toDouble() * 100
         }
-        dpsData.battleTime = rawBattleTime
+        dpsData.battleTime = effectiveBattleTime
         return EncounterBuildResult(
             dpsData = dpsData,
             totalDamage = totalDamage,
@@ -1268,11 +1281,13 @@ class DpsCalculator(private val dataStorage: DataStorage) {
             encounterToken = currentEncounterToken,
             targetName = resolveTargetName(currentTarget)
         ) ?: return
-        if (encounterData.dpsData.battleTime < minStoredEncounterMs) {
+        val encounterSpanMs = (encounterData.endedAt - encounterData.startedAt).coerceAtLeast(1L)
+        if (encounterSpanMs < minStoredEncounterMs) {
             logger.info(
-                "엔카운터 기록 스킵 token={} reason={} battleTime={}ms (<{}ms)",
+                "엔카운터 기록 스킵 token={} reason={} span={}ms effective={}ms (<{}ms)",
                 currentEncounterToken,
                 reason,
+                encounterSpanMs,
                 encounterData.dpsData.battleTime,
                 minStoredEncounterMs
             )
