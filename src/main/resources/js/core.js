@@ -20,7 +20,6 @@ class DpsApp {
     this.GRACE_MS = 30000;
     this.GRACE_ARM_MS = 1000;
 
-
     // battleTime 캐시
     this._battleTimeVisible = false;
     this._lastBattleTimeMs = null;
@@ -121,7 +120,6 @@ class DpsApp {
   resetAll({ callBackend = true } = {}) {
     this.resetPending = !!callBackend;
 
-
     this.lastSnapshot = null;
     this.lastJson = null;
 
@@ -140,9 +138,6 @@ class DpsApp {
       window.javaBridge?.resetDps?.();
     }
   }
-
-
-
 
   fetchDps() {
     if (this.isCollapse) return;
@@ -167,7 +162,7 @@ class DpsApp {
       if (shouldBeVisible) {
         this.battleTime.update(now, this._lastBattleTimeMs);
       }
-  
+
       return;
     }
 
@@ -175,7 +170,6 @@ class DpsApp {
 
     const { rows, targetName, battleTimeMs } = this.buildRowsFromPayload(raw);
     this._lastBattleTimeMs = battleTimeMs;
-
 
     const showByServer = rows.length > 0;
     if (this.resetPending) {
@@ -296,7 +290,7 @@ class DpsApp {
       const nameRaw = typeof value.skillName === "string" ? value.skillName.trim() : "";
       const baseName = nameRaw ? nameRaw : `스킬 ${code}`;
 
-      // 공통 
+      // 공통
       const pushSkill = ({
         codeKey,
         name,
@@ -446,7 +440,7 @@ class DpsApp {
 
     document.addEventListener("mousedown", (e) => {
       const ignoreTarget = e.target.closest(
-        ".headerBtns, .settingsPanel, .detailsPanel, .console, input, button"
+        ".headerBtns, .settingsPanel, .detailsPanel, .console, input, button",
       );
       if (ignoreTarget) return;
       isDragging = true;
@@ -514,3 +508,10 @@ const setupDebugConsole = () => {
 
 setupDebugConsole();
 const dpsApp = DpsApp.createInstance();
+window.resetDpsUi = function (options) {
+  const app = DpsApp.instance || dpsApp || DpsApp.createInstance();
+
+  const callBackend = options?.callBackend === true;
+
+  app.resetAll({ callBackend });
+};
