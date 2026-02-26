@@ -109,6 +109,7 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
         stage.title = "Aion2 Dps Overlay"
 
         stage.show()
+        HotkeyHandler.registerCallback { dpsCalculator.resetDataStorage() }
         HotkeyHandler.start()
         Timeline(KeyFrame(Duration.millis(500.0), {
             dpsData = dpsCalculator.getDps()

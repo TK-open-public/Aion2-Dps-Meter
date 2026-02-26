@@ -21,10 +21,17 @@ object HotkeyHandler {
     @Volatile
     private var running = false
 
+    private var onHotkeyPressed: (() -> Unit)? = null
+
+    fun registerCallback(callback: () -> Unit) {
+        onHotkeyPressed = callback
+    }
+
     data class HotkeyCombo(val modifiers: Int, val vkCode: Int) {
         override fun toString() = "modifiers=$modifiers,vkCode=$vkCode"
 
         companion object {
+            private val logger = LoggerFactory.getLogger(HotkeyCombo::class.java)
             fun fromString(s: String): HotkeyCombo? {
                 return try {
                     val map = s.split(",").associate {
@@ -66,7 +73,7 @@ object HotkeyHandler {
             val hotkeyId = 1
 
             val registered = user32.RegisterHotKey(
-                WinDef.HWND(null),
+                null,
                 hotkeyId,
                 currentHotkey.modifiers,
                 currentHotkey.vkCode
@@ -84,7 +91,7 @@ object HotkeyHandler {
             while (running) {
                 if (user32.PeekMessage(msg, null, 0, 0, 1)) {
                     if (msg.message == WinUser.WM_HOTKEY) {
-                        onHotkeyPressed()
+                        onHotkeyPressed?.invoke()
                     }
                 } else {
                     Thread.sleep(10)
@@ -102,11 +109,5 @@ object HotkeyHandler {
         running = false
         listenerThread?.interrupt()
         listenerThread = null
-    }
-
-
-    private fun onHotkeyPressed() {
-        logger.info("단축키 감지")
-        //콜백으로 바꿀지 고려
     }
 }
