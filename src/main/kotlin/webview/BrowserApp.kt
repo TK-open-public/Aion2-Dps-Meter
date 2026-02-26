@@ -1,6 +1,7 @@
 package com.tbread.webview
 
 import com.tbread.DpsCalculator
+import com.tbread.config.HotkeyHandler
 import com.tbread.entity.DpsData
 import javafx.animation.KeyFrame
 import javafx.animation.Timeline
@@ -14,6 +15,7 @@ import javafx.stage.Stage
 import javafx.stage.StageStyle
 import javafx.util.Duration
 import javafx.application.Platform
+import javafx.scene.web.WebEngine
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
 import kotlin.system.exitProcess
@@ -26,7 +28,10 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
 
     private val logger = LoggerFactory.getLogger(BrowserApp::class.java)
 
-    class JSBridge(private val stage: Stage,private val dpsCalculator: DpsCalculator,private val hostServices: HostServices,) {
+    private lateinit var engine:WebEngine
+
+    inner class JSBridge(private val stage: Stage,private val hostServices: HostServices,) {
+
         fun moveWindow(x: Double, y: Double) {
             stage.x = x
             stage.y = y
@@ -34,7 +39,17 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
 
         fun resetDps(){
             dpsCalculator.resetDataStorage()
+            engine.executeScript("resetDpsUI()")
         }
+
+        fun updateHotkey(modifiers: Int, vkCode: Int) {
+            HotkeyHandler.updateHotkey(modifiers, vkCode)
+        }
+
+        fun getHotkey(): String {
+            return HotkeyHandler.getCurrentHotkey().toString()
+        }
+
         fun openBrowser(url: String) {
             try {
                 hostServices.showDocument(url)
@@ -42,10 +57,12 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
                 e.printStackTrace()
             }
         }
+
         fun exitApp() {
           Platform.exit()     
           exitProcess(0)       
         }
+
     }
 
     @Volatile
@@ -58,13 +75,14 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
 
     override fun start(stage: Stage) {
         stage.setOnCloseRequest {
+            HotkeyHandler.stop()
             exitProcess(0)
         }
         val webView = WebView()
-        val engine = webView.engine
+        engine = webView.engine
         engine.load(javaClass.getResource("/index.html")?.toExternalForm())
 
-        val bridge = JSBridge(stage, dpsCalculator, hostServices)
+        val bridge = JSBridge(stage, hostServices)
         engine.loadWorker.stateProperty().addListener { _, _, newState ->
             if (newState == Worker.State.SUCCEEDED) {
                 val window = engine.executeScript("window") as JSObject
@@ -95,6 +113,13 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
         stage.title = "Aion2 Dps Overlay"
 
         stage.show()
+        HotkeyHandler.registerCallback {
+            Platform.runLater{
+                bridge.resetDps()
+            }
+
+        }
+        HotkeyHandler.start()
         Timeline(KeyFrame(Duration.millis(500.0), {
             dpsData = dpsCalculator.getDps()
         })).apply {

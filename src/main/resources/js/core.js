@@ -20,7 +20,6 @@ class DpsApp {
     this.GRACE_MS = 30000;
     this.GRACE_ARM_MS = 1000;
 
-
     // battleTime 캐시
     this._battleTimeVisible = false;
     this._lastBattleTimeMs = null;
@@ -42,9 +41,15 @@ class DpsApp {
 
     this.resetBtn = document.querySelector(".resetBtn");
     this.collapseBtn = document.querySelector(".collapseBtn");
+    this.settingsBtn = document.querySelector(".settingsBtn");
+    this.settingsPanel = document.querySelector(".settingsPanel");
+    this.settingsClose = document.querySelector(".settingsClose");
+    this.settingsSave = document.querySelector(".settingsSave");
+    this.settingsInput = document.querySelector(".settingsInput");
 
     this.bindHeaderButtons();
     this.bindDragToMoveWindow();
+    this.bindSettingsUI();
 
     this.meterUI = createMeterUI({
       elList: this.elList,
@@ -111,9 +116,8 @@ class DpsApp {
     this._pollTimer = null;
   }
 
-  resetAll({ callBackend = true } = {}) {
-    this.resetPending = !!callBackend;
-
+  resetUI() {
+    this.resetPending = true;
 
     this.lastSnapshot = null;
     this.lastJson = null;
@@ -129,13 +133,7 @@ class DpsApp {
     if (this.elBossName) {
       this.elBossName.textContent = "DPS METER";
     }
-    if (callBackend) {
-      window.javaBridge?.resetDps?.();
-    }
   }
-
-
-
 
   fetchDps() {
     if (this.isCollapse) return;
@@ -160,7 +158,7 @@ class DpsApp {
       if (shouldBeVisible) {
         this.battleTime.update(now, this._lastBattleTimeMs);
       }
-  
+
       return;
     }
 
@@ -168,7 +166,6 @@ class DpsApp {
 
     const { rows, targetName, battleTimeMs } = this.buildRowsFromPayload(raw);
     this._lastBattleTimeMs = battleTimeMs;
-
 
     const showByServer = rows.length > 0;
     if (this.resetPending) {
@@ -289,7 +286,7 @@ class DpsApp {
       const nameRaw = typeof value.skillName === "string" ? value.skillName.trim() : "";
       const baseName = nameRaw ? nameRaw : `스킬 ${code}`;
 
-      // 공통 
+      // 공통
       const pushSkill = ({
         codeKey,
         name,
@@ -378,6 +375,10 @@ class DpsApp {
   }
 
   bindHeaderButtons() {
+    this.settingsBtn?.addEventListener("click", () => {
+      if (!this.settingsUI) this.bindSettingsUI();
+      this.settingsUI?.open?.();
+    });
     this.collapseBtn?.addEventListener("click", () => {
       this.isCollapse = !this.isCollapse;
 
@@ -385,7 +386,8 @@ class DpsApp {
       if (this.isCollapse) {
         this.stopPolling();
         this.elList.style.display = "none";
-        this.resetAll({ callBackend: true });
+        this.resetUI();
+        window.javaBridge?.resetDps?.();
       } else {
         // 펼치면 polling 재개하고 즉시 1회 fetch
         this.elList.style.display = "grid";
@@ -404,7 +406,18 @@ class DpsApp {
       lucide.createIcons({ root: this.collapseBtn });
     });
     this.resetBtn?.addEventListener("click", () => {
-      this.resetAll({ callBackend: true });
+      this.resetUI();
+      window.javaBridge?.resetDps?.();
+    });
+  }
+
+  bindSettingsUI() {
+    if (this.settingsUI || typeof window.createSettingsUI !== "function") return;
+    this.settingsUI = window.createSettingsUI({
+      panel: this.settingsPanel,
+      closeBtn: this.settingsClose,
+      saveBtn: this.settingsSave,
+      input: this.settingsInput,
     });
   }
 
@@ -416,6 +429,10 @@ class DpsApp {
       initialStageY = 0;
 
     document.addEventListener("mousedown", (e) => {
+      const ignoreTarget = e.target.closest(
+        ".headerBtns, .settingsPanel, .detailsPanel, .console, input, button",
+      );
+      if (ignoreTarget) return;
       isDragging = true;
       startX = e.screenX;
       startY = e.screenY;
@@ -481,3 +498,7 @@ const setupDebugConsole = () => {
 
 setupDebugConsole();
 const dpsApp = DpsApp.createInstance();
+
+const resetDpsUI = () => {
+  dpsApp.resetUI();
+};

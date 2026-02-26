@@ -120,10 +120,18 @@
       const latestStable = pickLatest(list, false);
       const latestBeta = pickLatest(list, true);
 
+      const isCurrentPrerelease = !!current.pre;
+
       let target = null;
+
       if (latestStable && compareVersion(latestStable.version, current) > 0) {
         target = latestStable;
-      } else if (latestBeta && compareVersion(latestBeta.version, current) > 0) {
+      }
+      else if (
+        isCurrentPrerelease &&
+        latestBeta &&
+        compareVersion(latestBeta.version, current) > 0
+      ) {
         target = latestBeta;
       }
 
