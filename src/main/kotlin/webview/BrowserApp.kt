@@ -1,6 +1,7 @@
 package com.tbread.webview
 
 import com.tbread.DpsCalculator
+import com.tbread.config.HotkeyHandler
 import com.tbread.entity.DpsData
 import javafx.animation.KeyFrame
 import javafx.animation.Timeline
@@ -27,6 +28,7 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
     private val logger = LoggerFactory.getLogger(BrowserApp::class.java)
 
     class JSBridge(private val stage: Stage,private val dpsCalculator: DpsCalculator,private val hostServices: HostServices,) {
+
         fun moveWindow(x: Double, y: Double) {
             stage.x = x
             stage.y = y
@@ -35,6 +37,15 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
         fun resetDps(){
             dpsCalculator.resetDataStorage()
         }
+
+        fun updateHotkey(modifiers: Int, vkCode: Int) {
+            HotkeyHandler.updateHotkey(modifiers, vkCode)
+        }
+
+        fun getHotkey(): String {
+            return HotkeyHandler.getCurrentHotkey().toString()
+        }
+
         fun openBrowser(url: String) {
             try {
                 hostServices.showDocument(url)
@@ -42,10 +53,12 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
                 e.printStackTrace()
             }
         }
+
         fun exitApp() {
           Platform.exit()     
           exitProcess(0)       
         }
+
     }
 
     @Volatile
@@ -58,6 +71,7 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
 
     override fun start(stage: Stage) {
         stage.setOnCloseRequest {
+            HotkeyHandler.stop()
             exitProcess(0)
         }
         val webView = WebView()
@@ -95,6 +109,7 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
         stage.title = "Aion2 Dps Overlay"
 
         stage.show()
+        HotkeyHandler.start()
         Timeline(KeyFrame(Duration.millis(500.0), {
             dpsData = dpsCalculator.getDps()
         })).apply {

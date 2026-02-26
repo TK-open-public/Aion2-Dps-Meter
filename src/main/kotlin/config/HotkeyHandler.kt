@@ -107,6 +107,6 @@ object HotkeyHandler {
 
     private fun onHotkeyPressed() {
         logger.info("단축키 감지")
-        
+        //콜백으로 바꿀지 고려
     }
 }
