@@ -42,9 +42,16 @@ class DpsApp {
 
     this.resetBtn = document.querySelector(".resetBtn");
     this.collapseBtn = document.querySelector(".collapseBtn");
+    this.settingsBtn = document.querySelector(".settingsBtn");
+    this.settingsPanel = document.querySelector(".settingsPanel");
+    this.settingsClose = document.querySelector(".settingsClose");
+    this.settingsSave = document.querySelector(".settingsSave");
+    this.settingsInput = document.querySelector(".settingsInput");
 
     this.bindHeaderButtons();
     this.bindDragToMoveWindow();
+    this.bindSettingsUI();
+    this.bindNativeKeyEvents();
 
     this.meterUI = createMeterUI({
       elList: this.elList,
@@ -378,6 +385,10 @@ class DpsApp {
   }
 
   bindHeaderButtons() {
+    this.settingsBtn?.addEventListener("click", () => {
+      if (!this.settingsUI) this.bindSettingsUI();
+      this.settingsUI?.open?.();
+    });
     this.collapseBtn?.addEventListener("click", () => {
       this.isCollapse = !this.isCollapse;
 
@@ -408,6 +419,24 @@ class DpsApp {
     });
   }
 
+  bindSettingsUI() {
+    if (this.settingsUI || typeof window.createSettingsUI !== "function") return;
+    this.settingsUI = window.createSettingsUI({
+      panel: this.settingsPanel,
+      closeBtn: this.settingsClose,
+      saveBtn: this.settingsSave,
+      input: this.settingsInput,
+    });
+  }
+
+  bindNativeKeyEvents() {
+    window.addEventListener("nativeResetHotKey", (event) => {
+      const detail = event?.detail;
+      if (!detail) return;
+      this.resetAll({ callBackend: true });
+    });
+  }
+
   bindDragToMoveWindow() {
     let isDragging = false;
     let startX = 0,
@@ -416,6 +445,10 @@ class DpsApp {
       initialStageY = 0;
 
     document.addEventListener("mousedown", (e) => {
+      const ignoreTarget = e.target.closest(
+        ".headerBtns, .settingsPanel, .detailsPanel, .console, input, button"
+      );
+      if (ignoreTarget) return;
       isDragging = true;
       startX = e.screenX;
       startY = e.screenY;
@@ -481,11 +514,3 @@ const setupDebugConsole = () => {
 
 setupDebugConsole();
 const dpsApp = DpsApp.createInstance();
-
-window.resetDpsUi = function (options) {
-  const app = DpsApp.instance || dpsApp || DpsApp.createInstance();
-
-  const callBackend = options?.callBackend === true;
-
-  app.resetAll({ callBackend });
-};
