@@ -116,8 +116,8 @@ class DpsApp {
     this._pollTimer = null;
   }
 
-  resetAll({ callBackend = true } = {}) {
-    this.resetPending = !!callBackend;
+  resetUI() {
+    this.resetPending = true;
 
     this.lastSnapshot = null;
     this.lastJson = null;
@@ -132,9 +132,6 @@ class DpsApp {
 
     if (this.elBossName) {
       this.elBossName.textContent = "DPS METER";
-    }
-    if (callBackend) {
-      window.javaBridge?.resetDps?.();
     }
   }
 
@@ -389,7 +386,8 @@ class DpsApp {
       if (this.isCollapse) {
         this.stopPolling();
         this.elList.style.display = "none";
-        this.resetAll({ callBackend: true });
+        this.resetUI();
+        window.javaBridge?.resetDps?.();
       } else {
         // 펼치면 polling 재개하고 즉시 1회 fetch
         this.elList.style.display = "grid";
@@ -408,7 +406,8 @@ class DpsApp {
       lucide.createIcons({ root: this.collapseBtn });
     });
     this.resetBtn?.addEventListener("click", () => {
-      this.resetAll({ callBackend: true });
+      this.resetUI();
+      window.javaBridge?.resetDps?.();
     });
   }
 
@@ -501,7 +500,5 @@ setupDebugConsole();
 const dpsApp = DpsApp.createInstance();
 
 const resetDpsUI = () => {
-  const app = dpsApp;
-
-  app.resetAll({ callBackend: true });
+  dpsApp.resetUI();
 };
