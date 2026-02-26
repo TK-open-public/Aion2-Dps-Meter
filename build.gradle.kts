@@ -41,6 +41,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
     implementation("org.slf4j:slf4j-simple:1.7.26")
 
+    implementation("net.java.dev.jna:jna-platform:5.17.0")
 
 
 }
