@@ -6,6 +6,7 @@ import com.tbread.entity.SpecialDamage
 import net.jpountz.lz4.LZ4Factory
 import org.slf4j.LoggerFactory
 import java.nio.ByteBuffer
+import java.nio.ByteOrder
 
 class StreamProcessor(private val dataStorage: DataStorage) {
     private val logger = LoggerFactory.getLogger(StreamProcessor::class.java)
@@ -33,6 +34,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
             }
         }
         searchOwnNickname(packet)
+        searchOtherNickname(packet)
         var flag = parsingDamage(packet, extraFlag)
         if (flag) return
         flag = parseSummonPacket(packet, extraFlag)
@@ -55,7 +57,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
             var innerOffset = 0
             while (innerOffset < restored.size) {
                 val pastInnerOffset = innerOffset
-                val lengthInfo = readVarInt(restored,innerOffset)
+                val lengthInfo = readVarInt(restored, innerOffset)
                 if (lengthInfo.value == 0) {
                     innerOffset += 1
                     continue
@@ -82,6 +84,8 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         if (flagIdx == -1) return
 
         var offset = flagIdx + 2
+        if (packet.size < offset) return
+
         val userInfo = readVarInt(packet, offset)
         if (userInfo.length < 0) return
 
@@ -98,18 +102,113 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         if (nameLengthInfo.length > 71) return
         if (offset >= packet.size) return
 
+        var server = -1
+        var job = -1
         val np = packet.copyOfRange(offset, offset + nameLengthInfo.value)
         val nickname = String(np, Charsets.UTF_8)
+        if (!isValidNickname(nickname)) return
         dataStorage.appendNickname(userInfo.value, nickname)
         dataStorage.setExecutorCode(userInfo.value)
 
         offset += nameLengthInfo.value
-        if (packet.size < offset + 2) return
-        val server = ByteBuffer.wrap(packet,offset,2).getShort().toInt() and 0xffff
-        offset += 2
+        if (packet.size >= offset + 2) {
+            server = ByteBuffer.wrap(packet, offset, 2)
+                .order(ByteOrder.LITTLE_ENDIAN)
+                .getShort()
+                .toInt() and 0xffff
+            offset += 2
 
-        if (packet.size < offset +1) return
+            if (packet.size >= offset + 1) {
+                job = packet[offset].toInt() and 0xff
+            }
+        }
+    }
+
+    private fun searchOtherNickname(packet: ByteArray) {
+        val flagIdx = findArrayIndex(packet, 0x44, 0x36)
+        if (flagIdx == -1) return
+
+        var offset = flagIdx + 2
+        if (packet.size < offset) return
+
+        val userInfo = readVarInt(packet, offset)
+        offset += userInfo.length
+        if (packet.size < offset) return
+
+        val unknownInfo1 = readVarInt(packet, offset)
+        offset += unknownInfo1.length
+        if (packet.size < offset) return
+
+        val unknownInfo2 = readVarInt(packet, offset)
+        offset += unknownInfo2.length
+        if (packet.size < offset) return
+
+        if (packet.size - offset <= 2) return
+        offset += 1
+        val base = offset
+        //
+        var nickname: String? = null
+        var nickEndOffset = -1
+
+        for (i in 0 until 5) {
+            offset = base + i
+            if (packet.size < offset) continue
+            val nicknameLengthInfo = readVarInt(packet, offset)
+            if (nicknameLengthInfo.length <= 0) continue
+
+            offset += nicknameLengthInfo.length
+            if (nicknameLengthInfo.value < 1 || nicknameLengthInfo.value > 71) continue
+            if (packet.size < offset) continue
+            if (packet.size < offset + nicknameLengthInfo.value) continue
+            val np = packet.copyOfRange(offset, offset + nicknameLengthInfo.value)
+            val candidate = String(np, Charsets.UTF_8)
+
+            offset += nicknameLengthInfo.value
+            if (!isValidNickname(candidate)) continue
+            nickname = candidate
+            nickEndOffset = offset
+            break
+        }
+        if (nickname == null || nickEndOffset == -1) return
+
+        offset = nickEndOffset
+
         val job = packet[offset].toInt() and 0xff
+        offset += 1
+        if (packet.size < offset) return
+        val serverBase = offset
+
+        var server = -1
+        var legionName:String? = null
+        var i = 0
+        while (true) {
+            offset = serverBase + i
+            i++
+            if (packet.size < offset + 2) break
+            val serverCandidate = ByteBuffer.wrap(packet, offset, 2)
+                .order(ByteOrder.LITTLE_ENDIAN)
+                .getShort()
+                .toInt() and 0xffff
+            if (!(serverCandidate in 1001..1021 || serverCandidate in 2001..2021)) continue
+            offset += 2
+            if (packet.size < offset) continue
+            val LegionNameLengthInfo = readVarInt(packet, offset)
+            if (LegionNameLengthInfo.value < 2 || LegionNameLengthInfo.value > 24) continue
+            offset += LegionNameLengthInfo.length
+            if (packet.size < offset + LegionNameLengthInfo.value) continue
+            val lnp = packet.copyOfRange(offset, offset + LegionNameLengthInfo.value)
+            val legionNameCandidate = String(lnp, Charsets.UTF_8)
+            if (legionNameCandidate.any { !it.isDigit() }) {
+                server = serverCandidate
+            }
+//            if (legionNameCandidate.all { it in '\uAC00'..'\uD7A3' }){
+//                legionName = legionNameCandidate
+//                break
+//            }
+        }
+
+        dataStorage.appendNickname(userInfo.value, nickname)
+
     }
 
     private fun parseDoTPacket(packet: ByteArray, extraFlag: Boolean): Boolean {
@@ -501,5 +600,15 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         return flags
     }
 
+    private fun isValidNickname(str: String): Boolean {
+        val hasKoreanOrEnglish = str.any { it in '\uAC00'..'\uD7A3' || it in 'a'..'z' || it in 'A'..'Z' }
+        val allValid = str.all {
+            it in '\uAC00'..'\uD7A3' ||  // 한글 완성형
+                    it in 'a'..'z' ||            // 영어 소문자
+                    it in 'A'..'Z' ||            // 영어 대문자
+                    it.isDigit()                 // 숫자
+        }
+        return hasKoreanOrEnglish && allValid
+    }
 
 }
