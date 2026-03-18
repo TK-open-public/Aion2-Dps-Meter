@@ -15,6 +15,7 @@ class DataStorage {
     private val mobCodeData = HashMap<Int, String>()
     private val mobStorage = HashMap<Int, Int>()
     private var currentTarget:Int = 0
+    private var executorCode:Int = 0
 
     @Synchronized
     fun appendDamage(pdp: ParsedDamagePacket) {
@@ -22,6 +23,10 @@ class DataStorage {
             .add(pdp)
         byTargetStorage.getOrPut(pdp.getTargetId()) { ConcurrentSkipListSet(compareBy<ParsedDamagePacket> { it.getTimeStamp() }.thenBy { it.getUuid() }) }
             .add(pdp)
+    }
+
+    fun setExecutorCode(executorCode:Int) {
+        this.executorCode = executorCode
     }
 
     fun setCurrentTarget(targetId:Int){

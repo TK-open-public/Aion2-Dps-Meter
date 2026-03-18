@@ -101,6 +101,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         val np = packet.copyOfRange(offset, offset + nameLengthInfo.value)
         val nickname = String(np, Charsets.UTF_8)
         dataStorage.appendNickname(userInfo.value, nickname)
+        dataStorage.setExecutorCode(userInfo.value)
 
         offset += nameLengthInfo.value
         if (packet.size < offset + 2) return
