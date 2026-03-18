@@ -17,61 +17,61 @@ class StreamProcessor(private val dataStorage: DataStorage) {
     private val decompressor = decompressFactory.fastDecompressor()
 
     fun onPacketReceived(packet: ByteArray) {
-        try {
-            if (packet.size == 3) return
-            logger.debug("들어온 패킷: {}", toHex(packet))
-            val length = readVarInt(packet).length
-            val extraFlag = packet[length] >= 0xf0.toByte() && packet[length] < 0xff.toByte()
-            if (extraFlag) {
-                if (packet[length + 1] == 0xff.toByte() && packet[length + 2] == 0xff.toByte()) {
-                    decompressPacket(packet, length, true)
-                    return
-                }
-            } else {
-                if (packet[length] == 0xff.toByte() && packet[length + 1] == 0xff.toByte()) {
-                    decompressPacket(packet, length, false)
-                    return
-                }
+        val temp = if (packet.size < 10) packet.size else 10
+        if (packet.size == 3) return
+        val length = readVarInt(packet).length
+        val extraFlag = (packet[length] >= 0xf0.toByte() && packet[length] < 0xff.toByte())
+        if (extraFlag) {
+            if (packet[length + 1] == 0xff.toByte() && packet[length + 2] == 0xff.toByte()) {
+                decompressPacket(packet, length, true)
+                return
             }
-            var flag = parsingDamage(packet, extraFlag)
-            if (flag) return
-            flag = parseSummonPacket(packet, extraFlag)
-            if (flag) return
-            flag = parseDoTPacket(packet, extraFlag)
-            if (flag) return
-            searchNickname(packet)
-        } catch (e: Exception) {
-            e.printStackTrace()
+        } else {
+            if (packet[length] == 0xff.toByte() && packet[length + 1] == 0xff.toByte()) {
+                decompressPacket(packet, length, false)
+                return
+            }
         }
+        var flag = parsingDamage(packet, extraFlag)
+        if (flag) return
+        flag = parseSummonPacket(packet, extraFlag)
+        if (flag) return
+        flag = parseDoTPacket(packet, extraFlag)
+        if (flag) return
+        searchNickname(packet)
     }
 
     private fun decompressPacket(packet: ByteArray, headerLength: Int, extraFlag: Boolean) {
-        var offset = headerLength + 2
-        if (extraFlag) {
-            offset += 1
-        }
-        val originLength = parseUInt32le(packet, offset)
-        offset += 4
-        val restored = ByteArray(originLength)
-        decompressor.decompress(packet, offset, restored, 0, originLength)
-
-        var innerOffset = 0
-        while (true){
-            val pastInnerOffset = innerOffset
-            val lengthInfo = readVarInt(restored)
-            if (lengthInfo.value == 0){
-                innerOffset += 1
-                continue
+        try {
+            var offset = headerLength + 2
+            if (extraFlag) {
+                offset += 1
             }
+            val originLength = parseUInt32le(packet, offset)
+            offset += 4
+            val restored = ByteArray(originLength)
+            decompressor.decompress(packet, offset, restored, 0, originLength)
 
-            val realLength = lengthInfo.value + lengthInfo.length - 4
-            if (realLength <= 0) {
-                logger.error("패킷 길이 체크에서 오류발생 {}, 오프셋 {}", toHex(packet),innerOffset)
-                break
+            var innerOffset = 0
+            while (innerOffset < restored.size) {
+                val pastInnerOffset = innerOffset
+                val lengthInfo = readVarInt(restored,innerOffset)
+                if (lengthInfo.value == 0) {
+                    innerOffset += 1
+                    continue
+                }
+
+                val realLength = lengthInfo.value + lengthInfo.length - 4
+                if (realLength <= 0) {
+                    logger.error("패킷 길이 체크에서 오류발생 {}, 오프셋 {}", toHex(packet), innerOffset)
+                    break
+                }
+
+                onPacketReceived(restored.copyOfRange(pastInnerOffset, pastInnerOffset + realLength))
+                innerOffset += realLength
             }
-
-            onPacketReceived(packet.copyOfRange(pastInnerOffset,pastInnerOffset+realLength))
-            innerOffset += realLength
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
         logger.trace("압축 패킷 해제 종료")
     }
