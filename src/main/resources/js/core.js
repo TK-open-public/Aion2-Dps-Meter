@@ -232,22 +232,21 @@ class DpsApp {
     for (const [id, value] of Object.entries(mapObj || {})) {
       const isObj = value && typeof value === "object";
 
-      const job = isObj ? (value.job ?? "") : "";
-      const nickname = isObj ? (value.nickname ?? "") : "";
+      const user = isObj ? value.user : null;
+      const job = user?.job ?? "";
+      const nickname = user?.nickname ?? "";
       const name = nickname || String(id);
+      const isUser = user?.isExecutor ?? false;
 
       const dpsRaw = isObj ? value.dps : value;
       const dps = Math.trunc(Number(dpsRaw));
 
-      // 소수점 한자리
       const contribRaw = isObj ? Number(value.damageContribution) : NaN;
       const damageContribution = Number.isFinite(contribRaw)
         ? Math.round(contribRaw * 10) / 10
         : NaN;
 
-      if (!Number.isFinite(dps)) {
-        continue;
-      }
+      if (!Number.isFinite(dps)) continue;
 
       rows.push({
         id: String(id),
@@ -255,7 +254,7 @@ class DpsApp {
         job,
         dps,
         damageContribution,
-        isUser: name === this.USER_NAME,
+        isUser,
       });
     }
 
