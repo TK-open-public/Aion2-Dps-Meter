@@ -1,0 +1,5727 @@
+[
+  {
+    "code": 2000000,
+    "name": "샌드백",
+    "boss": false
+  },
+  {
+    "code": 2000001,
+    "name": "샌드백",
+    "boss": false
+  },
+  {
+    "code": 2000002,
+    "name": "드라코뉴트 궁수",
+    "boss": false
+  },
+  {
+    "code": 2000003,
+    "name": "개조 크랄 전사",
+    "boss": false
+  },
+  {
+    "code": 2000004,
+    "name": "오드 거미",
+    "boss": false
+  },
+  {
+    "code": 2000053,
+    "name": "개조 크랄 전사",
+    "boss": false
+  },
+  {
+    "code": 2000059,
+    "name": "샌드백",
+    "boss": false
+  },
+  {
+    "code": 2000073,
+    "name": "샌드백",
+    "boss": false
+  },
+  {
+    "code": 2000091,
+    "name": "샌드백",
+    "boss": false
+  },
+  {
+    "code": 2000412,
+    "name": "파프니르의 독혈 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2000745,
+    "name": "몬스터 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2000791,
+    "name": "수정체",
+    "boss": false
+  },
+  {
+    "code": 2000923,
+    "name": "붉은 눈 거미",
+    "boss": false
+  },
+  {
+    "code": 2000924,
+    "name": "거대 오드 스파키",
+    "boss": false
+  },
+  {
+    "code": 2000925,
+    "name": "라플레시아",
+    "boss": false
+  },
+  {
+    "code": 2000926,
+    "name": "빛 바랜 파피스",
+    "boss": false
+  },
+  {
+    "code": 2000927,
+    "name": "빛 바랜 파피스",
+    "boss": false
+  },
+  {
+    "code": 2000928,
+    "name": "빛 바랜 파피스",
+    "boss": false
+  },
+  {
+    "code": 2000929,
+    "name": "빛 바랜 파피스",
+    "boss": false
+  },
+  {
+    "code": 2000951,
+    "name": "빛 바랜 파피스",
+    "boss": false
+  },
+  {
+    "code": 2000952,
+    "name": "변종 코라돈",
+    "boss": false
+  },
+  {
+    "code": 2000953,
+    "name": "어린 코라돈",
+    "boss": false
+  },
+  {
+    "code": 2000954,
+    "name": "브락스",
+    "boss": false
+  },
+  {
+    "code": 2000955,
+    "name": "검은 갑주 벌",
+    "boss": false
+  },
+  {
+    "code": 2000956,
+    "name": "마른 가지 거미",
+    "boss": false
+  },
+  {
+    "code": 2000957,
+    "name": "마른 가지 거미",
+    "boss": false
+  },
+  {
+    "code": 2090001,
+    "name": "숲 정령",
+    "boss": false
+  },
+  {
+    "code": 2090002,
+    "name": "숲 정령",
+    "boss": false
+  },
+  {
+    "code": 2090003,
+    "name": "아울라우 마법사",
+    "boss": false
+  },
+  {
+    "code": 2090004,
+    "name": "중형 괴물",
+    "boss": false
+  },
+  {
+    "code": 2090005,
+    "name": "환영 파편",
+    "boss": false
+  },
+  {
+    "code": 2090006,
+    "name": "펑기",
+    "boss": false
+  },
+  {
+    "code": 2090007,
+    "name": "환영 파편",
+    "boss": false
+  },
+  {
+    "code": 2090008,
+    "name": "환영 파편",
+    "boss": false
+  },
+  {
+    "code": 2090009,
+    "name": "고대 원혼 기사",
+    "boss": false
+  },
+  {
+    "code": 2090010,
+    "name": "펑거스",
+    "boss": false
+  },
+  {
+    "code": 2090011,
+    "name": "폭탄형 기믹 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090017,
+    "name": "펑기",
+    "boss": false
+  },
+  {
+    "code": 2090018,
+    "name": "작은 버섯 자란 펑기",
+    "boss": false
+  },
+  {
+    "code": 2090019,
+    "name": "달팽이 얹은 펑기",
+    "boss": false
+  },
+  {
+    "code": 2090020,
+    "name": "중형 괴물",
+    "boss": false
+  },
+  {
+    "code": 2090021,
+    "name": "중형 괴물",
+    "boss": false
+  },
+  {
+    "code": 2090022,
+    "name": "샌드백_천족Tribe",
+    "boss": false
+  },
+  {
+    "code": 2090023,
+    "name": "샌드백_마족Tribe",
+    "boss": false
+  },
+  {
+    "code": 2090024,
+    "name": "케네이르",
+    "boss": false
+  },
+  {
+    "code": 2090025,
+    "name": "케네이르",
+    "boss": false
+  },
+  {
+    "code": 2090026,
+    "name": "드라코뉴트 궁수",
+    "boss": false
+  },
+  {
+    "code": 2090027,
+    "name": "몬스터 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090029,
+    "name": "독기꽃",
+    "boss": false
+  },
+  {
+    "code": 2090030,
+    "name": "밸런스테스트1",
+    "boss": false
+  },
+  {
+    "code": 2090031,
+    "name": "밸런스테스트2",
+    "boss": false
+  },
+  {
+    "code": 2090032,
+    "name": "밸런스테스트3",
+    "boss": false
+  },
+  {
+    "code": 2090033,
+    "name": "밸런스테스트4",
+    "boss": false
+  },
+  {
+    "code": 2090034,
+    "name": "밸런스테스트5",
+    "boss": false
+  },
+  {
+    "code": 2090035,
+    "name": "밸런스테스트6",
+    "boss": false
+  },
+  {
+    "code": 2090036,
+    "name": "밸런스테스트7",
+    "boss": false
+  },
+  {
+    "code": 2090037,
+    "name": "밸런스테스트8",
+    "boss": false
+  },
+  {
+    "code": 2090038,
+    "name": "밸런스테스트9",
+    "boss": false
+  },
+  {
+    "code": 2090039,
+    "name": "밸런스테스트10",
+    "boss": false
+  },
+  {
+    "code": 2090040,
+    "name": "밸런스테스트11",
+    "boss": false
+  },
+  {
+    "code": 2090041,
+    "name": "밸런스테스트12",
+    "boss": false
+  },
+  {
+    "code": 2090042,
+    "name": "밸런스테스트13",
+    "boss": false
+  },
+  {
+    "code": 2090043,
+    "name": "밸런스테스트14",
+    "boss": false
+  },
+  {
+    "code": 2090044,
+    "name": "밸런스테스트15",
+    "boss": false
+  },
+  {
+    "code": 2090045,
+    "name": "밸런스테스트16",
+    "boss": false
+  },
+  {
+    "code": 2090046,
+    "name": "밸런스테스트17",
+    "boss": false
+  },
+  {
+    "code": 2090047,
+    "name": "밸런스테스트18",
+    "boss": false
+  },
+  {
+    "code": 2090048,
+    "name": "밸런스테스트19",
+    "boss": false
+  },
+  {
+    "code": 2090049,
+    "name": "밸런스테스트20",
+    "boss": false
+  },
+  {
+    "code": 2090050,
+    "name": "밸런스테스트21",
+    "boss": false
+  },
+  {
+    "code": 2090051,
+    "name": "밸런스테스트22",
+    "boss": false
+  },
+  {
+    "code": 2090052,
+    "name": "밸런스테스트23",
+    "boss": false
+  },
+  {
+    "code": 2090053,
+    "name": "밸런스테스트24",
+    "boss": false
+  },
+  {
+    "code": 2090054,
+    "name": "밸런스테스트25",
+    "boss": false
+  },
+  {
+    "code": 2090055,
+    "name": "밸런스테스트26",
+    "boss": false
+  },
+  {
+    "code": 2090056,
+    "name": "밸런스테스트27",
+    "boss": false
+  },
+  {
+    "code": 2090057,
+    "name": "밸런스테스트28",
+    "boss": false
+  },
+  {
+    "code": 2090058,
+    "name": "밸런스테스트29",
+    "boss": false
+  },
+  {
+    "code": 2090059,
+    "name": "밸런스테스트30",
+    "boss": false
+  },
+  {
+    "code": 2090060,
+    "name": "밸런스테스트31",
+    "boss": false
+  },
+  {
+    "code": 2090061,
+    "name": "밸런스테스트32",
+    "boss": false
+  },
+  {
+    "code": 2090062,
+    "name": "밸런스테스트33",
+    "boss": false
+  },
+  {
+    "code": 2090063,
+    "name": "밸런스테스트34",
+    "boss": false
+  },
+  {
+    "code": 2090064,
+    "name": "밸런스테스트35",
+    "boss": false
+  },
+  {
+    "code": 2090065,
+    "name": "밸런스테스트36",
+    "boss": false
+  },
+  {
+    "code": 2090066,
+    "name": "밸런스테스트37",
+    "boss": false
+  },
+  {
+    "code": 2090067,
+    "name": "밸런스테스트38",
+    "boss": false
+  },
+  {
+    "code": 2090068,
+    "name": "밸런스테스트39",
+    "boss": false
+  },
+  {
+    "code": 2090069,
+    "name": "밸런스테스트40",
+    "boss": false
+  },
+  {
+    "code": 2090070,
+    "name": "밸런스테스트41",
+    "boss": false
+  },
+  {
+    "code": 2090071,
+    "name": "밸런스테스트42",
+    "boss": false
+  },
+  {
+    "code": 2090072,
+    "name": "밸런스테스트43",
+    "boss": false
+  },
+  {
+    "code": 2090073,
+    "name": "밸런스테스트44",
+    "boss": false
+  },
+  {
+    "code": 2090074,
+    "name": "밸런스테스트45",
+    "boss": false
+  },
+  {
+    "code": 2090075,
+    "name": "밸런스테스트46",
+    "boss": false
+  },
+  {
+    "code": 2090076,
+    "name": "밸런스테스트47",
+    "boss": false
+  },
+  {
+    "code": 2090077,
+    "name": "밸런스테스트48",
+    "boss": false
+  },
+  {
+    "code": 2090078,
+    "name": "밸런스테스트49",
+    "boss": false
+  },
+  {
+    "code": 2090079,
+    "name": "밸런스테스트50",
+    "boss": false
+  },
+  {
+    "code": 2090080,
+    "name": "밸런스테스트51",
+    "boss": false
+  },
+  {
+    "code": 2090081,
+    "name": "밸런스테스트52",
+    "boss": false
+  },
+  {
+    "code": 2090082,
+    "name": "밸런스테스트53",
+    "boss": false
+  },
+  {
+    "code": 2090083,
+    "name": "밸런스테스트54",
+    "boss": false
+  },
+  {
+    "code": 2090084,
+    "name": "밸런스테스트55",
+    "boss": false
+  },
+  {
+    "code": 2090085,
+    "name": "밸런스테스트56",
+    "boss": false
+  },
+  {
+    "code": 2090086,
+    "name": "밸런스테스트57",
+    "boss": false
+  },
+  {
+    "code": 2090087,
+    "name": "밸런스테스트58",
+    "boss": false
+  },
+  {
+    "code": 2090088,
+    "name": "밸런스테스트59",
+    "boss": false
+  },
+  {
+    "code": 2090089,
+    "name": "밸런스테스트60",
+    "boss": false
+  },
+  {
+    "code": 2090090,
+    "name": "밸런스테스트61",
+    "boss": false
+  },
+  {
+    "code": 2090091,
+    "name": "밸런스테스트62",
+    "boss": false
+  },
+  {
+    "code": 2090092,
+    "name": "밸런스테스트63",
+    "boss": false
+  },
+  {
+    "code": 2090093,
+    "name": "밸런스테스트64",
+    "boss": false
+  },
+  {
+    "code": 2090094,
+    "name": "밸런스테스트65",
+    "boss": false
+  },
+  {
+    "code": 2090095,
+    "name": "밸런스테스트66",
+    "boss": false
+  },
+  {
+    "code": 2090096,
+    "name": "밸런스테스트67",
+    "boss": false
+  },
+  {
+    "code": 2090097,
+    "name": "밸런스테스트68",
+    "boss": false
+  },
+  {
+    "code": 2090098,
+    "name": "밸런스테스트69",
+    "boss": false
+  },
+  {
+    "code": 2090099,
+    "name": "밸런스테스트70",
+    "boss": false
+  },
+  {
+    "code": 2090100,
+    "name": "밸런스테스트71",
+    "boss": false
+  },
+  {
+    "code": 2090101,
+    "name": "밸런스테스트72",
+    "boss": false
+  },
+  {
+    "code": 2090102,
+    "name": "밸런스테스트73",
+    "boss": false
+  },
+  {
+    "code": 2090103,
+    "name": "밸런스테스트74",
+    "boss": false
+  },
+  {
+    "code": 2090104,
+    "name": "밸런스테스트75",
+    "boss": false
+  },
+  {
+    "code": 2090105,
+    "name": "밸런스테스트76",
+    "boss": false
+  },
+  {
+    "code": 2090106,
+    "name": "밸런스테스트77",
+    "boss": false
+  },
+  {
+    "code": 2090107,
+    "name": "밸런스테스트78",
+    "boss": false
+  },
+  {
+    "code": 2090108,
+    "name": "밸런스테스트79",
+    "boss": false
+  },
+  {
+    "code": 2090109,
+    "name": "밸런스테스트80",
+    "boss": false
+  },
+  {
+    "code": 2090110,
+    "name": "밸런스테스트81",
+    "boss": false
+  },
+  {
+    "code": 2090111,
+    "name": "밸런스테스트82",
+    "boss": false
+  },
+  {
+    "code": 2090112,
+    "name": "밸런스테스트83",
+    "boss": false
+  },
+  {
+    "code": 2090113,
+    "name": "밸런스테스트84",
+    "boss": false
+  },
+  {
+    "code": 2090114,
+    "name": "밸런스테스트85",
+    "boss": false
+  },
+  {
+    "code": 2090115,
+    "name": "밸런스테스트86",
+    "boss": false
+  },
+  {
+    "code": 2090116,
+    "name": "밸런스테스트87",
+    "boss": false
+  },
+  {
+    "code": 2090117,
+    "name": "밸런스테스트88",
+    "boss": false
+  },
+  {
+    "code": 2090118,
+    "name": "밸런스테스트89",
+    "boss": false
+  },
+  {
+    "code": 2090119,
+    "name": "밸런스테스트90",
+    "boss": false
+  },
+  {
+    "code": 2090120,
+    "name": "밸런스테스트91",
+    "boss": false
+  },
+  {
+    "code": 2090121,
+    "name": "밸런스테스트92",
+    "boss": false
+  },
+  {
+    "code": 2090122,
+    "name": "밸런스테스트93",
+    "boss": false
+  },
+  {
+    "code": 2090123,
+    "name": "밸런스테스트94",
+    "boss": false
+  },
+  {
+    "code": 2090124,
+    "name": "밸런스테스트95",
+    "boss": false
+  },
+  {
+    "code": 2090125,
+    "name": "밸런스테스트96",
+    "boss": false
+  },
+  {
+    "code": 2090126,
+    "name": "밸런스테스트97",
+    "boss": false
+  },
+  {
+    "code": 2090127,
+    "name": "밸런스테스트98",
+    "boss": false
+  },
+  {
+    "code": 2090128,
+    "name": "밸런스테스트99",
+    "boss": false
+  },
+  {
+    "code": 2090129,
+    "name": "밸런스테스트100",
+    "boss": false
+  },
+  {
+    "code": 2090130,
+    "name": "공격 안 함 (레벨 스케일링 테스트)",
+    "boss": false
+  },
+  {
+    "code": 2090131,
+    "name": "평타 (레벨 스케일링 테스트)",
+    "boss": false
+  },
+  {
+    "code": 2090132,
+    "name": "광역 (레벨 스케일링 테스트)",
+    "boss": false
+  },
+  {
+    "code": 2090133,
+    "name": "자힐 (레벨 스케일링 테스트)",
+    "boss": false
+  },
+  {
+    "code": 2090134,
+    "name": "자기 버프(물공, 마공, 물방, 마방 증가) (레벨 스케일링 테스트)",
+    "boss": false
+  },
+  {
+    "code": 2090151,
+    "name": "개조 크랄 전사",
+    "boss": false
+  },
+  {
+    "code": 2090152,
+    "name": "개조 크랄 전사",
+    "boss": false
+  },
+  {
+    "code": 2090153,
+    "name": "광역 (레벨 스케일링 테스트_모든 skill effect 부여)",
+    "boss": false
+  },
+  {
+    "code": 2090154,
+    "name": "브리트라 공습부대 장교",
+    "boss": false
+  },
+  {
+    "code": 2090157,
+    "name": "테스트몹_Hidden",
+    "boss": false
+  },
+  {
+    "code": 2090158,
+    "name": "개조 크랄 전사",
+    "boss": false
+  },
+  {
+    "code": 2090159,
+    "name": "아울라우 병사",
+    "boss": false
+  },
+  {
+    "code": 2090160,
+    "name": "암흑 정령",
+    "boss": false
+  },
+  {
+    "code": 2090162,
+    "name": "몬스터 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090164,
+    "name": "브리트라 공습부대장A",
+    "boss": false
+  },
+  {
+    "code": 2090165,
+    "name": "몬스터 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090166,
+    "name": "작열의 토템",
+    "boss": false
+  },
+  {
+    "code": 2090167,
+    "name": "버려진 수라 궁수",
+    "boss": false
+  },
+  {
+    "code": 2090168,
+    "name": "크랄 주술병",
+    "boss": false
+  },
+  {
+    "code": 2090169,
+    "name": "Ground",
+    "boss": false
+  },
+  {
+    "code": 2090170,
+    "name": "Air",
+    "boss": false
+  },
+  {
+    "code": 2090171,
+    "name": "Water",
+    "boss": false
+  },
+  {
+    "code": 2090173,
+    "name": "개조 크랄 전사",
+    "boss": false
+  },
+  {
+    "code": 2090175,
+    "name": "페디브의 망령",
+    "boss": true
+  },
+  {
+    "code": 2090176,
+    "name": "드라칸 정예장교 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090177,
+    "name": "브라우니 잡역꾼 여성 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090178,
+    "name": "브라우니 잡역꾼 여성 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090179,
+    "name": "브라우니 잡역꾼 여성 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090180,
+    "name": "브라우니 잡역꾼 여성 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090181,
+    "name": "브라우니 잡역꾼 여성 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090182,
+    "name": "브라우니 잡역꾼 여성 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090187,
+    "name": "Ground",
+    "boss": false
+  },
+  {
+    "code": 2090188,
+    "name": "Air",
+    "boss": false
+  },
+  {
+    "code": 2090189,
+    "name": "Water",
+    "boss": false
+  },
+  {
+    "code": 2090190,
+    "name": "All(정령)",
+    "boss": false
+  },
+  {
+    "code": 2090192,
+    "name": "도둑 슈라크 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090193,
+    "name": "피노",
+    "boss": false
+  },
+  {
+    "code": 2090194,
+    "name": "환혼의 돌",
+    "boss": false
+  },
+  {
+    "code": 2090195,
+    "name": "환혼의 돌",
+    "boss": false
+  },
+  {
+    "code": 2090196,
+    "name": "환혼의 돌",
+    "boss": false
+  },
+  {
+    "code": 2090197,
+    "name": "브라우니 잡역꾼 남성 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090198,
+    "name": "브라우니 일꾼 여성",
+    "boss": false
+  },
+  {
+    "code": 2090199,
+    "name": "브라우니 일꾼 남성",
+    "boss": false
+  },
+  {
+    "code": 2090220,
+    "name": "변이 수라 마법사",
+    "boss": false
+  },
+  {
+    "code": 2090221,
+    "name": "오드 거미",
+    "boss": false
+  },
+  {
+    "code": 2090222,
+    "name": "봉인된 수라",
+    "boss": true
+  },
+  {
+    "code": 2090223,
+    "name": "봉인된 수라",
+    "boss": true
+  },
+  {
+    "code": 2090224,
+    "name": "봉인된 수라",
+    "boss": true
+  },
+  {
+    "code": 2090225,
+    "name": "봉인된 수라",
+    "boss": true
+  },
+  {
+    "code": 2090226,
+    "name": "봉인된 수라",
+    "boss": true
+  },
+  {
+    "code": 2090227,
+    "name": "봉인된 수라",
+    "boss": true
+  },
+  {
+    "code": 2090228,
+    "name": "봉인된 수라",
+    "boss": true
+  },
+  {
+    "code": 2090229,
+    "name": "봉인된 수라",
+    "boss": true
+  },
+  {
+    "code": 2090230,
+    "name": "봉인된 수라",
+    "boss": true
+  },
+  {
+    "code": 2090231,
+    "name": "봉인된 수라",
+    "boss": true
+  },
+  {
+    "code": 2090232,
+    "name": "아울트로스",
+    "boss": true
+  },
+  {
+    "code": 2090233,
+    "name": "아울트로스",
+    "boss": true
+  },
+  {
+    "code": 2090234,
+    "name": "아울트로스",
+    "boss": true
+  },
+  {
+    "code": 2090235,
+    "name": "아울트로스",
+    "boss": true
+  },
+  {
+    "code": 2090236,
+    "name": "아울트로스",
+    "boss": true
+  },
+  {
+    "code": 2090237,
+    "name": "아울트로스",
+    "boss": true
+  },
+  {
+    "code": 2090238,
+    "name": "아울트로스",
+    "boss": true
+  },
+  {
+    "code": 2090239,
+    "name": "아울트로스",
+    "boss": true
+  },
+  {
+    "code": 2090240,
+    "name": "아울트로스",
+    "boss": true
+  },
+  {
+    "code": 2090241,
+    "name": "아울트로스",
+    "boss": true
+  },
+  {
+    "code": 2090242,
+    "name": "중형 괴물",
+    "boss": false
+  },
+  {
+    "code": 2090243,
+    "name": "중형 괴물",
+    "boss": false
+  },
+  {
+    "code": 2090244,
+    "name": "중형 괴물",
+    "boss": false
+  },
+  {
+    "code": 2090245,
+    "name": "중형 괴물",
+    "boss": false
+  },
+  {
+    "code": 2090246,
+    "name": "중형 괴물",
+    "boss": false
+  },
+  {
+    "code": 2090247,
+    "name": "중형 괴물",
+    "boss": false
+  },
+  {
+    "code": 2090248,
+    "name": "중형 괴물",
+    "boss": false
+  },
+  {
+    "code": 2090249,
+    "name": "오드 거미",
+    "boss": false
+  },
+  {
+    "code": 2090250,
+    "name": "중형 괴물",
+    "boss": false
+  },
+  {
+    "code": 2090251,
+    "name": "몬스터 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090252,
+    "name": "은빛칼날 로탄 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090253,
+    "name": "은빛칼날 로탄 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090254,
+    "name": "중형 괴물",
+    "boss": false
+  },
+  {
+    "code": 2090255,
+    "name": "중형 괴물",
+    "boss": false
+  },
+  {
+    "code": 2090269,
+    "name": "몬스터 (표본)",
+    "boss": true
+  },
+  {
+    "code": 2090270,
+    "name": "몬스터 (표본)",
+    "boss": true
+  },
+  {
+    "code": 2090271,
+    "name": "몬스터 (표본)",
+    "boss": true
+  },
+  {
+    "code": 2090274,
+    "name": "폐기된 크라오 정예 실험체 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090275,
+    "name": "몬스터 (표본)",
+    "boss": true
+  },
+  {
+    "code": 2090277,
+    "name": "몬스터 (표본)",
+    "boss": true
+  },
+  {
+    "code": 2090278,
+    "name": "처형자 누아 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090284,
+    "name": "카이시넬의 환영 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090285,
+    "name": "카이시넬의 환영 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090305,
+    "name": "미니언 1단계",
+    "boss": false
+  },
+  {
+    "code": 2090306,
+    "name": "미니언 1단계",
+    "boss": false
+  },
+  {
+    "code": 2090307,
+    "name": "미니언 1단계",
+    "boss": false
+  },
+  {
+    "code": 2090308,
+    "name": "미니언 1단계",
+    "boss": false
+  },
+  {
+    "code": 2090309,
+    "name": "폭탄형 기믹 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090331,
+    "name": "미니언 1단계",
+    "boss": false
+  },
+  {
+    "code": 2090332,
+    "name": "미니언 2단계",
+    "boss": false
+  },
+  {
+    "code": 2090333,
+    "name": "미니언 3단계",
+    "boss": false
+  },
+  {
+    "code": 2090334,
+    "name": "미니언 4단계",
+    "boss": false
+  },
+  {
+    "code": 2090335,
+    "name": "포탑 1단계",
+    "boss": false
+  },
+  {
+    "code": 2090336,
+    "name": "포탑 2단계",
+    "boss": false
+  },
+  {
+    "code": 2090337,
+    "name": "포탑 3단계",
+    "boss": false
+  },
+  {
+    "code": 2090338,
+    "name": "포탑 4단계",
+    "boss": false
+  },
+  {
+    "code": 2090381,
+    "name": "무적의 드라칸",
+    "boss": false
+  },
+  {
+    "code": 2090382,
+    "name": "기절의 라크슈미",
+    "boss": false
+  },
+  {
+    "code": 2090383,
+    "name": "쾌속의 케네이르",
+    "boss": false
+  },
+  {
+    "code": 2090384,
+    "name": "나포의 울라크",
+    "boss": false
+  },
+  {
+    "code": 2090397,
+    "name": "몬스터 (표본)",
+    "boss": true
+  },
+  {
+    "code": 2090398,
+    "name": "타신 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090401,
+    "name": "천족 핵",
+    "boss": true
+  },
+  {
+    "code": 2090402,
+    "name": "마족 핵",
+    "boss": true
+  },
+  {
+    "code": 2090404,
+    "name": "괴조 루필리니",
+    "boss": false
+  },
+  {
+    "code": 2090405,
+    "name": "괴조 루필리니",
+    "boss": false
+  },
+  {
+    "code": 2090406,
+    "name": "괴조 루필리니",
+    "boss": false
+  },
+  {
+    "code": 2090407,
+    "name": "회복의 드라칸",
+    "boss": false
+  },
+  {
+    "code": 2090408,
+    "name": "수면의 라크슈미",
+    "boss": false
+  },
+  {
+    "code": 2090409,
+    "name": "신속의 케네이르",
+    "boss": false
+  },
+  {
+    "code": 2090410,
+    "name": "약화의 울라크",
+    "boss": false
+  },
+  {
+    "code": 2090411,
+    "name": "천족 외부 포탑",
+    "boss": false
+  },
+  {
+    "code": 2090412,
+    "name": "마족 외부 포탑",
+    "boss": false
+  },
+  {
+    "code": 2090413,
+    "name": "천족 내부 포탑",
+    "boss": false
+  },
+  {
+    "code": 2090414,
+    "name": "마족 내부 포탑",
+    "boss": false
+  },
+  {
+    "code": 2090428,
+    "name": "초월한 바카르마",
+    "boss": true
+  },
+  {
+    "code": 2090433,
+    "name": "페디브의 망령",
+    "boss": true
+  },
+  {
+    "code": 2090434,
+    "name": "몬스터 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090435,
+    "name": "페디브의 망령",
+    "boss": true
+  },
+  {
+    "code": 2090438,
+    "name": "샌드백",
+    "boss": false
+  },
+  {
+    "code": 2090439,
+    "name": "샌드백",
+    "boss": false
+  },
+  {
+    "code": 2090440,
+    "name": "샌드백",
+    "boss": false
+  },
+  {
+    "code": 2090441,
+    "name": "샌드백",
+    "boss": false
+  },
+  {
+    "code": 2090442,
+    "name": "샌드백",
+    "boss": false
+  },
+  {
+    "code": 2090443,
+    "name": "샌드백",
+    "boss": false
+  },
+  {
+    "code": 2090444,
+    "name": "샌드백",
+    "boss": false
+  },
+  {
+    "code": 2090445,
+    "name": "샌드백",
+    "boss": false
+  },
+  {
+    "code": 2090446,
+    "name": "샌드백",
+    "boss": false
+  },
+  {
+    "code": 2090447,
+    "name": "샌드백",
+    "boss": false
+  },
+  {
+    "code": 2090448,
+    "name": "샌드백",
+    "boss": false
+  },
+  {
+    "code": 2090449,
+    "name": "샌드백",
+    "boss": false
+  },
+  {
+    "code": 2090451,
+    "name": "몬스터 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090452,
+    "name": "몬스터 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090453,
+    "name": "몬스터 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090454,
+    "name": "샌드백",
+    "boss": false
+  },
+  {
+    "code": 2090456,
+    "name": "오드 거미",
+    "boss": false
+  },
+  {
+    "code": 2090457,
+    "name": "화염 수문장 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090458,
+    "name": "샌드백",
+    "boss": false
+  },
+  {
+    "code": 2090463,
+    "name": "드라칸 네임드",
+    "boss": false
+  },
+  {
+    "code": 2090464,
+    "name": "처형자 누아 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090467,
+    "name": "90도 Arc",
+    "boss": false
+  },
+  {
+    "code": 2090468,
+    "name": "89도 Arc",
+    "boss": false
+  },
+  {
+    "code": 2090469,
+    "name": "90도 ArcCircle",
+    "boss": false
+  },
+  {
+    "code": 2090470,
+    "name": "89도 ArcCircle",
+    "boss": false
+  },
+  {
+    "code": 2090471,
+    "name": "개조 크랄 전사",
+    "boss": false
+  },
+  {
+    "code": 2090479,
+    "name": "오드 거미",
+    "boss": false
+  },
+  {
+    "code": 2090480,
+    "name": "새끼 오드 거미",
+    "boss": false
+  },
+  {
+    "code": 2090488,
+    "name": "개조 크랄 전사",
+    "boss": false
+  },
+  {
+    "code": 2090491,
+    "name": "개조 크랄 전사",
+    "boss": false
+  },
+  {
+    "code": 2090538,
+    "name": "크로마",
+    "boss": false
+  },
+  {
+    "code": 2090553,
+    "name": "그로기 테스트_Persistant",
+    "boss": true
+  },
+  {
+    "code": 2090554,
+    "name": "그로기 테스트_Temporary_GroggyGuard",
+    "boss": true
+  },
+  {
+    "code": 2090555,
+    "name": "그로기 테스트_Temporary_GroggyAttack",
+    "boss": true
+  },
+  {
+    "code": 2090613,
+    "name": "개조 크랄 전사",
+    "boss": false
+  },
+  {
+    "code": 2090614,
+    "name": "정예 우르서스 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2090623,
+    "name": "부패한 두르바티 (표본)",
+    "boss": true
+  },
+  {
+    "code": 2090626,
+    "name": "개조 크랄 전사",
+    "boss": false
+  },
+  {
+    "code": 2090636,
+    "name": "오드 샤드 폭풍",
+    "boss": false
+  },
+  {
+    "code": 2090649,
+    "name": "부모 40/Exceed/Exceed",
+    "boss": false
+  },
+  {
+    "code": 2090650,
+    "name": "부모 40/Exceed/None",
+    "boss": false
+  },
+  {
+    "code": 2090652,
+    "name": "부모 40/All/Exceed",
+    "boss": false
+  },
+  {
+    "code": 2090653,
+    "name": "부모 40/All/None",
+    "boss": false
+  },
+  {
+    "code": 2090654,
+    "name": "부모 40/None/Exceed",
+    "boss": false
+  },
+  {
+    "code": 2090655,
+    "name": "부모 40/None/None",
+    "boss": false
+  },
+  {
+    "code": 2090656,
+    "name": "샌드백",
+    "boss": false
+  },
+  {
+    "code": 2090657,
+    "name": "샌드백",
+    "boss": false
+  },
+  {
+    "code": 2090658,
+    "name": "샌드백",
+    "boss": false
+  },
+  {
+    "code": 2090663,
+    "name": "무무 파수꾼",
+    "boss": false
+  },
+  {
+    "code": 2090664,
+    "name": "무무 일꾼",
+    "boss": false
+  },
+  {
+    "code": 2090665,
+    "name": "무무 순찰꾼",
+    "boss": false
+  },
+  {
+    "code": 2090666,
+    "name": "브라우니 일꾼",
+    "boss": false
+  },
+  {
+    "code": 2090667,
+    "name": "브라우니 경계꾼",
+    "boss": false
+  },
+  {
+    "code": 2090668,
+    "name": "브라우니 노역꾼",
+    "boss": false
+  },
+  {
+    "code": 2090669,
+    "name": "드라코뉴트 보초병",
+    "boss": false
+  },
+  {
+    "code": 2090670,
+    "name": "드라코뉴트 순찰병",
+    "boss": false
+  },
+  {
+    "code": 2090671,
+    "name": "노역 관리 크랄",
+    "boss": false
+  },
+  {
+    "code": 2090672,
+    "name": "드라칸 감시병",
+    "boss": false
+  },
+  {
+    "code": 2090673,
+    "name": "드라칸 경비견",
+    "boss": false
+  },
+  {
+    "code": 2090674,
+    "name": "드라칸 경비병",
+    "boss": false
+  },
+  {
+    "code": 2090675,
+    "name": "드라칸 상급 마법병",
+    "boss": false
+  },
+  {
+    "code": 2090680,
+    "name": "대신관의 환영",
+    "boss": true
+  },
+  {
+    "code": 2090681,
+    "name": "대신관의 환영",
+    "boss": true
+  },
+  {
+    "code": 2090682,
+    "name": "대신관의 환영",
+    "boss": true
+  },
+  {
+    "code": 2090683,
+    "name": "드라나 감시 정찰병",
+    "boss": false
+  },
+  {
+    "code": 2090684,
+    "name": "노역 관리 오큘라젠",
+    "boss": false
+  },
+  {
+    "code": 2090685,
+    "name": "재배지 크랄 궁병",
+    "boss": false
+  },
+  {
+    "code": 2090686,
+    "name": "드라쿠니 가공 노역꾼",
+    "boss": false
+  },
+  {
+    "code": 2090687,
+    "name": "드라나 가공 관리기",
+    "boss": false
+  },
+  {
+    "code": 2090688,
+    "name": "드라코뉴트 잡역꾼",
+    "boss": false
+  },
+  {
+    "code": 2090690,
+    "name": "개조 크랄 전사",
+    "boss": false
+  },
+  {
+    "code": 2090691,
+    "name": "몬스터 (표본)",
+    "boss": true
+  },
+  {
+    "code": 2090692,
+    "name": "몬스터 (표본)",
+    "boss": true
+  },
+  {
+    "code": 2090693,
+    "name": "샌드백",
+    "boss": false
+  },
+  {
+    "code": 2100000,
+    "name": "반짝이는 칼크겔름",
+    "boss": false
+  },
+  {
+    "code": 2100001,
+    "name": "계곡 아르마돈",
+    "boss": false
+  },
+  {
+    "code": 2100002,
+    "name": "단단한 칼크겔름",
+    "boss": false
+  },
+  {
+    "code": 2100003,
+    "name": "동쪽의 네이켈",
+    "boss": true
+  },
+  {
+    "code": 2100004,
+    "name": "고지대 뮤타",
+    "boss": false
+  },
+  {
+    "code": 2100005,
+    "name": "계곡 스파키",
+    "boss": false
+  },
+  {
+    "code": 2100006,
+    "name": "돌무더기 토그",
+    "boss": false
+  },
+  {
+    "code": 2100007,
+    "name": "칸타스 강탈자",
+    "boss": false
+  },
+  {
+    "code": 2100008,
+    "name": "칸타스 정찰꾼",
+    "boss": false
+  },
+  {
+    "code": 2100009,
+    "name": "온순한 파피스",
+    "boss": false
+  },
+  {
+    "code": 2100010,
+    "name": "온순한 스파키",
+    "boss": false
+  },
+  {
+    "code": 2100013,
+    "name": "빛나는 돌 정령",
+    "boss": false
+  },
+  {
+    "code": 2100014,
+    "name": "견고한 칼크겔름",
+    "boss": false
+  },
+  {
+    "code": 2100015,
+    "name": "빛나는 언덕 스파키",
+    "boss": false
+  },
+  {
+    "code": 2100021,
+    "name": "늪지 타르곤",
+    "boss": false
+  },
+  {
+    "code": 2100022,
+    "name": "늪지 덩굴정령",
+    "boss": false
+  },
+  {
+    "code": 2100023,
+    "name": "엘룬강 뮤타",
+    "boss": false
+  },
+  {
+    "code": 2100025,
+    "name": "늪지 슬라임",
+    "boss": false
+  },
+  {
+    "code": 2100026,
+    "name": "오염된 시체 벌레 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2100027,
+    "name": "붕괴된 코우로스",
+    "boss": true
+  },
+  {
+    "code": 2100028,
+    "name": "메마른 어그린트",
+    "boss": false
+  },
+  {
+    "code": 2100030,
+    "name": "늪지 오드 거미",
+    "boss": false
+  },
+  {
+    "code": 2100031,
+    "name": "악취나는 스카마",
+    "boss": false
+  },
+  {
+    "code": 2100032,
+    "name": "늪이끼 캔서리드",
+    "boss": false
+  },
+  {
+    "code": 2100033,
+    "name": "해안 스타터틀",
+    "boss": false
+  },
+  {
+    "code": 2100034,
+    "name": "해안 오드 거미",
+    "boss": false
+  },
+  {
+    "code": 2100035,
+    "name": "새끼 오드 거미",
+    "boss": false
+  },
+  {
+    "code": 2100036,
+    "name": "언덕 스파키",
+    "boss": false
+  },
+  {
+    "code": 2100037,
+    "name": "돌부리 크레스틀리치",
+    "boss": false
+  },
+  {
+    "code": 2100039,
+    "name": "칸타스 염탐자",
+    "boss": false
+  },
+  {
+    "code": 2100040,
+    "name": "썩은 쿠타르",
+    "boss": true
+  },
+  {
+    "code": 2100041,
+    "name": "붉은 갓 펑기",
+    "boss": false
+  },
+  {
+    "code": 2100042,
+    "name": "늪지대 거미 새끼",
+    "boss": false
+  },
+  {
+    "code": 2100044,
+    "name": "축축한 스카마",
+    "boss": false
+  },
+  {
+    "code": 2100046,
+    "name": "오염된 제르피",
+    "boss": false
+  },
+  {
+    "code": 2100047,
+    "name": "작은 숲 드리톤",
+    "boss": false
+  },
+  {
+    "code": 2100048,
+    "name": "엘룬강 폭포 드리톤",
+    "boss": false
+  },
+  {
+    "code": 2100050,
+    "name": "서쪽의 케르논",
+    "boss": true
+  },
+  {
+    "code": 2100064,
+    "name": "악취나는 슬라임",
+    "boss": false
+  },
+  {
+    "code": 2100065,
+    "name": "숲 자이프",
+    "boss": false
+  },
+  {
+    "code": 2100066,
+    "name": "브라우니 일꾼",
+    "boss": false
+  },
+  {
+    "code": 2100067,
+    "name": "브라우니 경계꾼",
+    "boss": false
+  },
+  {
+    "code": 2100068,
+    "name": "크랄 전투병",
+    "boss": false
+  },
+  {
+    "code": 2100069,
+    "name": "크랄 궁병",
+    "boss": false
+  },
+  {
+    "code": 2100070,
+    "name": "정찰하는 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2100071,
+    "name": "크랄 정찰병",
+    "boss": false
+  },
+  {
+    "code": 2100072,
+    "name": "강화된 크랄 경계병",
+    "boss": false
+  },
+  {
+    "code": 2100073,
+    "name": "크랄 돌격병",
+    "boss": false
+  },
+  {
+    "code": 2100074,
+    "name": "크랄 주술병",
+    "boss": false
+  },
+  {
+    "code": 2100075,
+    "name": "크랄 무장병",
+    "boss": false
+  },
+  {
+    "code": 2100076,
+    "name": "광투사 쿠산",
+    "boss": true
+  },
+  {
+    "code": 2100077,
+    "name": "제사장 가르심",
+    "boss": true
+  },
+  {
+    "code": 2100078,
+    "name": "배회하는 뉴트",
+    "boss": false
+  },
+  {
+    "code": 2100079,
+    "name": "호위병 티간트",
+    "boss": true
+  },
+  {
+    "code": 2100080,
+    "name": "강화된 크랄 돌격병",
+    "boss": false
+  },
+  {
+    "code": 2100093,
+    "name": "브라우니 노역꾼",
+    "boss": false
+  },
+  {
+    "code": 2100095,
+    "name": "브라우니 관리조장",
+    "boss": false
+  },
+  {
+    "code": 2100096,
+    "name": "난폭한 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2100097,
+    "name": "강화된 크랄 전투병",
+    "boss": false
+  },
+  {
+    "code": 2100098,
+    "name": "계곡 스파키",
+    "boss": false
+  },
+  {
+    "code": 2100128,
+    "name": "크랄 문지기",
+    "boss": false
+  },
+  {
+    "code": 2100129,
+    "name": "크랄 문지기",
+    "boss": false
+  },
+  {
+    "code": 2100130,
+    "name": "조련된 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2100131,
+    "name": "크랄 상급 문지기",
+    "boss": false
+  },
+  {
+    "code": 2100132,
+    "name": "크랄 전투병",
+    "boss": false
+  },
+  {
+    "code": 2100133,
+    "name": "크랄 지휘관",
+    "boss": false
+  },
+  {
+    "code": 2100134,
+    "name": "크랄 부관",
+    "boss": false
+  },
+  {
+    "code": 2100141,
+    "name": "만개한 코린",
+    "boss": true
+  },
+  {
+    "code": 2100142,
+    "name": "오염된 덩굴정령",
+    "boss": false
+  },
+  {
+    "code": 2100143,
+    "name": "부패한 어그린트",
+    "boss": false
+  },
+  {
+    "code": 2100144,
+    "name": "작은부리 하이브",
+    "boss": false
+  },
+  {
+    "code": 2100145,
+    "name": "배고픈 토그",
+    "boss": false
+  },
+  {
+    "code": 2100146,
+    "name": "온순한 초지 자이프",
+    "boss": false
+  },
+  {
+    "code": 2100147,
+    "name": "언덕 루필리니",
+    "boss": false
+  },
+  {
+    "code": 2100148,
+    "name": "탄식하는 검성 영혼",
+    "boss": false
+  },
+  {
+    "code": 2100149,
+    "name": "탄식하는 궁성 영혼",
+    "boss": false
+  },
+  {
+    "code": 2100150,
+    "name": "엘룬강 크레스틀리치 암컷",
+    "boss": false
+  },
+  {
+    "code": 2100151,
+    "name": "엘룬강 크레스틀리치 수컷",
+    "boss": false
+  },
+  {
+    "code": 2100155,
+    "name": "아울라우 방어 토템",
+    "boss": false
+  },
+  {
+    "code": 2100156,
+    "name": "톨바스 코누티 탐색꾼",
+    "boss": false
+  },
+  {
+    "code": 2100157,
+    "name": "톨바스 코누티 일꾼",
+    "boss": false
+  },
+  {
+    "code": 2100158,
+    "name": "아울라우 부유 토템",
+    "boss": false
+  },
+  {
+    "code": 2100159,
+    "name": "톨바스 쿠루 감독관",
+    "boss": false
+  },
+  {
+    "code": 2100160,
+    "name": "톨바스 네펜데스",
+    "boss": false
+  },
+  {
+    "code": 2100161,
+    "name": "아스틴 용병단 순찰꾼",
+    "boss": false
+  },
+  {
+    "code": 2100162,
+    "name": "아스틴 용병단 정찰꾼",
+    "boss": false
+  },
+  {
+    "code": 2100163,
+    "name": "순찰하는 포사",
+    "boss": false
+  },
+  {
+    "code": 2100164,
+    "name": "푸른 핵 옥타사이드",
+    "boss": false
+  },
+  {
+    "code": 2100165,
+    "name": "톨바스 레피스마",
+    "boss": false
+  },
+  {
+    "code": 2100166,
+    "name": "아스틴 용병단 밀렵꾼",
+    "boss": false
+  },
+  {
+    "code": 2100167,
+    "name": "아스틴 용병단 감시꾼",
+    "boss": false
+  },
+  {
+    "code": 2100168,
+    "name": "아스틴 용병단 탐색꾼",
+    "boss": false
+  },
+  {
+    "code": 2100169,
+    "name": "아스틴 용병단 싸움꾼",
+    "boss": false
+  },
+  {
+    "code": 2100170,
+    "name": "아스틴 용병단 약탈꾼",
+    "boss": false
+  },
+  {
+    "code": 2100171,
+    "name": "아스틴 용병단 기습꾼",
+    "boss": false
+  },
+  {
+    "code": 2100172,
+    "name": "단단한 뿔 우르서스",
+    "boss": false
+  },
+  {
+    "code": 2100173,
+    "name": "새끼 뿔 우르서스",
+    "boss": false
+  },
+  {
+    "code": 2100174,
+    "name": "사나운 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2100177,
+    "name": "분노한 사루스",
+    "boss": true
+  },
+  {
+    "code": 2100178,
+    "name": "피송곳니 프닌",
+    "boss": true
+  },
+  {
+    "code": 2100179,
+    "name": "숲 어그린트",
+    "boss": false
+  },
+  {
+    "code": 2100180,
+    "name": "톨바스 쿠루 일꾼",
+    "boss": false
+  },
+  {
+    "code": 2100181,
+    "name": "톨바스 쿠루 잡역꾼",
+    "boss": false
+  },
+  {
+    "code": 2100182,
+    "name": "톨바스 숲 호수 드리톤",
+    "boss": false
+  },
+  {
+    "code": 2100183,
+    "name": "비로타 방랑자",
+    "boss": false
+  },
+  {
+    "code": 2100184,
+    "name": "약초꾼 비로타",
+    "boss": false
+  },
+  {
+    "code": 2100188,
+    "name": "습지 레피스마",
+    "boss": false
+  },
+  {
+    "code": 2100189,
+    "name": "어린 습지 레피스마",
+    "boss": false
+  },
+  {
+    "code": 2100190,
+    "name": "폐허 루필리니",
+    "boss": false
+  },
+  {
+    "code": 2100192,
+    "name": "배고픈 새끼 토그",
+    "boss": false
+  },
+  {
+    "code": 2100205,
+    "name": "엘룬강 크랄 궁수",
+    "boss": false
+  },
+  {
+    "code": 2100206,
+    "name": "엘룬강 크랄 전사",
+    "boss": false
+  },
+  {
+    "code": 2100207,
+    "name": "세뇌된 뉴트",
+    "boss": false
+  },
+  {
+    "code": 2100208,
+    "name": "개조된 뉴트",
+    "boss": false
+  },
+  {
+    "code": 2100209,
+    "name": "크랄 수호병",
+    "boss": false
+  },
+  {
+    "code": 2100214,
+    "name": "강화된 크랄 지원병",
+    "boss": false
+  },
+  {
+    "code": 2100215,
+    "name": "물비늘 파이니",
+    "boss": false
+  },
+  {
+    "code": 2100216,
+    "name": "뾰족부리 하이브",
+    "boss": false
+  },
+  {
+    "code": 2100217,
+    "name": "들판 브락스",
+    "boss": false
+  },
+  {
+    "code": 2100219,
+    "name": "엘룬강 뮤타",
+    "boss": false
+  },
+  {
+    "code": 2100220,
+    "name": "엘룬강 파피스",
+    "boss": false
+  },
+  {
+    "code": 2100222,
+    "name": "탐색하는 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2100223,
+    "name": "엘룬강 언덕 토그",
+    "boss": false
+  },
+  {
+    "code": 2100224,
+    "name": "엘룬강 언덕 어린 토그",
+    "boss": false
+  },
+  {
+    "code": 2100226,
+    "name": "크랄 지원병",
+    "boss": false
+  },
+  {
+    "code": 2100231,
+    "name": "물의 정령",
+    "boss": false
+  },
+  {
+    "code": 2100272,
+    "name": "돌격하는 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2100273,
+    "name": "야생 스파키",
+    "boss": false
+  },
+  {
+    "code": 2100274,
+    "name": "폐허 뮤타",
+    "boss": false
+  },
+  {
+    "code": 2100275,
+    "name": "브라우니 수리꾼",
+    "boss": false
+  },
+  {
+    "code": 2100276,
+    "name": "브라우니 사역꾼",
+    "boss": false
+  },
+  {
+    "code": 2100277,
+    "name": "크랄 감시병",
+    "boss": false
+  },
+  {
+    "code": 2100281,
+    "name": "감시하는 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2100282,
+    "name": "강화된 크랄 감시병",
+    "boss": false
+  },
+  {
+    "code": 2100283,
+    "name": "흰 껍질 옥타사이드",
+    "boss": false
+  },
+  {
+    "code": 2100285,
+    "name": "엘룬강 언덕 그라비",
+    "boss": false
+  },
+  {
+    "code": 2100286,
+    "name": "검은 무늬 벌",
+    "boss": false
+  },
+  {
+    "code": 2100287,
+    "name": "브라우니 심부름꾼",
+    "boss": false
+  },
+  {
+    "code": 2100288,
+    "name": "들판 토그",
+    "boss": false
+  },
+  {
+    "code": 2100289,
+    "name": "들판 어린 토그",
+    "boss": false
+  },
+  {
+    "code": 2100303,
+    "name": "굶주린 브락스",
+    "boss": false
+  },
+  {
+    "code": 2100305,
+    "name": "초지 스파키",
+    "boss": false
+  },
+  {
+    "code": 2100306,
+    "name": "오염된 어그린트",
+    "boss": false
+  },
+  {
+    "code": 2100343,
+    "name": "강화된 크랄 탐색병",
+    "boss": false
+  },
+  {
+    "code": 2100346,
+    "name": "톨바스 사냥꾼",
+    "boss": false
+  },
+  {
+    "code": 2100347,
+    "name": "잊힌 기사의 영혼",
+    "boss": false
+  },
+  {
+    "code": 2100348,
+    "name": "톨바스 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2100349,
+    "name": "톨바스 흉포한 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2100350,
+    "name": "톨바스 숲 타르곤",
+    "boss": false
+  },
+  {
+    "code": 2100361,
+    "name": "폐허 그늘 뮤타",
+    "boss": false
+  },
+  {
+    "code": 2100362,
+    "name": "크랄 탐색병",
+    "boss": false
+  },
+  {
+    "code": 2100363,
+    "name": "톨바스 밀렵꾼",
+    "boss": false
+  },
+  {
+    "code": 2100364,
+    "name": "광포한 자이프",
+    "boss": false
+  },
+  {
+    "code": 2100365,
+    "name": "광기어린 비로타",
+    "boss": false
+  },
+  {
+    "code": 2100366,
+    "name": "현혹된 어그린트",
+    "boss": false
+  },
+  {
+    "code": 2100369,
+    "name": "도둑 지르카",
+    "boss": false
+  },
+  {
+    "code": 2100370,
+    "name": "덤불 지르카",
+    "boss": false
+  },
+  {
+    "code": 2100376,
+    "name": "호수 스카마",
+    "boss": false
+  },
+  {
+    "code": 2100377,
+    "name": "호수 타르곤",
+    "boss": false
+  },
+  {
+    "code": 2100378,
+    "name": "브라우니 수리꾼",
+    "boss": false
+  },
+  {
+    "code": 2100446,
+    "name": "크랄 조련병",
+    "boss": false
+  },
+  {
+    "code": 2100448,
+    "name": "크랄 경계병",
+    "boss": false
+  },
+  {
+    "code": 2100449,
+    "name": "아스틴 용병단 조련사",
+    "boss": false
+  },
+  {
+    "code": 2100450,
+    "name": "톨바스 약탈꾼",
+    "boss": false
+  },
+  {
+    "code": 2100451,
+    "name": "아스틴 용병단 포사",
+    "boss": false
+  },
+  {
+    "code": 2100452,
+    "name": "사나운 계곡 스파키",
+    "boss": false
+  },
+  {
+    "code": 2100453,
+    "name": "빛나는 아르마돈",
+    "boss": false
+  },
+  {
+    "code": 2100454,
+    "name": "빛나는 칼크겔름",
+    "boss": false
+  },
+  {
+    "code": 2100455,
+    "name": "계곡 루필리니",
+    "boss": false
+  },
+  {
+    "code": 2100456,
+    "name": "붉은 갓 펑거스",
+    "boss": false
+  },
+  {
+    "code": 2100458,
+    "name": "해안 제르피",
+    "boss": false
+  },
+  {
+    "code": 2100459,
+    "name": "오염된 드라이드",
+    "boss": false
+  },
+  {
+    "code": 2100460,
+    "name": "오염된 정령",
+    "boss": false
+  },
+  {
+    "code": 2100461,
+    "name": "늪지 펑기",
+    "boss": false
+  },
+  {
+    "code": 2100464,
+    "name": "활성화된 용족 대형 토템",
+    "boss": false
+  },
+  {
+    "code": 2100468,
+    "name": "칸타스 감시자",
+    "boss": false
+  },
+  {
+    "code": 2100469,
+    "name": "온순한 벌",
+    "boss": false
+  },
+  {
+    "code": 2100470,
+    "name": "숲 이끼 게",
+    "boss": false
+  },
+  {
+    "code": 2100471,
+    "name": "아울라우 주술 토템",
+    "boss": false
+  },
+  {
+    "code": 2100472,
+    "name": "변종 뮤타",
+    "boss": false
+  },
+  {
+    "code": 2100473,
+    "name": "톨바스 어린 레피스마",
+    "boss": false
+  },
+  {
+    "code": 2100474,
+    "name": "난폭한 비로타",
+    "boss": false
+  },
+  {
+    "code": 2100475,
+    "name": "축축한 제르피",
+    "boss": false
+  },
+  {
+    "code": 2100476,
+    "name": "브라우니 관리꾼",
+    "boss": false
+  },
+  {
+    "code": 2100477,
+    "name": "크랄 저격병",
+    "boss": false
+  },
+  {
+    "code": 2100478,
+    "name": "크랄 돌격보병",
+    "boss": false
+  },
+  {
+    "code": 2100479,
+    "name": "브라우니 감시꾼",
+    "boss": false
+  },
+  {
+    "code": 2100480,
+    "name": "크랄 보초병",
+    "boss": false
+  },
+  {
+    "code": 2100481,
+    "name": "예민한 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2100482,
+    "name": "크랄 순찰병",
+    "boss": false
+  },
+  {
+    "code": 2100550,
+    "name": "줄무늬 벌",
+    "boss": false
+  },
+  {
+    "code": 2100551,
+    "name": "거대 줄무늬 벌",
+    "boss": false
+  },
+  {
+    "code": 2100552,
+    "name": "고갯길 우르서스",
+    "boss": false
+  },
+  {
+    "code": 2100553,
+    "name": "고갯길 독기꽃",
+    "boss": false
+  },
+  {
+    "code": 2100554,
+    "name": "고갯길 거미",
+    "boss": false
+  },
+  {
+    "code": 2100555,
+    "name": "고갯길 숲 정령",
+    "boss": false
+  },
+  {
+    "code": 2100556,
+    "name": "고갯길 드리톤",
+    "boss": false
+  },
+  {
+    "code": 2100557,
+    "name": "배회하는 만두리 싸움꾼",
+    "boss": false
+  },
+  {
+    "code": 2100558,
+    "name": "노란 갈기 자이프",
+    "boss": false
+  },
+  {
+    "code": 2100559,
+    "name": "새끼 노란 갈기 자이프",
+    "boss": false
+  },
+  {
+    "code": 2100560,
+    "name": "고갯길 흉폭한 우르서스",
+    "boss": false
+  },
+  {
+    "code": 2100561,
+    "name": "고갯길 습격자",
+    "boss": false
+  },
+  {
+    "code": 2100562,
+    "name": "고갯길 약탈자",
+    "boss": false
+  },
+  {
+    "code": 2100563,
+    "name": "고갯길 순찰자",
+    "boss": false
+  },
+  {
+    "code": 2100564,
+    "name": "길들인 정찰 자이프",
+    "boss": false
+  },
+  {
+    "code": 2100565,
+    "name": "고갯길 뮤타",
+    "boss": false
+  },
+  {
+    "code": 2100566,
+    "name": "약탈단 자이프",
+    "boss": false
+  },
+  {
+    "code": 2100567,
+    "name": "고갯길 약탈단 전사",
+    "boss": false
+  },
+  {
+    "code": 2100568,
+    "name": "고갯길 약탈단 암살자",
+    "boss": false
+  },
+  {
+    "code": 2100569,
+    "name": "배회하는 만두리 싸움꾼",
+    "boss": false
+  },
+  {
+    "code": 2100570,
+    "name": "변절한 데바 감시자",
+    "boss": false
+  },
+  {
+    "code": 2100571,
+    "name": "변절한 데바 순찰자",
+    "boss": false
+  },
+  {
+    "code": 2100572,
+    "name": "변절한 데바 정탐자",
+    "boss": false
+  },
+  {
+    "code": 2100573,
+    "name": "바위 언덕 자이프",
+    "boss": false
+  },
+  {
+    "code": 2100575,
+    "name": "고장난 데바 감찰자",
+    "boss": false
+  },
+  {
+    "code": 2100576,
+    "name": "망가진 수라 병사",
+    "boss": false
+  },
+  {
+    "code": 2100577,
+    "name": "버려진 수라 전사",
+    "boss": false
+  },
+  {
+    "code": 2100578,
+    "name": "버려진 수라 궁수",
+    "boss": false
+  },
+  {
+    "code": 2100579,
+    "name": "버려진 수라 정탐꾼",
+    "boss": false
+  },
+  {
+    "code": 2100580,
+    "name": "바위 무덤 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2100581,
+    "name": "바위 무덤 무법자 데바 전사",
+    "boss": false
+  },
+  {
+    "code": 2100582,
+    "name": "배교자 레일라",
+    "boss": true
+  },
+  {
+    "code": 2100583,
+    "name": "고원 비벨",
+    "boss": false
+  },
+  {
+    "code": 2100584,
+    "name": "아르타미아 고원 유적 장치",
+    "boss": false
+  },
+  {
+    "code": 2100585,
+    "name": "아르타미아 고원 유적 장치",
+    "boss": false
+  },
+  {
+    "code": 2100586,
+    "name": "아르타미아 고원 유적 장치",
+    "boss": false
+  },
+  {
+    "code": 2100600,
+    "name": "타락한 정령",
+    "boss": false
+  },
+  {
+    "code": 2100601,
+    "name": "협곡 덩굴 정령",
+    "boss": false
+  },
+  {
+    "code": 2100602,
+    "name": "협곡 디오나에",
+    "boss": false
+  },
+  {
+    "code": 2100603,
+    "name": "축축한 옥타사이드",
+    "boss": false
+  },
+  {
+    "code": 2100604,
+    "name": "서풍의 나우톤",
+    "boss": true
+  },
+  {
+    "code": 2100605,
+    "name": "공기의 정령",
+    "boss": false
+  },
+  {
+    "code": 2100606,
+    "name": "얇은 다리 옥타사이드",
+    "boss": false
+  },
+  {
+    "code": 2100607,
+    "name": "협곡 드리톤",
+    "boss": false
+  },
+  {
+    "code": 2100608,
+    "name": "온순한 파이니",
+    "boss": false
+  },
+  {
+    "code": 2100609,
+    "name": "단단한 부리 하이브",
+    "boss": false
+  },
+  {
+    "code": 2100610,
+    "name": "납작한 캔서리드",
+    "boss": false
+  },
+  {
+    "code": 2100611,
+    "name": "깊은 협곡 숲 정령",
+    "boss": false
+  },
+  {
+    "code": 2100612,
+    "name": "메마른 협곡 어그린트",
+    "boss": false
+  },
+  {
+    "code": 2100613,
+    "name": "협곡 호수 드리톤",
+    "boss": false
+  },
+  {
+    "code": 2100614,
+    "name": "암흑의 정령석",
+    "boss": false
+  },
+  {
+    "code": 2100615,
+    "name": "협곡 카이린",
+    "boss": false
+  },
+  {
+    "code": 2100616,
+    "name": "협곡 네펜데스",
+    "boss": false
+  },
+  {
+    "code": 2100617,
+    "name": "검은 촉수 라와",
+    "boss": true
+  },
+  {
+    "code": 2100650,
+    "name": "붉은 줄기 그라비",
+    "boss": false
+  },
+  {
+    "code": 2100651,
+    "name": "큰 잎사귀 그라비",
+    "boss": false
+  },
+  {
+    "code": 2100652,
+    "name": "앙상한 어그린트",
+    "boss": false
+  },
+  {
+    "code": 2100653,
+    "name": "방황하는 땅 정령",
+    "boss": false
+  },
+  {
+    "code": 2100654,
+    "name": "정원 파피스",
+    "boss": false
+  },
+  {
+    "code": 2100655,
+    "name": "혼란한 우르서스",
+    "boss": false
+  },
+  {
+    "code": 2100656,
+    "name": "방황하는 어둠 정령",
+    "boss": false
+  },
+  {
+    "code": 2100657,
+    "name": "방황하는 물 정령",
+    "boss": false
+  },
+  {
+    "code": 2100658,
+    "name": "방황하는 바람 정령",
+    "boss": false
+  },
+  {
+    "code": 2100659,
+    "name": "환영의 마법 그라비",
+    "boss": false
+  },
+  {
+    "code": 2100660,
+    "name": "정원 수호자",
+    "boss": false
+  },
+  {
+    "code": 2100661,
+    "name": "환몽의 카시아",
+    "boss": true
+  },
+  {
+    "code": 2100662,
+    "name": "혼탁한 덩굴 혼령",
+    "boss": false
+  },
+  {
+    "code": 2100663,
+    "name": "정원 거미",
+    "boss": false
+  },
+  {
+    "code": 2100664,
+    "name": "업화의 정령",
+    "boss": false
+  },
+  {
+    "code": 2100665,
+    "name": "유수의 정령",
+    "boss": false
+  },
+  {
+    "code": 2100666,
+    "name": "삭풍의 정령",
+    "boss": false
+  },
+  {
+    "code": 2100667,
+    "name": "기암의 정령",
+    "boss": false
+  },
+  {
+    "code": 2100697,
+    "name": "어린 정원 코라돈",
+    "boss": false
+  },
+  {
+    "code": 2100698,
+    "name": "오래된 어그린트",
+    "boss": false
+  },
+  {
+    "code": 2100699,
+    "name": "정원 코라돈",
+    "boss": false
+  },
+  {
+    "code": 2100700,
+    "name": "잿빛 칼크겔름",
+    "boss": false
+  },
+  {
+    "code": 2100701,
+    "name": "오염된 변종 옥타사이드",
+    "boss": false
+  },
+  {
+    "code": 2100702,
+    "name": "방황하는 기사의 갑주",
+    "boss": false
+  },
+  {
+    "code": 2100703,
+    "name": "신전 변종 아르마돈",
+    "boss": false
+  },
+  {
+    "code": 2100704,
+    "name": "분노한 기사의 사체",
+    "boss": false
+  },
+  {
+    "code": 2100705,
+    "name": "떠도는 기사의 영혼",
+    "boss": false
+  },
+  {
+    "code": 2100706,
+    "name": "돌무더기 옥타사이드",
+    "boss": false
+  },
+  {
+    "code": 2100707,
+    "name": "떠도는 궁수의 영혼",
+    "boss": false
+  },
+  {
+    "code": 2100708,
+    "name": "백부장 데미로스",
+    "boss": true
+  },
+  {
+    "code": 2100709,
+    "name": "오염된 스콜피온",
+    "boss": false
+  },
+  {
+    "code": 2100710,
+    "name": "노란 꼬리 스카마",
+    "boss": false
+  },
+  {
+    "code": 2100711,
+    "name": "변이 덩굴 덩어리",
+    "boss": false
+  },
+  {
+    "code": 2100712,
+    "name": "통제를 잃은 가디트",
+    "boss": false
+  },
+  {
+    "code": 2100713,
+    "name": "오염된 변종 타르곤",
+    "boss": false
+  },
+  {
+    "code": 2100714,
+    "name": "오염된 어그린트",
+    "boss": false
+  },
+  {
+    "code": 2100715,
+    "name": "오염된 덩굴 덩어리",
+    "boss": false
+  },
+  {
+    "code": 2100716,
+    "name": "오염된 가디트",
+    "boss": false
+  },
+  {
+    "code": 2100717,
+    "name": "오염된 독 슬라임",
+    "boss": false
+  },
+  {
+    "code": 2100718,
+    "name": "신성한 안사스",
+    "boss": true
+  },
+  {
+    "code": 2100740,
+    "name": "온순한 고원 브락스",
+    "boss": false
+  },
+  {
+    "code": 2100741,
+    "name": "긴 부리 고원 하이브",
+    "boss": false
+  },
+  {
+    "code": 2100742,
+    "name": "질긴 갈기 고원 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2100743,
+    "name": "고원 뮤타",
+    "boss": false
+  },
+  {
+    "code": 2100744,
+    "name": "진홍빛 고원 네펜데스",
+    "boss": false
+  },
+  {
+    "code": 2100745,
+    "name": "고원 오드 거미",
+    "boss": false
+  },
+  {
+    "code": 2100746,
+    "name": "꼬리깃 루필리니",
+    "boss": false
+  },
+  {
+    "code": 2100747,
+    "name": "오염된 고원 루필리니",
+    "boss": false
+  },
+  {
+    "code": 2100748,
+    "name": "고원 숲 자이프",
+    "boss": false
+  },
+  {
+    "code": 2100749,
+    "name": "고원 새끼 숲 자이프",
+    "boss": false
+  },
+  {
+    "code": 2100750,
+    "name": "고원 크레스틀리치 수컷",
+    "boss": false
+  },
+  {
+    "code": 2100751,
+    "name": "고원 야생 아르마돈",
+    "boss": false
+  },
+  {
+    "code": 2100752,
+    "name": "고원 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2100753,
+    "name": "고원 오드 스파키",
+    "boss": false
+  },
+  {
+    "code": 2100793,
+    "name": "야생 줄무늬 토그",
+    "boss": false
+  },
+  {
+    "code": 2100794,
+    "name": "야생 줄무늬 어린 토그",
+    "boss": false
+  },
+  {
+    "code": 2100795,
+    "name": "고원 오드 스파키",
+    "boss": false
+  },
+  {
+    "code": 2100796,
+    "name": "고원 거대 오드 스파키",
+    "boss": false
+  },
+  {
+    "code": 2100797,
+    "name": "고원 자이프",
+    "boss": false
+  },
+  {
+    "code": 2100798,
+    "name": "고원 새끼 자이프",
+    "boss": false
+  },
+  {
+    "code": 2100799,
+    "name": "고원 크레스틀리치 암컷",
+    "boss": false
+  },
+  {
+    "code": 2100800,
+    "name": "탈주한 데바 궁성",
+    "boss": false
+  },
+  {
+    "code": 2100801,
+    "name": "탈주한 데바 살성",
+    "boss": false
+  },
+  {
+    "code": 2100802,
+    "name": "길들인 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2100803,
+    "name": "탈주한 데바 궁성",
+    "boss": false
+  },
+  {
+    "code": 2100804,
+    "name": "탈주한 데바 살성",
+    "boss": false
+  },
+  {
+    "code": 2100805,
+    "name": "길들인 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2100806,
+    "name": "사나운 연못 하이브",
+    "boss": false
+  },
+  {
+    "code": 2100807,
+    "name": "뒤틀린 정령",
+    "boss": false
+  },
+  {
+    "code": 2100808,
+    "name": "연못 스타터틀",
+    "boss": false
+  },
+  {
+    "code": 2100809,
+    "name": "어린 뮤타",
+    "boss": false
+  },
+  {
+    "code": 2100810,
+    "name": "메마른 페어리",
+    "boss": false
+  },
+  {
+    "code": 2100811,
+    "name": "사악한 언덕 제르피",
+    "boss": false
+  },
+  {
+    "code": 2100812,
+    "name": "언덕 돌 정령",
+    "boss": false
+  },
+  {
+    "code": 2100813,
+    "name": "언덕 자이프",
+    "boss": false
+  },
+  {
+    "code": 2100814,
+    "name": "언덕 붉은 루필리니",
+    "boss": false
+  },
+  {
+    "code": 2100815,
+    "name": "루필리니 실험체",
+    "boss": false
+  },
+  {
+    "code": 2100816,
+    "name": "언덕 만두리",
+    "boss": false
+  },
+  {
+    "code": 2100817,
+    "name": "언덕 우르서스",
+    "boss": false
+  },
+  {
+    "code": 2100818,
+    "name": "언덕 어린 우르서스",
+    "boss": false
+  },
+  {
+    "code": 2100819,
+    "name": "언덕 토그",
+    "boss": false
+  },
+  {
+    "code": 2100820,
+    "name": "언덕 어린 토그",
+    "boss": false
+  },
+  {
+    "code": 2100821,
+    "name": "언덕 코라돈",
+    "boss": false
+  },
+  {
+    "code": 2100822,
+    "name": "언덕 어린 코라돈",
+    "boss": false
+  },
+  {
+    "code": 2100823,
+    "name": "메마른 페어리",
+    "boss": false
+  },
+  {
+    "code": 2100824,
+    "name": "언덕 우르서스",
+    "boss": false
+  },
+  {
+    "code": 2100825,
+    "name": "언덕 어린 우르서스",
+    "boss": false
+  },
+  {
+    "code": 2100826,
+    "name": "언덕 토그",
+    "boss": false
+  },
+  {
+    "code": 2100827,
+    "name": "언덕 어린 토그",
+    "boss": false
+  },
+  {
+    "code": 2100828,
+    "name": "언덕 코라돈",
+    "boss": false
+  },
+  {
+    "code": 2100829,
+    "name": "언덕 어린 코라돈",
+    "boss": false
+  },
+  {
+    "code": 2100830,
+    "name": "언덕 아르마돈",
+    "boss": false
+  },
+  {
+    "code": 2100831,
+    "name": "언덕 아르마돈",
+    "boss": false
+  },
+  {
+    "code": 2100832,
+    "name": "연못 드리톤",
+    "boss": false
+  },
+  {
+    "code": 2100850,
+    "name": "재배지 브라우니 갈퀴꾼",
+    "boss": false
+  },
+  {
+    "code": 2100851,
+    "name": "재배지 브라우니 채집꾼",
+    "boss": false
+  },
+  {
+    "code": 2100852,
+    "name": "재배지 브라우니 지게꾼",
+    "boss": false
+  },
+  {
+    "code": 2100853,
+    "name": "재배지 브라우니 채석꾼",
+    "boss": false
+  },
+  {
+    "code": 2100854,
+    "name": "노역 관리 오큘라젠",
+    "boss": false
+  },
+  {
+    "code": 2100855,
+    "name": "재배지 크랄 치유병",
+    "boss": false
+  },
+  {
+    "code": 2100856,
+    "name": "브라우니 재배 노역꾼",
+    "boss": false
+  },
+  {
+    "code": 2100857,
+    "name": "브라우니 수확 노역꾼",
+    "boss": false
+  },
+  {
+    "code": 2100858,
+    "name": "노역 감시 오큘라젠",
+    "boss": false
+  },
+  {
+    "code": 2100859,
+    "name": "재배지 크랄 궁병",
+    "boss": false
+  },
+  {
+    "code": 2100860,
+    "name": "드라쿠니 채집꾼",
+    "boss": false
+  },
+  {
+    "code": 2100861,
+    "name": "재배지 브라우니 잡역꾼",
+    "boss": false
+  },
+  {
+    "code": 2100862,
+    "name": "드라칸 마법병",
+    "boss": false
+  },
+  {
+    "code": 2100863,
+    "name": "재배지 브라우니 노역꾼",
+    "boss": false
+  },
+  {
+    "code": 2100864,
+    "name": "드라나 가공 정령",
+    "boss": false
+  },
+  {
+    "code": 2100865,
+    "name": "재배지 드라칸 경비병",
+    "boss": false
+  },
+  {
+    "code": 2100866,
+    "name": "드라나 가공 관리기",
+    "boss": false
+  },
+  {
+    "code": 2100867,
+    "name": "드라쿠니 가공 노역꾼",
+    "boss": false
+  },
+  {
+    "code": 2100868,
+    "name": "드라나 뒤틀린 정령",
+    "boss": false
+  },
+  {
+    "code": 2100869,
+    "name": "드라나 감시 정찰병",
+    "boss": false
+  },
+  {
+    "code": 2100870,
+    "name": "재배지 브라우니 분류꾼",
+    "boss": false
+  },
+  {
+    "code": 2100871,
+    "name": "재배지 브라우니 탐광꾼",
+    "boss": false
+  },
+  {
+    "code": 2100872,
+    "name": "가공지 드라칸 정찰병",
+    "boss": false
+  },
+  {
+    "code": 2100873,
+    "name": "재배지 브라우니 운반꾼",
+    "boss": false
+  },
+  {
+    "code": 2100874,
+    "name": "노역 감시 오큘라젠",
+    "boss": false
+  },
+  {
+    "code": 2100875,
+    "name": "노예감독관 가즈탄",
+    "boss": true
+  },
+  {
+    "code": 2100876,
+    "name": "수확관리자 모샤브",
+    "boss": true
+  },
+  {
+    "code": 2100877,
+    "name": "감시병기 크나쉬",
+    "boss": true
+  },
+  {
+    "code": 2100878,
+    "name": "노역 관리 크랄",
+    "boss": false
+  },
+  {
+    "code": 2100879,
+    "name": "드라나 중독 벌레",
+    "boss": false
+  },
+  {
+    "code": 2100900,
+    "name": "변이된 숲 드라토나",
+    "boss": false
+  },
+  {
+    "code": 2100901,
+    "name": "붉은 숲 드라토나",
+    "boss": false
+  },
+  {
+    "code": 2100902,
+    "name": "거대 변이 드라토나",
+    "boss": false
+  },
+  {
+    "code": 2100903,
+    "name": "망가진 변이 수라",
+    "boss": false
+  },
+  {
+    "code": 2100904,
+    "name": "배회하는 수라 전사",
+    "boss": false
+  },
+  {
+    "code": 2100905,
+    "name": "배회하는 수라 궁수",
+    "boss": false
+  },
+  {
+    "code": 2100906,
+    "name": "오염된 시체 벌레",
+    "boss": false
+  },
+  {
+    "code": 2100907,
+    "name": "드라나 변이 스카마",
+    "boss": false
+  },
+  {
+    "code": 2100908,
+    "name": "드라나 변이 캔서리드",
+    "boss": false
+  },
+  {
+    "code": 2100909,
+    "name": "용족 경보 장치",
+    "boss": false
+  },
+  {
+    "code": 2100910,
+    "name": "개조 크랄 전사",
+    "boss": false
+  },
+  {
+    "code": 2100911,
+    "name": "드라나 변이 박쥐",
+    "boss": false
+  },
+  {
+    "code": 2100912,
+    "name": "개조 크랄 궁수",
+    "boss": false
+  },
+  {
+    "code": 2100913,
+    "name": "드라나 주입기",
+    "boss": false
+  },
+  {
+    "code": 2100914,
+    "name": "변이된 크랄 노역꾼",
+    "boss": false
+  },
+  {
+    "code": 2100950,
+    "name": "아울라우 수습 주술사",
+    "boss": false
+  },
+  {
+    "code": 2100951,
+    "name": "아울라우 부락 경비병",
+    "boss": false
+  },
+  {
+    "code": 2100952,
+    "name": "아울라우 부락 보초병",
+    "boss": false
+  },
+  {
+    "code": 2100953,
+    "name": "피노 일꾼",
+    "boss": false
+  },
+  {
+    "code": 2100954,
+    "name": "피노 노역꾼",
+    "boss": false
+  },
+  {
+    "code": 2100955,
+    "name": "매서운 피노 일꾼",
+    "boss": false
+  },
+  {
+    "code": 2100956,
+    "name": "아울라우 나무 토템",
+    "boss": false
+  },
+  {
+    "code": 2100957,
+    "name": "성실한 피노 일꾼",
+    "boss": false
+  },
+  {
+    "code": 2100958,
+    "name": "아울라우 부락 경계병",
+    "boss": false
+  },
+  {
+    "code": 2100959,
+    "name": "아울라우 방랑 순찰자",
+    "boss": false
+  },
+  {
+    "code": 2100960,
+    "name": "아울라우 방랑 궁사",
+    "boss": false
+  },
+  {
+    "code": 2100961,
+    "name": "아울라우 방랑 전사",
+    "boss": false
+  },
+  {
+    "code": 2100962,
+    "name": "아울라우 방랑 검사",
+    "boss": false
+  },
+  {
+    "code": 2100963,
+    "name": "아울라우 방랑 투사",
+    "boss": false
+  },
+  {
+    "code": 2100964,
+    "name": "매서운 쿠루 잡역꾼",
+    "boss": false
+  },
+  {
+    "code": 2100965,
+    "name": "아울라우 부락 주술사",
+    "boss": false
+  },
+  {
+    "code": 2100966,
+    "name": "아울라우 저장고 보초병",
+    "boss": false
+  },
+  {
+    "code": 2100967,
+    "name": "아울라우 향로 나무 토템",
+    "boss": false
+  },
+  {
+    "code": 2100968,
+    "name": "아울라우 상급 토템 주술사",
+    "boss": false
+  },
+  {
+    "code": 2100969,
+    "name": "아울라우 공중 토템",
+    "boss": false
+  },
+  {
+    "code": 2100970,
+    "name": "아울라우 부락 순찰병",
+    "boss": false
+  },
+  {
+    "code": 2100971,
+    "name": "아울라우 호위병",
+    "boss": false
+  },
+  {
+    "code": 2100972,
+    "name": "아울라우 중급 주술사",
+    "boss": false
+  },
+  {
+    "code": 2100973,
+    "name": "아울라우 상급 주술사",
+    "boss": false
+  },
+  {
+    "code": 2100974,
+    "name": "아울라우 경계병",
+    "boss": false
+  },
+  {
+    "code": 2100975,
+    "name": "사나운 쿠루 잡역꾼",
+    "boss": false
+  },
+  {
+    "code": 2100976,
+    "name": "아울라우 숲 관리 용병",
+    "boss": false
+  },
+  {
+    "code": 2100977,
+    "name": "숲 언덕 감시 순찰병",
+    "boss": false
+  },
+  {
+    "code": 2100978,
+    "name": "아울라우 숲 감시 병사",
+    "boss": false
+  },
+  {
+    "code": 2100979,
+    "name": "아울라우 순찰 경비병",
+    "boss": false
+  },
+  {
+    "code": 2100980,
+    "name": "매서운 피노 일꾼",
+    "boss": false
+  },
+  {
+    "code": 2100981,
+    "name": "아울라우 숲 감시 경비병",
+    "boss": false
+  },
+  {
+    "code": 2100982,
+    "name": "난폭한 쿠루 잡역꾼",
+    "boss": false
+  },
+  {
+    "code": 2100983,
+    "name": "아울라우 주술사 경비병",
+    "boss": false
+  },
+  {
+    "code": 2100984,
+    "name": "아울라우 막사 경비병",
+    "boss": false
+  },
+  {
+    "code": 2100985,
+    "name": "아울라우 숲 거미",
+    "boss": false
+  },
+  {
+    "code": 2100986,
+    "name": "아울라우 숲 스파키",
+    "boss": false
+  },
+  {
+    "code": 2100987,
+    "name": "아울라우 숲 거대 스파키",
+    "boss": false
+  },
+  {
+    "code": 2100988,
+    "name": "학자 라울라",
+    "boss": true
+  },
+  {
+    "code": 2100989,
+    "name": "숲전사 우라무",
+    "boss": true
+  },
+  {
+    "code": 2100990,
+    "name": "용주술사 마울라트",
+    "boss": true
+  },
+  {
+    "code": 2100991,
+    "name": "추격자 타울로",
+    "boss": true
+  },
+  {
+    "code": 2100992,
+    "name": "고지대 스파키",
+    "boss": false
+  },
+  {
+    "code": 2100993,
+    "name": "고지대 거대 스파키",
+    "boss": false
+  },
+  {
+    "code": 2100994,
+    "name": "아울라우 부락 훈련병",
+    "boss": false
+  },
+  {
+    "code": 2100995,
+    "name": "아울라우 토템 주술사",
+    "boss": false
+  },
+  {
+    "code": 2100996,
+    "name": "아울라우 부락 경비병",
+    "boss": false
+  },
+  {
+    "code": 2100997,
+    "name": "아울라우 보초병",
+    "boss": false
+  },
+  {
+    "code": 2100998,
+    "name": "아울라우 관리 궁병",
+    "boss": false
+  },
+  {
+    "code": 2100999,
+    "name": "아울라우 숲 감시 순찰병",
+    "boss": false
+  },
+  {
+    "code": 2101000,
+    "name": "드라칸 경비병",
+    "boss": false
+  },
+  {
+    "code": 2101001,
+    "name": "나히드 드라칸 방어병",
+    "boss": false
+  },
+  {
+    "code": 2101002,
+    "name": "드라칸 경비견",
+    "boss": false
+  },
+  {
+    "code": 2101003,
+    "name": "나히드 드라칸 돌격병",
+    "boss": false
+  },
+  {
+    "code": 2101004,
+    "name": "수라 실험체",
+    "boss": false
+  },
+  {
+    "code": 2101005,
+    "name": "크랄 실험체",
+    "boss": false
+  },
+  {
+    "code": 2101006,
+    "name": "나히드 생체 연구원",
+    "boss": false
+  },
+  {
+    "code": 2101007,
+    "name": "나히드 실험체 감시병",
+    "boss": false
+  },
+  {
+    "code": 2101008,
+    "name": "잔인한 나히드 경비병",
+    "boss": false
+  },
+  {
+    "code": 2101009,
+    "name": "나히드 드라칸 경비견",
+    "boss": false
+  },
+  {
+    "code": 2101010,
+    "name": "드라나 에너지 경비병",
+    "boss": false
+  },
+  {
+    "code": 2101011,
+    "name": "잔인한 나히드 무장병",
+    "boss": false
+  },
+  {
+    "code": 2101012,
+    "name": "드라칸 연구원",
+    "boss": false
+  },
+  {
+    "code": 2101013,
+    "name": "드라나 에너지 연구원",
+    "boss": false
+  },
+  {
+    "code": 2101014,
+    "name": "침입자 탐색기",
+    "boss": false
+  },
+  {
+    "code": 2101015,
+    "name": "침입자 탐색기",
+    "boss": false
+  },
+  {
+    "code": 2101016,
+    "name": "연구관 세트람",
+    "boss": true
+  },
+  {
+    "code": 2101017,
+    "name": "드라칸 연구원",
+    "boss": false
+  },
+  {
+    "code": 2101018,
+    "name": "엘룬강 우르서스",
+    "boss": false
+  },
+  {
+    "code": 2101020,
+    "name": "붉은 등껍질 스타터틀",
+    "boss": false
+  },
+  {
+    "code": 2101021,
+    "name": "엘룬강 카이린",
+    "boss": false
+  },
+  {
+    "code": 2101022,
+    "name": "엘룬강 어린 카이린",
+    "boss": false
+  },
+  {
+    "code": 2101023,
+    "name": "아울라우 숲 오드거미",
+    "boss": false
+  },
+  {
+    "code": 2101048,
+    "name": "채집 관리 코누티 일꾼",
+    "boss": false
+  },
+  {
+    "code": 2101049,
+    "name": "노역 관리 피노",
+    "boss": false
+  },
+  {
+    "code": 2101050,
+    "name": "제사장 처소 관리 궁병",
+    "boss": false
+  },
+  {
+    "code": 2101051,
+    "name": "제사장 처소 순찰병",
+    "boss": false
+  },
+  {
+    "code": 2101052,
+    "name": "아울라우 관리 토템 주술사",
+    "boss": false
+  },
+  {
+    "code": 2101053,
+    "name": "순찰 공중 토템",
+    "boss": false
+  },
+  {
+    "code": 2101054,
+    "name": "게으른 쿠루 일꾼",
+    "boss": false
+  },
+  {
+    "code": 2101055,
+    "name": "굶주린 쿠루 심부름꾼",
+    "boss": false
+  },
+  {
+    "code": 2101056,
+    "name": "숲 일꾼 감시 병사",
+    "boss": false
+  },
+  {
+    "code": 2101057,
+    "name": "숲 감시 주술사",
+    "boss": false
+  },
+  {
+    "code": 2101058,
+    "name": "아울라우 순찰 궁병",
+    "boss": false
+  },
+  {
+    "code": 2101059,
+    "name": "숲 노역 감시 순찰병",
+    "boss": false
+  },
+  {
+    "code": 2101060,
+    "name": "숲 노역 감시 주술사",
+    "boss": false
+  },
+  {
+    "code": 2101061,
+    "name": "숲 나무 공중 토템",
+    "boss": false
+  },
+  {
+    "code": 2101062,
+    "name": "숲 노역 관리 병사",
+    "boss": false
+  },
+  {
+    "code": 2101063,
+    "name": "숲 레피스마",
+    "boss": false
+  },
+  {
+    "code": 2101064,
+    "name": "숲 새끼 레피스마",
+    "boss": false
+  },
+  {
+    "code": 2101066,
+    "name": "다미누 숲 케루빔",
+    "boss": false
+  },
+  {
+    "code": 2101068,
+    "name": "공중섬 포이닉스",
+    "boss": false
+  },
+  {
+    "code": 2101070,
+    "name": "창고 드라코뉴트 짐꾼",
+    "boss": false
+  },
+  {
+    "code": 2101071,
+    "name": "창고 드라코뉴트 잡역꾼",
+    "boss": false
+  },
+  {
+    "code": 2101072,
+    "name": "드라칸 감시전사",
+    "boss": false
+  },
+  {
+    "code": 2101074,
+    "name": "영원의 가르투아",
+    "boss": true
+  },
+  {
+    "code": 2101075,
+    "name": "영원의 케루빔",
+    "boss": false
+  },
+  {
+    "code": 2101076,
+    "name": "영원의 케루비언",
+    "boss": false
+  },
+  {
+    "code": 2101077,
+    "name": "영원의 케루비엘",
+    "boss": false
+  },
+  {
+    "code": 2101078,
+    "name": "영원의 오디티움",
+    "boss": false
+  },
+  {
+    "code": 2101079,
+    "name": "영원의 케루빔",
+    "boss": false
+  },
+  {
+    "code": 2101080,
+    "name": "영원의 케루비언",
+    "boss": false
+  },
+  {
+    "code": 2101081,
+    "name": "영원의 오디티움",
+    "boss": false
+  },
+  {
+    "code": 2101082,
+    "name": "영원의 스타터틀",
+    "boss": false
+  },
+  {
+    "code": 2101083,
+    "name": "영원의 파이니",
+    "boss": false
+  },
+  {
+    "code": 2101084,
+    "name": "영원의 뉴트",
+    "boss": false
+  },
+  {
+    "code": 2101085,
+    "name": "영원의 제르피",
+    "boss": false
+  },
+  {
+    "code": 2101086,
+    "name": "영원의 루필리니",
+    "boss": false
+  },
+  {
+    "code": 2101087,
+    "name": "영원의 불의 정령",
+    "boss": false
+  },
+  {
+    "code": 2101088,
+    "name": "영원의 물의 정령",
+    "boss": false
+  },
+  {
+    "code": 2101089,
+    "name": "영원의 땅의 정령",
+    "boss": false
+  },
+  {
+    "code": 2101090,
+    "name": "주둔지 점령석",
+    "boss": false
+  },
+  {
+    "code": 2101091,
+    "name": "주둔지 점령석",
+    "boss": false
+  },
+  {
+    "code": 2101092,
+    "name": "브라우니 짐꾼",
+    "boss": false
+  },
+  {
+    "code": 2101093,
+    "name": "브라우니 잡역꾼",
+    "boss": false
+  },
+  {
+    "code": 2101094,
+    "name": "숲의 드라코뉴트 전사",
+    "boss": false
+  },
+  {
+    "code": 2101095,
+    "name": "협곡 어그린트",
+    "boss": false
+  },
+  {
+    "code": 2101096,
+    "name": "영원의 바람의 정령",
+    "boss": false
+  },
+  {
+    "code": 2101097,
+    "name": "영원의 레피스마",
+    "boss": false
+  },
+  {
+    "code": 2101098,
+    "name": "영원의 이끼 게",
+    "boss": false
+  },
+  {
+    "code": 2101099,
+    "name": "영원의 어그린트",
+    "boss": false
+  },
+  {
+    "code": 2101100,
+    "name": "포악한 불의 정령",
+    "boss": false
+  },
+  {
+    "code": 2101101,
+    "name": "포악한 물의 정령",
+    "boss": false
+  },
+  {
+    "code": 2101102,
+    "name": "포악한 땅의 정령",
+    "boss": false
+  },
+  {
+    "code": 2101103,
+    "name": "포악한 바람의 정령",
+    "boss": false
+  },
+  {
+    "code": 2101104,
+    "name": "숭배자 드키쉬",
+    "boss": true
+  },
+  {
+    "code": 2101105,
+    "name": "탐색꾼 사하르",
+    "boss": true
+  },
+  {
+    "code": 2101106,
+    "name": "파괴자 타르카",
+    "boss": true
+  },
+  {
+    "code": 2101107,
+    "name": "감시자 산드하",
+    "boss": true
+  },
+  {
+    "code": 2101108,
+    "name": "친위대 이리마",
+    "boss": true
+  },
+  {
+    "code": 2101109,
+    "name": "냉혹한 칸다크",
+    "boss": true
+  },
+  {
+    "code": 2101110,
+    "name": "사냥꾼 다나한",
+    "boss": true
+  },
+  {
+    "code": 2101111,
+    "name": "무정한 모잔트",
+    "boss": true
+  },
+  {
+    "code": 2101112,
+    "name": "분노한 카르샤",
+    "boss": true
+  },
+  {
+    "code": 2101113,
+    "name": "파수꾼 크라체",
+    "boss": true
+  },
+  {
+    "code": 2101114,
+    "name": "처형자 네모크",
+    "boss": true
+  },
+  {
+    "code": 2101115,
+    "name": "보좌관 바르하",
+    "boss": true
+  },
+  {
+    "code": 2101116,
+    "name": "교활한 드마크",
+    "boss": true
+  },
+  {
+    "code": 2101117,
+    "name": "수색대 바그쉬",
+    "boss": true
+  },
+  {
+    "code": 2101118,
+    "name": "추적자 다즈란",
+    "boss": true
+  },
+  {
+    "code": 2101120,
+    "name": "침묵의 타르탄",
+    "boss": true
+  },
+  {
+    "code": 2101122,
+    "name": "영혼 지배자 카샤파",
+    "boss": true
+  },
+  {
+    "code": 2101123,
+    "name": "엘룬강 호수 드리톤",
+    "boss": false
+  },
+  {
+    "code": 2101124,
+    "name": "칸타스 계곡 드리톤",
+    "boss": false
+  },
+  {
+    "code": 2101125,
+    "name": "톨바스 그라비",
+    "boss": false
+  },
+  {
+    "code": 2101126,
+    "name": "톨바스 마법 그라비",
+    "boss": false
+  },
+  {
+    "code": 2101128,
+    "name": "카테코아",
+    "boss": true
+  },
+  {
+    "code": 2101129,
+    "name": "재배지 비행병",
+    "boss": false
+  },
+  {
+    "code": 2101130,
+    "name": "재배지 대형 토템",
+    "boss": false
+  },
+  {
+    "code": 2101131,
+    "name": "군단장 라그타",
+    "boss": true
+  },
+  {
+    "code": 2101132,
+    "name": "호수 드리톤",
+    "boss": false
+  },
+  {
+    "code": 2101133,
+    "name": "영원의 쿠루 일꾼",
+    "boss": false
+  },
+  {
+    "code": 2101134,
+    "name": "영원의 쿠루 잡역꾼",
+    "boss": false
+  },
+  {
+    "code": 2101135,
+    "name": "영원의 드라나 변이체",
+    "boss": false
+  },
+  {
+    "code": 2101136,
+    "name": "영원의 쿠루 일꾼",
+    "boss": false
+  },
+  {
+    "code": 2101137,
+    "name": "영원의 쿠루 잡역꾼",
+    "boss": false
+  },
+  {
+    "code": 2101138,
+    "name": "영원의 섬 만두리 싸움꾼",
+    "boss": false
+  },
+  {
+    "code": 2101139,
+    "name": "영원의 쿠루 감독관",
+    "boss": false
+  },
+  {
+    "code": 2101164,
+    "name": "숲의 드라토나",
+    "boss": false
+  },
+  {
+    "code": 2101165,
+    "name": "숲의 드라코뉴트 전사",
+    "boss": false
+  },
+  {
+    "code": 2101182,
+    "name": "코누티",
+    "boss": false
+  },
+  {
+    "code": 2101183,
+    "name": "코누티",
+    "boss": false
+  },
+  {
+    "code": 2101195,
+    "name": "드라칸 감시전사",
+    "boss": false
+  },
+  {
+    "code": 2101200,
+    "name": "힐로스터 탐색꾼",
+    "boss": false
+  },
+  {
+    "code": 2101201,
+    "name": "힐로스터 일꾼",
+    "boss": false
+  },
+  {
+    "code": 2101202,
+    "name": "힐로스터 싸움꾼",
+    "boss": false
+  },
+  {
+    "code": 2101203,
+    "name": "힐로스터 순찰꾼",
+    "boss": false
+  },
+  {
+    "code": 2101204,
+    "name": "구릉지 네펜데스",
+    "boss": false
+  },
+  {
+    "code": 2101205,
+    "name": "뾰족머리 뮤타",
+    "boss": false
+  },
+  {
+    "code": 2101206,
+    "name": "힐로스터 샘 감시자",
+    "boss": false
+  },
+  {
+    "code": 2101207,
+    "name": "힐로스터 샘 일꾼",
+    "boss": false
+  },
+  {
+    "code": 2101208,
+    "name": "힐로스터 샘 경계꾼",
+    "boss": false
+  },
+  {
+    "code": 2101209,
+    "name": "갈고리 스카마",
+    "boss": false
+  },
+  {
+    "code": 2101210,
+    "name": "독비늘 드리톤",
+    "boss": false
+  },
+  {
+    "code": 2101211,
+    "name": "힐로스터 감시자",
+    "boss": false
+  },
+  {
+    "code": 2101212,
+    "name": "힐로스터 사냥꾼",
+    "boss": false
+  },
+  {
+    "code": 2101213,
+    "name": "힐로스터 용병",
+    "boss": false
+  },
+  {
+    "code": 2101214,
+    "name": "힐로스터 수색꾼",
+    "boss": false
+  },
+  {
+    "code": 2101215,
+    "name": "힐로스터 길들인 자이프",
+    "boss": false
+  },
+  {
+    "code": 2101216,
+    "name": "오염된 디오나에",
+    "boss": false
+  },
+  {
+    "code": 2101217,
+    "name": "루브레인 변이 벌레",
+    "boss": true
+  },
+  {
+    "code": 2101218,
+    "name": "힐로스터 약탈꾼 대장",
+    "boss": true
+  },
+  {
+    "code": 2101230,
+    "name": "레파르단 언덕 수색꾼",
+    "boss": false
+  },
+  {
+    "code": 2101231,
+    "name": "에이론 탐색 아르카",
+    "boss": false
+  },
+  {
+    "code": 2101232,
+    "name": "독주머니 벌레",
+    "boss": false
+  },
+  {
+    "code": 2101233,
+    "name": "굶주린 토그",
+    "boss": false
+  },
+  {
+    "code": 2101234,
+    "name": "굶주린 어린 토그",
+    "boss": false
+  },
+  {
+    "code": 2101235,
+    "name": "창백한 덩굴",
+    "boss": false
+  },
+  {
+    "code": 2101236,
+    "name": "에이론 독기 꽃",
+    "boss": false
+  },
+  {
+    "code": 2101237,
+    "name": "레파르단 언덕 탐색꾼",
+    "boss": false
+  },
+  {
+    "code": 2101238,
+    "name": "레파르단 수집꾼",
+    "boss": false
+  },
+  {
+    "code": 2101239,
+    "name": "레파르단 유적 연구가",
+    "boss": false
+  },
+  {
+    "code": 2101240,
+    "name": "에이론 수색 아르카",
+    "boss": false
+  },
+  {
+    "code": 2101241,
+    "name": "유적 칼크겔름",
+    "boss": false
+  },
+  {
+    "code": 2101242,
+    "name": "타락한 에이론 데바 검성",
+    "boss": false
+  },
+  {
+    "code": 2101243,
+    "name": "타락한 에이론 데바 수호성",
+    "boss": false
+  },
+  {
+    "code": 2101244,
+    "name": "타락한 데바 정예병",
+    "boss": false
+  },
+  {
+    "code": 2101260,
+    "name": "프렐 심부름꾼",
+    "boss": false
+  },
+  {
+    "code": 2101261,
+    "name": "결계탑 오염된 만두리",
+    "boss": false
+  },
+  {
+    "code": 2101262,
+    "name": "결계탑 드라나 부유체",
+    "boss": false
+  },
+  {
+    "code": 2101263,
+    "name": "응시의 오큘라젠",
+    "boss": false
+  },
+  {
+    "code": 2101264,
+    "name": "경계의 오큘라젠",
+    "boss": false
+  },
+  {
+    "code": 2101265,
+    "name": "프렐 일꾼",
+    "boss": false
+  },
+  {
+    "code": 2101266,
+    "name": "결계탑 아르카",
+    "boss": false
+  },
+  {
+    "code": 2101267,
+    "name": "결계탑 수색 아르카",
+    "boss": false
+  },
+  {
+    "code": 2101268,
+    "name": "붉은갈퀴 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2101269,
+    "name": "주시의 오큘라젠",
+    "boss": false
+  },
+  {
+    "code": 2101270,
+    "name": "프렐 실험체",
+    "boss": false
+  },
+  {
+    "code": 2101271,
+    "name": "결계탑 탐색 아르카",
+    "boss": false
+  },
+  {
+    "code": 2101272,
+    "name": "줄무늬 만두리",
+    "boss": false
+  },
+  {
+    "code": 2101273,
+    "name": "강철 송곳 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2101274,
+    "name": "프렐 정예 실험체",
+    "boss": false
+  },
+  {
+    "code": 2101275,
+    "name": "하얀 송곳니 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2101290,
+    "name": "레파르단 수색대 전사",
+    "boss": false
+  },
+  {
+    "code": 2101291,
+    "name": "레파르단 수색대 마법사",
+    "boss": false
+  },
+  {
+    "code": 2101292,
+    "name": "레파르단 수색대 격투가",
+    "boss": false
+  },
+  {
+    "code": 2101293,
+    "name": "빛바랜 잎 어그린트",
+    "boss": false
+  },
+  {
+    "code": 2101294,
+    "name": "붉은 깃 루필리니",
+    "boss": false
+  },
+  {
+    "code": 2101295,
+    "name": "끈적한 슬라임",
+    "boss": false
+  },
+  {
+    "code": 2101296,
+    "name": "레파르단 탐색대 전사",
+    "boss": false
+  },
+  {
+    "code": 2101297,
+    "name": "레파르단 탐색대 마법사",
+    "boss": false
+  },
+  {
+    "code": 2101298,
+    "name": "레파르단 탐색대 연구원",
+    "boss": false
+  },
+  {
+    "code": 2101299,
+    "name": "레파르단 개조 가디트",
+    "boss": false
+  },
+  {
+    "code": 2101300,
+    "name": "레파르단 탐색대 정찰병",
+    "boss": false
+  },
+  {
+    "code": 2101301,
+    "name": "훈련된 레파르단 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2101302,
+    "name": "멜트림",
+    "boss": true
+  },
+  {
+    "code": 2101330,
+    "name": "레파르 실험단 마법사",
+    "boss": false
+  },
+  {
+    "code": 2101331,
+    "name": "작은뿔 호카",
+    "boss": false
+  },
+  {
+    "code": 2101332,
+    "name": "드라나 포식자 실험체",
+    "boss": false
+  },
+  {
+    "code": 2101333,
+    "name": "뭉개진 실험체 임프",
+    "boss": false
+  },
+  {
+    "code": 2101334,
+    "name": "레파르 실험단 격투가",
+    "boss": false
+  },
+  {
+    "code": 2101335,
+    "name": "실험 기록용 아르카",
+    "boss": false
+  },
+  {
+    "code": 2101336,
+    "name": "레파르단 보안대 전사",
+    "boss": false
+  },
+  {
+    "code": 2101337,
+    "name": "레파르단 보안대 마법사",
+    "boss": false
+  },
+  {
+    "code": 2101338,
+    "name": "레파르단 드라나 연구원",
+    "boss": false
+  },
+  {
+    "code": 2101339,
+    "name": "레파르단 드라나 연구 지휘관",
+    "boss": false
+  },
+  {
+    "code": 2101340,
+    "name": "레파르단 보안대 격투가",
+    "boss": false
+  },
+  {
+    "code": 2101341,
+    "name": "레파르단 보안대 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2101342,
+    "name": "부패한 실험체 루필리니",
+    "boss": false
+  },
+  {
+    "code": 2101343,
+    "name": "니호그",
+    "boss": true
+  },
+  {
+    "code": 2101344,
+    "name": "불완전한 크티마",
+    "boss": true
+  },
+  {
+    "code": 2101345,
+    "name": "고장난 아르카",
+    "boss": false
+  },
+  {
+    "code": 2101346,
+    "name": "레파르단 실험체 관리자",
+    "boss": false
+  },
+  {
+    "code": 2101347,
+    "name": "실험체 만두리",
+    "boss": false
+  },
+  {
+    "code": 2101348,
+    "name": "오염된 드라나 실험체",
+    "boss": false
+  },
+  {
+    "code": 2101349,
+    "name": "오염된 드라나 만두리",
+    "boss": false
+  },
+  {
+    "code": 2110000,
+    "name": "옛 지휘관 마르델",
+    "boss": true
+  },
+  {
+    "code": 2110001,
+    "name": "탈영병 습격자",
+    "boss": false
+  },
+  {
+    "code": 2110002,
+    "name": "탈영병 약탈자",
+    "boss": false
+  },
+  {
+    "code": 2110003,
+    "name": "탈영병 순찰자",
+    "boss": false
+  },
+  {
+    "code": 2110004,
+    "name": "탈영병 정찰견",
+    "boss": false
+  },
+  {
+    "code": 2110005,
+    "name": "데바 궁사의 영혼",
+    "boss": false
+  },
+  {
+    "code": 2110006,
+    "name": "데바 전사의 영혼",
+    "boss": false
+  },
+  {
+    "code": 2110007,
+    "name": "생명의 돌",
+    "boss": false
+  },
+  {
+    "code": 2110008,
+    "name": "방어의 돌",
+    "boss": false
+  },
+  {
+    "code": 2110009,
+    "name": "공격의 돌",
+    "boss": false
+  },
+  {
+    "code": 2110010,
+    "name": "탈영병 지휘관",
+    "boss": false
+  },
+  {
+    "code": 2110011,
+    "name": "탈영병 정찰견",
+    "boss": false
+  },
+  {
+    "code": 2110012,
+    "name": "힘을 잃은 생명의 돌",
+    "boss": false
+  },
+  {
+    "code": 2110013,
+    "name": "힘을 잃은 방어의 돌",
+    "boss": false
+  },
+  {
+    "code": 2110014,
+    "name": "힘을 잃은 공격의 돌",
+    "boss": false
+  },
+  {
+    "code": 2110016,
+    "name": "부단장 로믈론",
+    "boss": true
+  },
+  {
+    "code": 2110017,
+    "name": "은신처 데바 습격자",
+    "boss": false
+  },
+  {
+    "code": 2110018,
+    "name": "은신처 데바 약탈자",
+    "boss": false
+  },
+  {
+    "code": 2110019,
+    "name": "은신처 데바 순찰자",
+    "boss": false
+  },
+  {
+    "code": 2110020,
+    "name": "감시의 눈",
+    "boss": false
+  },
+  {
+    "code": 2110021,
+    "name": "은신처 데바 순찰자",
+    "boss": false
+  },
+  {
+    "code": 2110022,
+    "name": "은신처 데바 약탈자",
+    "boss": false
+  },
+  {
+    "code": 2110023,
+    "name": "은신처 데바 습격자",
+    "boss": false
+  },
+  {
+    "code": 2110024,
+    "name": "은신처 데바 순찰자",
+    "boss": false
+  },
+  {
+    "code": 2110025,
+    "name": "변절한 데바 지휘관",
+    "boss": false
+  },
+  {
+    "code": 2110300,
+    "name": "집행자 셀마르",
+    "boss": true
+  },
+  {
+    "code": 2110301,
+    "name": "처형터 습격자",
+    "boss": false
+  },
+  {
+    "code": 2110302,
+    "name": "처형터 약탈자",
+    "boss": false
+  },
+  {
+    "code": 2110303,
+    "name": "처형터 순찰자",
+    "boss": false
+  },
+  {
+    "code": 2110304,
+    "name": "처형터 정찰 자이프",
+    "boss": false
+  },
+  {
+    "code": 2110305,
+    "name": "처형터 순찰자",
+    "boss": false
+  },
+  {
+    "code": 2110306,
+    "name": "처형터 지휘관",
+    "boss": false
+  },
+  {
+    "code": 2110307,
+    "name": "처형터 약탈자",
+    "boss": false
+  },
+  {
+    "code": 2110308,
+    "name": "처형터 순찰자",
+    "boss": false
+  },
+  {
+    "code": 2110309,
+    "name": "처형터 정찰 자이프",
+    "boss": false
+  },
+  {
+    "code": 2110310,
+    "name": "처형터 지휘관",
+    "boss": false
+  },
+  {
+    "code": 2110311,
+    "name": "변절자 칼로테",
+    "boss": true
+  },
+  {
+    "code": 2110312,
+    "name": "은신한 데바 습격자",
+    "boss": false
+  },
+  {
+    "code": 2110313,
+    "name": "은신한 데바 약탈자",
+    "boss": false
+  },
+  {
+    "code": 2110314,
+    "name": "은신한 데바 순찰자",
+    "boss": false
+  },
+  {
+    "code": 2110315,
+    "name": "길들여진 자이프",
+    "boss": false
+  },
+  {
+    "code": 2110316,
+    "name": "은신한 데바 순찰자",
+    "boss": false
+  },
+  {
+    "code": 2110317,
+    "name": "은신한 데바 습격자",
+    "boss": false
+  },
+  {
+    "code": 2110318,
+    "name": "은신한 데바 약탈자",
+    "boss": false
+  },
+  {
+    "code": 2110319,
+    "name": "은신한 데바 순찰자",
+    "boss": false
+  },
+  {
+    "code": 2110320,
+    "name": "길들여진 자이프",
+    "boss": false
+  },
+  {
+    "code": 2110321,
+    "name": "은신한 약탈 지휘관",
+    "boss": false
+  },
+  {
+    "code": 2110322,
+    "name": "은신한 데바 약탈자",
+    "boss": false
+  },
+  {
+    "code": 2110323,
+    "name": "은신한 데바 순찰자",
+    "boss": false
+  },
+  {
+    "code": 2110324,
+    "name": "은신처 마법 포탑",
+    "boss": false
+  },
+  {
+    "code": 2110350,
+    "name": "통솔자 티르케스",
+    "boss": true
+  },
+  {
+    "code": 2110351,
+    "name": "고원 기지 습격자",
+    "boss": false
+  },
+  {
+    "code": 2110352,
+    "name": "고원 기지 약탈자",
+    "boss": false
+  },
+  {
+    "code": 2110353,
+    "name": "고원 기지 순찰자",
+    "boss": false
+  },
+  {
+    "code": 2110354,
+    "name": "고원 기지 자이프",
+    "boss": false
+  },
+  {
+    "code": 2110355,
+    "name": "고원 기지 습격자",
+    "boss": false
+  },
+  {
+    "code": 2110356,
+    "name": "고원 기지 습격자",
+    "boss": false
+  },
+  {
+    "code": 2110357,
+    "name": "고원 기지 약탈자",
+    "boss": false
+  },
+  {
+    "code": 2110358,
+    "name": "고원 기지 순찰자",
+    "boss": false
+  },
+  {
+    "code": 2110359,
+    "name": "고원 기지 지휘관",
+    "boss": false
+  },
+  {
+    "code": 2110360,
+    "name": "대장 우가로스",
+    "boss": true
+  },
+  {
+    "code": 2110361,
+    "name": "우가로스 약탈자",
+    "boss": false
+  },
+  {
+    "code": 2110362,
+    "name": "우가로스 습격자",
+    "boss": false
+  },
+  {
+    "code": 2110363,
+    "name": "우가로스 암살자",
+    "boss": false
+  },
+  {
+    "code": 2110364,
+    "name": "우가로스 습격자",
+    "boss": false
+  },
+  {
+    "code": 2110365,
+    "name": "칸타스 길들인 포사",
+    "boss": false
+  },
+  {
+    "code": 2110366,
+    "name": "우가로스 약탈자",
+    "boss": false
+  },
+  {
+    "code": 2110367,
+    "name": "우가로스 습격자",
+    "boss": false
+  },
+  {
+    "code": 2110368,
+    "name": "우가로스 암살자",
+    "boss": false
+  },
+  {
+    "code": 2110369,
+    "name": "칸타스 약탈 지휘관",
+    "boss": false
+  },
+  {
+    "code": 2110370,
+    "name": "우두머리 미로스",
+    "boss": true
+  },
+  {
+    "code": 2110371,
+    "name": "미로스단 부대장",
+    "boss": false
+  },
+  {
+    "code": 2110372,
+    "name": "미로스단 약탈자",
+    "boss": false
+  },
+  {
+    "code": 2110373,
+    "name": "미로스단 습격자",
+    "boss": false
+  },
+  {
+    "code": 2110374,
+    "name": "미로스단 수배자",
+    "boss": false
+  },
+  {
+    "code": 2110375,
+    "name": "미로스단 수배자",
+    "boss": false
+  },
+  {
+    "code": 2110376,
+    "name": "예민한 포사",
+    "boss": false
+  },
+  {
+    "code": 2110377,
+    "name": "우두머리 미로스",
+    "boss": true
+  },
+  {
+    "code": 2110380,
+    "name": "수배자 로프만",
+    "boss": true
+  },
+  {
+    "code": 2110381,
+    "name": "중독된 밀렵꾼",
+    "boss": false
+  },
+  {
+    "code": 2110382,
+    "name": "중독된 밀렵꾼",
+    "boss": false
+  },
+  {
+    "code": 2110383,
+    "name": "중독된 밀렵꾼",
+    "boss": false
+  },
+  {
+    "code": 2110384,
+    "name": "밀렵꾼 선봉대장",
+    "boss": false
+  },
+  {
+    "code": 2110385,
+    "name": "흉포한 포사",
+    "boss": false
+  },
+  {
+    "code": 2110386,
+    "name": "중독성 독기 꽃",
+    "boss": false
+  },
+  {
+    "code": 2110387,
+    "name": "중독된 밀렵꾼",
+    "boss": false
+  },
+  {
+    "code": 2110388,
+    "name": "중독된 밀렵꾼",
+    "boss": false
+  },
+  {
+    "code": 2110389,
+    "name": "밀렵꾼 지휘관",
+    "boss": false
+  },
+  {
+    "code": 2110390,
+    "name": "수배자 가르고스",
+    "boss": true
+  },
+  {
+    "code": 2110391,
+    "name": "가르고스단 약탈자",
+    "boss": false
+  },
+  {
+    "code": 2110392,
+    "name": "가르고스단 습격자",
+    "boss": false
+  },
+  {
+    "code": 2110393,
+    "name": "가르고스단 수배자",
+    "boss": false
+  },
+  {
+    "code": 2110394,
+    "name": "가르고스단 약탈자",
+    "boss": false
+  },
+  {
+    "code": 2110395,
+    "name": "가르고스단 정찰 포사",
+    "boss": false
+  },
+  {
+    "code": 2110396,
+    "name": "주둔지 감시 포탑",
+    "boss": false
+  },
+  {
+    "code": 2110397,
+    "name": "주둔지 함정 포탑",
+    "boss": false
+  },
+  {
+    "code": 2110398,
+    "name": "주둔지 레이저",
+    "boss": false
+  },
+  {
+    "code": 2110399,
+    "name": "난봉꾼 로게르",
+    "boss": true
+  },
+  {
+    "code": 2110400,
+    "name": "협곡 습격자",
+    "boss": false
+  },
+  {
+    "code": 2110401,
+    "name": "협곡 약탈자",
+    "boss": false
+  },
+  {
+    "code": 2110402,
+    "name": "협곡 수배자",
+    "boss": false
+  },
+  {
+    "code": 2110403,
+    "name": "협곡 습격자",
+    "boss": false
+  },
+  {
+    "code": 2110404,
+    "name": "협곡 흉포한 포사",
+    "boss": false
+  },
+  {
+    "code": 2110405,
+    "name": "먼지 거미",
+    "boss": false
+  },
+  {
+    "code": 2110406,
+    "name": "협곡 약탈자",
+    "boss": false
+  },
+  {
+    "code": 2110407,
+    "name": "협곡 수배자",
+    "boss": false
+  },
+  {
+    "code": 2110408,
+    "name": "협곡 약탈 지휘관",
+    "boss": false
+  },
+  {
+    "code": 2110409,
+    "name": "가르고스단 부대장",
+    "boss": false
+  },
+  {
+    "code": 2110410,
+    "name": "순찰대장 만타쉬",
+    "boss": true
+  },
+  {
+    "code": 2110411,
+    "name": "브라우니 노역꾼",
+    "boss": false
+  },
+  {
+    "code": 2110412,
+    "name": "브라우니 짐꾼",
+    "boss": false
+  },
+  {
+    "code": 2110413,
+    "name": "슈라크 채집꾼",
+    "boss": false
+  },
+  {
+    "code": 2110414,
+    "name": "슈라크 잡역꾼",
+    "boss": false
+  },
+  {
+    "code": 2110415,
+    "name": "드라칸 경비병",
+    "boss": false
+  },
+  {
+    "code": 2110416,
+    "name": "노역 감시 오큘라젠",
+    "boss": false
+  },
+  {
+    "code": 2110417,
+    "name": "드라칸 마법병",
+    "boss": false
+  },
+  {
+    "code": 2110418,
+    "name": "독액의 사브가",
+    "boss": true
+  },
+  {
+    "code": 2110419,
+    "name": "수용소 드라코뉴트 지휘관",
+    "boss": false
+  },
+  {
+    "code": 2110420,
+    "name": "수용소 드라코뉴트 궁수",
+    "boss": false
+  },
+  {
+    "code": 2110421,
+    "name": "수용소 드라코뉴트 전사",
+    "boss": false
+  },
+  {
+    "code": 2110422,
+    "name": "수용소 드라코뉴트 잡역꾼",
+    "boss": false
+  },
+  {
+    "code": 2110423,
+    "name": "거대한 알",
+    "boss": false
+  },
+  {
+    "code": 2110424,
+    "name": "드라토나 알",
+    "boss": false
+  },
+  {
+    "code": 2110425,
+    "name": "드라토나",
+    "boss": false
+  },
+  {
+    "code": 2110426,
+    "name": "드라토나 사육사",
+    "boss": false
+  },
+  {
+    "code": 2110427,
+    "name": "드라토나 알",
+    "boss": false
+  },
+  {
+    "code": 2110428,
+    "name": "드라칸 탐사기",
+    "boss": false
+  },
+  {
+    "code": 2110429,
+    "name": "드라칸 연구원",
+    "boss": false
+  },
+  {
+    "code": 2110430,
+    "name": "수용소 드라코뉴트 전사",
+    "boss": false
+  },
+  {
+    "code": 2110431,
+    "name": "수용소 드라코뉴트 잡역꾼",
+    "boss": false
+  },
+  {
+    "code": 2110432,
+    "name": "강화된 드라토나",
+    "boss": false
+  },
+  {
+    "code": 2110437,
+    "name": "파견대장 코흐타",
+    "boss": true
+  },
+  {
+    "code": 2110438,
+    "name": "드라코뉴트 전투 지휘관",
+    "boss": false
+  },
+  {
+    "code": 2110439,
+    "name": "드라코뉴트 궁수",
+    "boss": false
+  },
+  {
+    "code": 2110440,
+    "name": "드라코뉴트 전사",
+    "boss": false
+  },
+  {
+    "code": 2110441,
+    "name": "드라코뉴트 잡역꾼",
+    "boss": false
+  },
+  {
+    "code": 2110443,
+    "name": "초소장 세흐나",
+    "boss": true
+  },
+  {
+    "code": 2110444,
+    "name": "드라코뉴트 전투 지휘관",
+    "boss": false
+  },
+  {
+    "code": 2110445,
+    "name": "드라코뉴트 궁수",
+    "boss": false
+  },
+  {
+    "code": 2110446,
+    "name": "드라코뉴트 전사",
+    "boss": false
+  },
+  {
+    "code": 2110447,
+    "name": "드라코뉴트 잡역꾼",
+    "boss": false
+  },
+  {
+    "code": 2110448,
+    "name": "드라나 변이 감염체",
+    "boss": false
+  },
+  {
+    "code": 2110449,
+    "name": "거대 드라나 실험체",
+    "boss": false
+  },
+  {
+    "code": 2110450,
+    "name": "드라나 실험체",
+    "boss": false
+  },
+  {
+    "code": 2110451,
+    "name": "드라나 변이 실패작",
+    "boss": false
+  },
+  {
+    "code": 2110453,
+    "name": "지휘대장 마크타샤",
+    "boss": true
+  },
+  {
+    "code": 2110454,
+    "name": "드라코뉴트 전투 지휘관",
+    "boss": false
+  },
+  {
+    "code": 2110455,
+    "name": "드라코뉴트 궁수",
+    "boss": false
+  },
+  {
+    "code": 2110456,
+    "name": "드라코뉴트 전사",
+    "boss": false
+  },
+  {
+    "code": 2110457,
+    "name": "드라코뉴트 잡역꾼",
+    "boss": false
+  },
+  {
+    "code": 2110461,
+    "name": "드라코뉴트 모듈 관리병",
+    "boss": false
+  },
+  {
+    "code": 2110462,
+    "name": "드라코뉴트 모듈 관리병",
+    "boss": false
+  },
+  {
+    "code": 2110463,
+    "name": "드라코뉴트 모듈 관리병",
+    "boss": false
+  },
+  {
+    "code": 2110464,
+    "name": "드라코뉴트 모듈 관리병",
+    "boss": false
+  },
+  {
+    "code": 2110500,
+    "name": "홍옥의 페어리",
+    "boss": false
+  },
+  {
+    "code": 2110501,
+    "name": "홍옥의 드라나 스웜",
+    "boss": false
+  },
+  {
+    "code": 2110502,
+    "name": "홍옥의 변이 포자체",
+    "boss": false
+  },
+  {
+    "code": 2110503,
+    "name": "홍옥의 드라나 변이체",
+    "boss": false
+  },
+  {
+    "code": 2110504,
+    "name": "홍옥의 크라오 실험체",
+    "boss": false
+  },
+  {
+    "code": 2110505,
+    "name": "홍옥의 드라나 포식자",
+    "boss": false
+  },
+  {
+    "code": 2110506,
+    "name": "홍옥의 만두리 싸움꾼",
+    "boss": false
+  },
+  {
+    "code": 2110507,
+    "name": "홍옥의 만두리 투석꾼",
+    "boss": false
+  },
+  {
+    "code": 2110508,
+    "name": "홍옥의 어그린트",
+    "boss": false
+  },
+  {
+    "code": 2110509,
+    "name": "홍옥의 거미",
+    "boss": false
+  },
+  {
+    "code": 2110510,
+    "name": "독혈 덩어리 (표본)",
+    "boss": false
+  },
+  {
+    "code": 2110511,
+    "name": "드라나 주입기",
+    "boss": false
+  },
+  {
+    "code": 2110512,
+    "name": "홍옥의 이끼 게",
+    "boss": false
+  },
+  {
+    "code": 2110513,
+    "name": "홍옥의 라플레시아",
+    "boss": false
+  },
+  {
+    "code": 2110514,
+    "name": "전기 자기장",
+    "boss": false
+  }
+]

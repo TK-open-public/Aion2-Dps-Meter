@@ -1,5 +1,6 @@
 package com.tbread
 
+import com.tbread.entity.Mob
 import com.tbread.entity.ParsedDamagePacket
 import org.slf4j.LoggerFactory
 import java.util.concurrent.ConcurrentHashMap
@@ -12,7 +13,7 @@ class DataStorage {
     private val nicknameStorage = ConcurrentHashMap<Int, String>()
     private val summonStorage = HashMap<Int, Int>()
     private val skillCodeData = HashMap<Int, String>()
-    private val mobCodeData = HashMap<Int, String>()
+    private val mobCodeData = HashMap<Int, Mob>()
     private val mobStorage = HashMap<Int, Int>()
     private var currentTarget:Int = 0
     private var executorCode:Int = 0
@@ -37,9 +38,8 @@ class DataStorage {
         return currentTarget
     }
 
-    fun appendMobCode(code: Int, name: String) {
-        //이건나중에 파일이나 서버에서 불러오는걸로
-        mobCodeData[code] = name
+    fun appendMobCode(mob: Mob) {
+        mobCodeData[mob.code] = mob
     }
 
     fun appendMob(mid: Int, code: Int) {
@@ -84,7 +84,7 @@ class DataStorage {
         return summonStorage
     }
 
-    fun getMobCodeData(): HashMap<Int, String> {
+    fun getMobCodeData(): HashMap<Int, Mob> {
         return mobCodeData
     }
 
