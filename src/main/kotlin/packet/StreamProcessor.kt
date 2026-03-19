@@ -348,7 +348,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
             val mobCode = (packet[codeMarkerIdx - 1].toInt() and 0xFF shl 16) or
                     (packet[codeMarkerIdx - 2].toInt() and 0xFF shl 8) or
                     (packet[codeMarkerIdx - 3].toInt() and 0xFF)
-            
+            dataStorage.getMobData()[summonInfo.value] = mobCode
         }
 
 
