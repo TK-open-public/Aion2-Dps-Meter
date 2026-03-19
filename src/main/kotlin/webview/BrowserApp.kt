@@ -80,7 +80,7 @@ class BrowserApp(private val dpsCalculator: DpsCalculator) : Application() {
         }
         val webView = WebView()
         engine = webView.engine
-        engine.load(javaClass.getResource("/index.html")?.toExternalForm())
+        engine.load(javaClass.getResource("/dist/index.html")?.toExternalForm())
 
         val bridge = JSBridge(stage, hostServices)
         engine.loadWorker.stateProperty().addListener { _, _, newState ->
