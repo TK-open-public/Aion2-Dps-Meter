@@ -5,11 +5,11 @@ import com.tbread.entity.ParsedDamagePacket
 import org.slf4j.LoggerFactory
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentSkipListSet
+import java.util.concurrent.CopyOnWriteArrayList
 
 class DataStorage {
     private val logger = LoggerFactory.getLogger(DataStorage::class.java)
-    private val byTargetStorage = ConcurrentHashMap<Int, ConcurrentSkipListSet<ParsedDamagePacket>>()
-    private val byActorStorage = ConcurrentHashMap<Int, ConcurrentSkipListSet<ParsedDamagePacket>>()
+    private val packetStorage = ConcurrentHashMap<Int, CopyOnWriteArrayList<ParsedDamagePacket>>()
     private val nicknameStorage = ConcurrentHashMap<Int, String>()
     private val summonStorage = HashMap<Int, Int>()
     private val skillCodeData = HashMap<Int, String>()
@@ -20,21 +20,26 @@ class DataStorage {
 
     @Synchronized
     fun appendDamage(pdp: ParsedDamagePacket) {
-        byActorStorage.getOrPut(pdp.getActorId()) { ConcurrentSkipListSet(compareBy<ParsedDamagePacket> { it.getTimeStamp() }.thenBy { it.getUuid() }) }
+        packetStorage.computeIfAbsent(pdp.getTargetId()) { CopyOnWriteArrayList() }
             .add(pdp)
-        byTargetStorage.getOrPut(pdp.getTargetId()) { ConcurrentSkipListSet(compareBy<ParsedDamagePacket> { it.getTimeStamp() }.thenBy { it.getUuid() }) }
-            .add(pdp)
+        if (mobCodeData[mobStorage[pdp.getTargetId()]]?.boss == true){
+            setCurrentTarget(pdp.getTargetId())
+        }
+    }
+
+    fun getBattleData(targetId:Int):CopyOnWriteArrayList<ParsedDamagePacket>?{
+        return packetStorage[targetId]
     }
 
     fun setExecutorCode(executorCode:Int) {
         this.executorCode = executorCode
     }
 
-    fun setCurrentTarget(targetId:Int){
+    private fun setCurrentTarget(targetId:Int){
         currentTarget = targetId
     }
 
-    fun getCurrentTarget():Int{
+    fun currentTarget():Int{
         return currentTarget
     }
 
@@ -58,8 +63,7 @@ class DataStorage {
 
     @Synchronized
     fun flushDamageStorage() {
-        byActorStorage.clear()
-        byTargetStorage.clear()
+        packetStorage.clear()
         summonStorage.clear()
         logger.info("데미지 패킷 초기화됨")
     }
@@ -70,10 +74,6 @@ class DataStorage {
 
     fun getSkillName(skillCode: Int): String {
         return skillCodeData[skillCode] ?: skillCode.toString()
-    }
-
-    fun getBossModeData(): ConcurrentHashMap<Int, ConcurrentSkipListSet<ParsedDamagePacket>> {
-        return byTargetStorage
     }
 
     fun getNickname(): ConcurrentHashMap<Int, String> {

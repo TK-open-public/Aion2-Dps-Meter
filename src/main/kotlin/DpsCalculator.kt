@@ -1,20 +1,16 @@
 package com.tbread
 
-import com.tbread.entity.DpsData
-import com.tbread.entity.JobClass
-import com.tbread.entity.PersonalData
-import com.tbread.entity.TargetInfo
+import com.tbread.entity.*
 import kotlinx.coroutines.Job
 import org.slf4j.LoggerFactory
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentSkipListSet
+import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.log
 import kotlin.math.roundToInt
 
 class DpsCalculator(private val dataStorage: DataStorage) {
     private val logger = LoggerFactory.getLogger(DpsCalculator::class.java)
-
-    enum class Mode {
-        ALL, BOSS_ONLY
-    }
 
     companion object {
         val POSSIBLE_OFFSETS: IntArray =
@@ -849,61 +845,46 @@ class DpsCalculator(private val dataStorage: DataStorage) {
 
     private val targetInfoMap = hashMapOf<Int, TargetInfo>()
 
-    private var mode: Mode = Mode.BOSS_ONLY
     private var currentTarget: Int = 0
 
-    fun setMode(mode: Mode) {
-        this.mode = mode
-        //모드 변경시 이전기록 초기화?
+    private fun getBattleData(): CopyOnWriteArrayList<ParsedDamagePacket>? {
+        return dataStorage.getBattleData(currentTarget)
     }
 
-    fun getDps(): DpsData {
-        val pdpMap = dataStorage.getBossModeData()
 
-        pdpMap.forEach { (target, data) ->
-            var flag = false
-            var targetInfo = targetInfoMap[target]
-            if (!targetInfoMap.containsKey(target)) {
-                flag = true
-            }
-            data.forEach { pdp ->
-                if (flag) {
-                    flag = false
-                    targetInfo = TargetInfo(target, 0, pdp.getTimeStamp(), pdp.getTimeStamp())
-                    targetInfoMap[target] = targetInfo!!
-                }
-                targetInfo!!.processPdp(pdp)
-                //그냥 아래에서 재계산하는거 여기서 해놓고 아래에선 그냥 골라서 주는게 맞는거같은데 나중에 고민할필요있을듯
-            }
-        }
+    fun getDps(): DpsData {
         val dpsData = DpsData()
-        val targetData = decideTarget()
-        dpsData.targetName = targetData.second
-        val battleTime = targetInfoMap[currentTarget]?.parseBattleTime() ?: 0
-        val nicknameData = dataStorage.getNickname()
-        var totalDamage = 0.0
-        if (battleTime == 0L) {
+        this.currentTarget = dataStorage.currentTarget()
+        if (currentTarget == 0) {
             return dpsData
         }
-        pdpMap[currentTarget]!!.forEach lastPdpLoop@{ pdp ->
-            totalDamage += pdp.getDamage()
-            val uid = dataStorage.getSummonData()[pdp.getActorId()] ?: pdp.getActorId()
-            val nickname:String = nicknameData[uid]
-                ?: nicknameData[dataStorage.getSummonData()[uid]?:uid]
-                ?: uid.toString()
-            if (!dpsData.map.containsKey(uid)) {
-                dpsData.map[uid] = PersonalData(nickname = nickname)
+        val pdpMap = getBattleData()
+        var totalDamage = 0.0
+        val targetInfo = TargetInfo(currentTarget, 0, 0, 0)
+        pdpMap?.forEach {
+            totalDamage += it.getDamage()
+            targetInfo.processPdp(it)
+            val actor = dataStorage.getSummonData()[it.getActorId()] ?: it.getActorId()
+            val nickname = dataStorage.getNickname()[actor] ?: actor.toString()
+            if (!dpsData.map.containsKey(actor)) {
+                dpsData.map[actor] = PersonalData(nickname = nickname)
             }
-            pdp.setSkillCode(inferOriginalSkillCode(pdp.getSkillCode1()) ?: pdp.getSkillCode1())
-            dpsData.map[uid]!!.processPdp(pdp)
-            if (dpsData.map[uid]!!.job == "") {
-                val origSkillCode = inferOriginalSkillCode(pdp.getSkillCode1()) ?: -1
-                val job = JobClass.convertFromSkill(origSkillCode)
-                if (job != null && dataStorage.getSummonData()[uid] == null) {
-                    dpsData.map[uid]!!.job = job.className
-                }
+
+            it.setSkillCode(inferOriginalSkillCode(it.getSkillCode1()) ?: it.getSkillCode1())
+            dpsData.map[actor]!!.processPdp(it)
+
+            if (dpsData.map[actor]!!.job == "") {
+                dpsData.map[actor]!!.job =
+                    JobClass.convertFromSkill(inferOriginalSkillCode(it.getSkillCode1()) ?: -1)?.className ?: ""
             }
-        }
+
+        } ?: return dpsData
+
+        targetInfoMap[currentTarget] = targetInfo
+        val battleTime = targetInfo.parseBattleTime()
+        val mob = dataStorage.getMobData()[currentTarget]
+        dpsData.targetName = dataStorage.getMobCodeData()[mob]?.name ?: ""
+        dpsData.battleTime = battleTime
         val iterator = dpsData.map.iterator()
         while (iterator.hasNext()) {
             val (_, data) = iterator.next()
@@ -914,23 +895,7 @@ class DpsCalculator(private val dataStorage: DataStorage) {
                 data.damageContribution = data.amount / totalDamage * 100
             }
         }
-        dpsData.battleTime = battleTime
         return dpsData
-    }
-
-    private fun decideTarget(): Pair<Int, String> {
-        val target: Int = targetInfoMap.maxByOrNull { it.value.damagedAmount() }?.key ?: 0
-        var targetName = ""
-        currentTarget = target
-        dataStorage.setCurrentTarget(target)
-        //데미지 누계말고도 건수누적방식도 추가하는게 좋을지도? 지금방식은 정복같은데선 타겟변경에 너무 오랜시간이듬
-        if (dataStorage.getMobData().containsKey(target)) {
-            val mobCode = dataStorage.getMobData()[target]
-            if (dataStorage.getMobCodeData().containsKey(mobCode)) {
-                targetName = dataStorage.getMobCodeData()[mobCode]?.name ?: ""
-            }
-        }
-        return Pair(target, targetName)
     }
 
     private fun inferOriginalSkillCode(skillCode: Int): Int? {
@@ -947,33 +912,9 @@ class DpsCalculator(private val dataStorage: DataStorage) {
 
     fun resetDataStorage() {
         dataStorage.flushDamageStorage()
-        targetInfoMap.clear()
+        println(currentTarget)
+        currentTarget = 0
         logger.info("대상 데미지 누적 데이터 초기화 완료")
-    }
-
-    fun analyzingData(uid: Int) {
-        val dpsData = getDps()
-        dpsData.map.forEach { (_, pData) ->
-            logger.debug("-----------------------------------------")
-            logger.debug(
-                "닉네임: {} 직업: {} 총 딜량: {} 기여도: {}",
-                pData.nickname,
-                pData.job,
-                pData.amount,
-                pData.damageContribution
-            )
-            pData.analyzedData.forEach { (key, data) ->
-                logger.debug("스킬(코드): {} 스킬 총 피해량: {}", SKILL_MAP[key] ?: key, data.damageAmount)
-                logger.debug(
-                    "사용 횟수: {} 치명타 횟수: {} 치명타 비율:{}",
-                    data.times,
-                    data.critTimes,
-                    data.critTimes / data.times * 100
-                )
-                logger.debug("스킬의 딜 지분: {}%", (data.damageAmount / pData.amount * 100).roundToInt())
-            }
-            logger.debug("-----------------------------------------")
-        }
     }
 
 }

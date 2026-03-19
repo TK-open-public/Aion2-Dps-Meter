@@ -25,9 +25,9 @@ data class TargetInfo(
         if (processedUuid.contains(pdp.getUuid())) return
         damagedAmount += pdp.getDamage()
         val ts = pdp.getTimeStamp()
-        if (ts < targetDamageStarted){
+        if (ts < targetDamageStarted || targetDamageStarted == 0.toLong()){
             targetDamageStarted = ts
-        } else if (ts > targetDamageEnded){
+        } else if (ts > targetDamageEnded || targetDamageEnded == 0.toLong()){
             targetDamageEnded = ts
         }
         processedUuid.add(pdp.getUuid())
