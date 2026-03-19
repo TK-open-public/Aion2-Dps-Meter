@@ -20,21 +20,21 @@ class StreamProcessor(private val dataStorage: DataStorage) {
 
     fun onPacketReceived(packet: ByteArray) {
         if (packet.size == 3) return
-        val length = readVarInt(packet).length
-        val extraFlag = (packet[length] >= 0xf0.toByte() && packet[length] < 0xff.toByte())
+        val lengthInfo = readVarInt(packet)
+        val extraFlag = (packet[lengthInfo.length] >= 0xf0.toByte() && packet[lengthInfo.length] < 0xff.toByte())
         if (extraFlag) {
-            if (packet[length + 1] == 0xff.toByte() && packet[length + 2] == 0xff.toByte()) {
-                decompressPacket(packet, length, true)
+            if (packet[lengthInfo.length + 1] == 0xff.toByte() && packet[lengthInfo.length + 2] == 0xff.toByte()) {
+                decompressPacket(packet, lengthInfo.length, true)
                 return
             }
         } else {
-            if (packet[length] == 0xff.toByte() && packet[length + 1] == 0xff.toByte()) {
-                decompressPacket(packet, length, false)
+            if (packet[lengthInfo.length] == 0xff.toByte() && packet[lengthInfo.length + 1] == 0xff.toByte()) {
+                decompressPacket(packet, lengthInfo.length, false)
                 return
             }
         }
-        searchOwnNickname(packet)
-        searchOtherNickname(packet)
+        searchOwnNickname(packet, lengthInfo)
+        searchOtherNickname(packet, lengthInfo)
         var flag = parsingDamage(packet, extraFlag)
         if (flag) return
         flag = parseSummonPacket(packet, extraFlag)
@@ -73,16 +73,18 @@ class StreamProcessor(private val dataStorage: DataStorage) {
                 innerOffset += realLength
             }
         } catch (e: Exception) {
-            logger.error("패킷 압축 해제중 에러",e)
+            logger.error("패킷 압축 해제중 에러", e)
         }
         logger.trace("압축 패킷 해제 종료")
     }
 
-    private fun searchOwnNickname(packet: ByteArray) {
-        val flagIdx = findArrayIndex(packet, 0x33, 0x36)
-        if (flagIdx == -1) return
+    private fun searchOwnNickname(packet: ByteArray, lengthInfo: VarIntOutput) {
+        var offset = lengthInfo.length
+        if (packet[offset] != 0x33.toByte()) return
+        if (packet[offset + 1] != 0x36.toByte()) return
 
-        var offset = flagIdx + 2
+
+        offset += 2
         if (packet.size < offset) return
 
         val userInfo = readVarInt(packet, offset)
@@ -106,8 +108,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         val np = packet.copyOfRange(offset, offset + nameLengthInfo.value)
         val nickname = String(np, Charsets.UTF_8)
         if (!isValidNickname(nickname)) return
-        dataStorage.appendNickname(userInfo.value, nickname)
-        dataStorage.setExecutorCode(userInfo.value)
+        dataStorage.appendNickname(userInfo.value, nickname,true)
 
         offset += nameLengthInfo.value
         if (packet.size >= offset + 2) {
@@ -123,11 +124,12 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         }
     }
 
-    private fun searchOtherNickname(packet: ByteArray) {
-        val flagIdx = findArrayIndex(packet, 0x44, 0x36)
-        if (flagIdx == -1) return
+    private fun searchOtherNickname(packet: ByteArray, lengthInfo: VarIntOutput) {
+        var offset = lengthInfo.length
+        if (packet[offset] != 0x44.toByte()) return
+        if (packet[offset + 1] != 0x36.toByte()) return
 
-        var offset = flagIdx + 2
+        offset += 2
         if (packet.size < offset) return
 
         val userInfo = readVarInt(packet, offset)
@@ -178,7 +180,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         val serverBase = offset
 
         var server = -1
-        var legionName:String? = null
+        var legionName: String? = null
         var i = 0
         while (true) {
             offset = serverBase + i
@@ -344,7 +346,7 @@ class StreamProcessor(private val dataStorage: DataStorage) {
         val codeMarkerIdx = findArrayIndex(packet, 0x00, 0x40, 0x02)
             .takeIf { it != -1 }
             ?: findArrayIndex(packet, 0x00, 0x00, 0x02)
-        if (codeMarkerIdx != -1){
+        if (codeMarkerIdx != -1) {
             val mobCode = (packet[codeMarkerIdx - 1].toInt() and 0xFF shl 16) or
                     (packet[codeMarkerIdx - 2].toInt() and 0xFF shl 8) or
                     (packet[codeMarkerIdx - 3].toInt() and 0xFF)

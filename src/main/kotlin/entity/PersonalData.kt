@@ -6,12 +6,11 @@ import kotlinx.serialization.Transient
 
 @Serializable
 data class PersonalData(
-    @Required var job: String = "",
+    @Required var user: User,
     var dps: Double = 0.0,
     @Transient var amount: Double = 0.0,
     @Required var damageContribution: Double = 0.0,
-    @Transient val analyzedData: MutableMap<Int, AnalyzedSkill> = mutableMapOf(),
-    val nickname: String
+    @Transient val analyzedData: MutableMap<Int, AnalyzedSkill> = mutableMapOf()
 ) {
     private fun addDamage(damage: Double) {
         amount += damage
@@ -25,7 +24,7 @@ data class PersonalData(
         }
         val analyzedSkill = analyzedData[pdp.getSkillCode1()]!!
         if (pdp.isDoT()) {
-            analyzedSkill.dotTimes ++
+            analyzedSkill.dotTimes++
             analyzedSkill.dotDamageAmount += pdp.getDamage()
         } else {
             analyzedSkill.times++

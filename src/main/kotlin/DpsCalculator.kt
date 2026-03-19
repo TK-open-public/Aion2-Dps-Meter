@@ -865,17 +865,18 @@ class DpsCalculator(private val dataStorage: DataStorage) {
             totalDamage += it.getDamage()
             targetInfo.processPdp(it)
             val actor = dataStorage.getSummonData()[it.getActorId()] ?: it.getActorId()
-            val nickname = dataStorage.getNickname()[actor] ?: actor.toString()
+            val user = dataStorage.user(actor) ?: User(
+                actor,
+                nickname = actor.toString()
+            )
             if (!dpsData.map.containsKey(actor)) {
-                dpsData.map[actor] = PersonalData(nickname = nickname)
+                dpsData.map[actor] = PersonalData(user = user)
             }
 
             it.setSkillCode(inferOriginalSkillCode(it.getSkillCode1()) ?: it.getSkillCode1())
             dpsData.map[actor]!!.processPdp(it)
-
-            if (dpsData.map[actor]!!.job == "") {
-                dpsData.map[actor]!!.job =
-                    JobClass.convertFromSkill(inferOriginalSkillCode(it.getSkillCode1()) ?: -1)?.className ?: ""
+            if (user.job == null) {
+                user.job = JobClass.convertFromSkill(inferOriginalSkillCode(it.getSkillCode1())?:-1)
             }
 
         } ?: return dpsData
@@ -888,7 +889,7 @@ class DpsCalculator(private val dataStorage: DataStorage) {
         val iterator = dpsData.map.iterator()
         while (iterator.hasNext()) {
             val (_, data) = iterator.next()
-            if (data.job == "") {
+            if (data.user.job == null) {
                 iterator.remove()
             } else {
                 data.dps = data.amount / battleTime * 1000
