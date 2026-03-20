@@ -69,7 +69,7 @@ export const SidePanel = ({
   return (
     <div
       style={{ left: meterWidth }}
-      className={` min-w-0 fixed top-0  ml-1 h-auto z-50 bg-[rgb(12,22,40)] text-white rounded-lg
+      className={` min-w-0 fixed top-0  ml-3 h-auto z-50 bg-[rgb(12,22,40)] text-white rounded-lg
     transition-all duration-200 ease-in-out
     ${visible ? "visible  translate-x-0" : "invisible  -translate-x-2"}`}>
       {currentType === "details" && (

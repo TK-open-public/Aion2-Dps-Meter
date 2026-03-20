@@ -130,11 +130,9 @@ export default function App() {
       </div>
       <div
         onMouseDown={onMouseDown}
-        className="absolute bottom-1 right-1 w-4 h-4 cursor-e-resize opacity-30 hover:opacity-80 transition-opacity"
-        style={{
-          background: "linear-gradient(135deg, transparent 50%, rgba(255,255,255,1) 10%)",
-        }}
-      />
+        className="absolute top-1/2 -translate-y-1/2 -right-3 w-3 h-16 cursor-e-resize flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity group">
+        <div className="w-1 h-10 rounded-full bg-black  transition-colors" />
+      </div>
       <SidePanel
         type={activePanel}
         player={selected}

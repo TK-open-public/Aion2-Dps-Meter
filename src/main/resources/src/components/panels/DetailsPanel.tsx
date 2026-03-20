@@ -3,6 +3,8 @@ import type { Player, Details } from "@/types";
 import { useDetails } from "@/hooks/useDetails";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useResizableDetail } from "@/hooks/useResizableDetail";
+
 interface Props {
   player: Player | null;
   onClose: () => void;
@@ -10,11 +12,14 @@ interface Props {
   combatTime: string;
 }
 
+const col = { name: 180, stat: 80, dmg: 220 };
+
 export const DetailsPanel = ({ player, onClose, onReady, combatTime }: Props) => {
   const { getDetails } = useDetails();
   const [details, setDetails] = useState<Details | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [hasScroll, setHasScroll] = useState(false);
+  const { detailHeight, onMouseDown } = useResizableDetail();
 
   useEffect(() => {
     if (!player) return;
@@ -23,19 +28,26 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime }: Props) =>
       setDetails(data);
     });
   }, [player]);
+
   useLayoutEffect(() => {
     if (details) {
-      onReady?.();
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          onReady?.();
+        });
+      });
     }
     if (scrollRef.current) {
       setHasScroll(scrollRef.current.scrollHeight > scrollRef.current.clientHeight);
     }
   }, [details?.skills]);
+  const FIXED_AREA_HEIGHT = 264;
 
   if (!player || !details) return null;
 
   return (
-    <div className="text-white font-bold rounded-lg py-4 px-7 ">
+    <div className="relative text-white font-bold rounded-lg py-4 px-7">
+      {/* 헤더 */}
       <div className="flex items-center pb-3 border-b border-white/10">
         <span>{player.name} 상세내역</span>
         <Button
@@ -46,8 +58,9 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime }: Props) =>
         </Button>
       </div>
 
+      {/* 스탯 그리드 */}
       {details && (
-        <div className="grid grid-cols-2 flex-wrap py-3  ">
+        <div className="grid grid-cols-2 py-3">
           {[
             { label: "누적 피해량", value: details.totalDmg.toLocaleString() },
             { label: "피해량 기여도", value: `${details.contributionPct.toFixed(1)}%` },
@@ -60,7 +73,7 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime }: Props) =>
           ].map(({ label, value }, i) => (
             <div
               key={label}
-              className={`flex justify-between mb-2  ${i % 2 == 0 ? "pr-4" : "pl-4"}`}>
+              className={`flex justify-between mb-2 ${i % 2 === 0 ? "pr-4" : "pl-4"}`}>
               <span className="opacity-80">{label}</span>
               <span>{value}</span>
             </div>
@@ -68,54 +81,105 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime }: Props) =>
         </div>
       )}
 
-      <div className="flex items-center py-3 gap-2 ">
+      {/* 스킬 헤더 */}
+      <div className="flex items-center py-3 gap-2 border-b border-white/10">
         <span
           className="text-left shrink-0"
-          style={{ width: "180px" }}>
+          style={{ width: col.name }}>
           스킬명
         </span>
-        <span className="text-center shrink-0 min-w-[80px]">타격횟수</span>
-        <span className="text-center shrink-0 min-w-[80px]">치명타</span>
-        <span className="text-center shrink-0 min-w-[80px]">패리</span>
-        <span className="text-center shrink-0 min-w-[80px]">완벽</span>
-        <span className="text-center shrink-0 min-w-[80px]">강타</span>
-        <span className="text-center shrink-0 min-w-[80px]">백어택</span>
         <span
           className="text-center shrink-0"
-          style={{ width: "220px" }}>
+          style={{ minWidth: col.stat }}>
+          타격횟수
+        </span>
+        <span
+          className="text-center shrink-0"
+          style={{ minWidth: col.stat }}>
+          치명타
+        </span>
+        <span
+          className="text-center shrink-0"
+          style={{ minWidth: col.stat }}>
+          패리
+        </span>
+        <span
+          className="text-center shrink-0"
+          style={{ minWidth: col.stat }}>
+          완벽
+        </span>
+        <span
+          className="text-center shrink-0"
+          style={{ minWidth: col.stat }}>
+          강타
+        </span>
+        <span
+          className="text-center shrink-0"
+          style={{ minWidth: col.stat }}>
+          백어택
+        </span>
+        <span
+          className="text-center shrink-0"
+          style={{ width: col.dmg }}>
           누적 피해량
         </span>
       </div>
 
+      {/* 스킬 목록 */}
       <div
         ref={scrollRef}
-        className="overflow-y-auto max-h-[560px] ">
-        <div className={`${hasScroll ? "pr-6" : ""}`}>
-          {details?.skills.map((s, i) => {
+        className="overflow-y-auto"
+        style={{ maxHeight: Math.max(100, detailHeight - FIXED_AREA_HEIGHT) }}>
+        <div className={hasScroll ? "pr-6" : ""}>
+          {details.skills.map((s, i) => {
             const ratio = s.dmg / (details.totalDmg || 1);
             return (
               <div
                 key={s.code}
-                className="flex items-center  py-1.5 gap-2"
+                className="flex items-center gap-2 py-1.5"
                 style={{
                   borderBottom:
                     i < details.skills.length - 1 ? "1px solid rgba(255,255,255,0.08)" : "none",
                 }}>
                 <span
                   className="text-left text-row-fill truncate shrink-0"
-                  style={{ width: "180px" }}>
+                  style={{ width: col.name }}>
                   {s.name}
                 </span>
-                <span className="text-center shrink-0 min-w-[80px]">{s.time}</span>
-                <span className="text-center shrink-0 min-w-[80px]">{s.critPct}%</span>
-                <span className="text-center shrink-0 min-w-[80px]">{s.parryPct}%</span>
-                <span className="text-center shrink-0 min-w-[80px]">{s.perfectPct}%</span>
-                <span className="text-center shrink-0 min-w-[80px]">{s.doublePct}%</span>
-                <span className="text-center shrink-0 min-w-[80px]">{s.backPct}%</span>
+                <span
+                  className="text-center shrink-0"
+                  style={{ minWidth: col.stat }}>
+                  {s.time}
+                </span>
+                <span
+                  className="text-center shrink-0"
+                  style={{ minWidth: col.stat }}>
+                  {s.critPct}%
+                </span>
+                <span
+                  className="text-center shrink-0"
+                  style={{ minWidth: col.stat }}>
+                  {s.parryPct}%
+                </span>
+                <span
+                  className="text-center shrink-0"
+                  style={{ minWidth: col.stat }}>
+                  {s.perfectPct}%
+                </span>
+                <span
+                  className="text-center shrink-0"
+                  style={{ minWidth: col.stat }}>
+                  {s.doublePct}%
+                </span>
+                <span
+                  className="text-center shrink-0"
+                  style={{ minWidth: col.stat }}>
+                  {s.backPct}%
+                </span>
 
                 <div
                   className="relative h-8 shrink-0 text-end"
-                  style={{ width: "220px" }}>
+                  style={{ width: col.dmg }}>
                   <div
                     className="absolute inset-0 origin-left rounded-md bg-isUser-fill"
                     style={{ transform: `scaleX(${ratio})` }}
@@ -129,6 +193,13 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime }: Props) =>
             );
           })}
         </div>
+      </div>
+
+      {/* 드래그 핸들 */}
+      <div
+        onMouseDown={onMouseDown}
+        className="absolute bottom-1 left-1/2 -translate-x-1/2 w-24 h-3 cursor-s-resize flex items-center justify-center opacity-60 hover:opacity-100 transition-opacity group">
+        <div className="w-8 h-1 rounded-full bg-white  transition-colors" />
       </div>
     </div>
   );

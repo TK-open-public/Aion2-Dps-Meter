@@ -14,8 +14,8 @@ interface SettingsState {
   setMeterWidth: (w: number) => void;
   rowHeight: number;
   setRowHeight: (h: number) => void;
-  detailWidth: number;
-  setDetailWidth: (w: number) => void;
+  detailHeight: number;
+  setDetailHeight: (h: number) => void;
   setHotkey: (h: Hotkey) => void;
 }
 
@@ -25,7 +25,8 @@ const defaultSettings = {
   hotkey: { modifiers: 2, vkCode: 0x52 },
   meterWidth: 400,
   rowHeight: 40,
-  detailWidth: 720,
+  detailHeight: 600,
+
   displayMode: "dps_percent" as DisplayMode,
   nameDisplay: "all" as NameDisplay,
 };
@@ -37,9 +38,9 @@ export const useSettingsStore = create<SettingsState>((set) => {
     hotkey: saved?.hotkey ?? defaultSettings.hotkey,
     meterWidth: saved?.meterWidth ?? defaultSettings.meterWidth,
     rowHeight: saved?.rowHeight ?? defaultSettings.rowHeight,
-    detailWidth: saved?.detailWidth ?? defaultSettings.detailWidth,
     displayMode: saved?.displayMode ?? defaultSettings.displayMode,
     nameDisplay: saved?.nameDisplay ?? defaultSettings.nameDisplay,
+    detailHeight: saved?.detailHeight ?? defaultSettings.detailHeight,
 
     setHotkey: (hotkey) => {
       set({ hotkey });
@@ -61,9 +62,10 @@ export const useSettingsStore = create<SettingsState>((set) => {
       set({ rowHeight });
       jb()?.saveSetting?.("rowHeight", rowHeight);
     },
-    setDetailWidth: (detailWidth) => {
-      set({ detailWidth });
-      jb()?.saveSetting?.("detailWidth", detailWidth);
+
+    setDetailHeight: (detailHeight) => {
+      set({ detailHeight });
+      jb()?.saveSetting?.("detailHeight", { detailHeight });
     },
   };
 });
