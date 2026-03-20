@@ -170,6 +170,5 @@ object DataManager {
             }
             userRepository.executor(uid)
         }
-        println("현재 사용자 $uid , 닉네임 ${userRepository.get(uid)?.nickname}")
     }
 }

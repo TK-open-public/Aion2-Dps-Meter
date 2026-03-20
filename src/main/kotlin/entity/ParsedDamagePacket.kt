@@ -2,8 +2,9 @@ package com.tbread.entity
 
 import com.tbread.entity.enums.SpecialDamage
 import com.tbread.packet.StreamProcessor
-import java.util.*
+import kotlinx.serialization.Serializable
 
+@Serializable
 class ParsedDamagePacket {
         private var actorId = 0
         private var targetId = 0
@@ -16,7 +17,6 @@ class ParsedDamagePacket {
         private var loop = 0
         private var skipValues = mutableListOf<Int>()
         private val timestamp = System.currentTimeMillis()
-        private val id = UUID.randomUUID()
         private var specials:List<SpecialDamage> = arrayListOf()
         private var dot = false
 
@@ -89,9 +89,6 @@ class ParsedDamagePacket {
         }
         fun getTimeStamp(): Long {
                 return this.timestamp
-        }
-        fun getUuid():UUID{
-                return this.id
         }
         fun getSpecials():List<SpecialDamage>{
                 return this.specials

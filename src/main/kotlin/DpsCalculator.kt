@@ -861,10 +861,11 @@ class DpsCalculator() {
         currentTarget = storageTarget
         if (currentTarget == -1) {
             DataManager.flushPacket()
+            recentData.battleEnd = DataManager.currentBattleEnd()
             return recentData
         }
         val report =
-            DpsReport(battleStart = DataManager.currentBattleStart(), battleEnd = DataManager.currentBattleEnd())
+            DpsReport(battleStart = DataManager.currentBattleStart(), battleEnd = DataManager.currentBattleEnd(), packets = data)
         if (currentTarget > 0) {
             val mobCode = DataManager.mobId(currentTarget)
             val mob = DataManager.mob(mobCode!!)
@@ -884,8 +885,11 @@ class DpsCalculator() {
             report.compareBattleTime(it.getTimeStamp())
         }
         report.information.forEach { (_, info) ->
+            val totalDamage = report.information.values.sumOf { it.amount }
             info.dps = info.amount / (report.battleEnd - report.battleStart) * 1000
-            info.contribution = info.amount / report.information.values.sumOf { it.amount } * 100
+            if (totalDamage != 0.0) {
+                info.contribution = info.amount / totalDamage * 100
+            }
         }
 
         recentData = report
