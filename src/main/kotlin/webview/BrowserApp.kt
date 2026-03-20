@@ -36,6 +36,10 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
             PropertyHandler.setProperty(key,value)
         }
 
+        fun loadProps(key:String): String?{
+            return PropertyHandler.getProperty(key)
+        }
+
         fun moveWindow(x: Double, y: Double) {
             stage.x = x
             stage.y = y
