@@ -1,15 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import type { Player } from "../types";
 import { parseCombatData } from "../utils/parser";
-import { useDebugStore } from "../stores/debugStore";
+// import { useDebugStore } from "../stores/debugStore";
 
 const POLL_MS = 300;
 
-export const useCombatController = () => {
+export const useMeter = () => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [targetName, setTargetName] = useState<string>("");
+  const isCollapseRef = useRef(false);
   const [isCollapse, setIsCollapse] = useState(false);
-  const addLog = useDebugStore((s) => s.addLog);
+  // const addLog = useDebugStore((s) => s.addLog);
+  const [isInCombat, setIsInCombat] = useState(false);
+  const lastBattleTimeRef = useRef<number | null>(null);
+  const combatTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [battleTime, setBattleTime] = useState<number | null>(null);
   const lastJsonRef = useRef<string | null>(null);
@@ -28,10 +32,8 @@ export const useCombatController = () => {
   };
 
   const fetchDps = () => {
-    if (isCollapse) return;
-
+    if (isCollapseRef.current) return;
     const raw = window.dpsData?.getDpsData?.();
-    addLog(raw);
     if (typeof raw !== "string") return;
 
     if (raw === lastJsonRef.current) return;
@@ -39,10 +41,28 @@ export const useCombatController = () => {
     lastJsonRef.current = raw;
 
     const parsed = JSON.parse(raw);
-
     const rows = parseCombatData(parsed);
+
+    if (resetPendingRef.current) {
+      if (rows.length > 0) {
+        return;
+      } else {
+        resetPendingRef.current = false;
+      }
+    }
+
     const targetName = parsed.targetName ?? "";
     const battleTime = parsed.battleTime ?? null;
+    if (battleTime !== lastBattleTimeRef.current) {
+      lastBattleTimeRef.current = battleTime;
+      setIsInCombat(true);
+
+      if (combatTimerRef.current) clearTimeout(combatTimerRef.current);
+
+      combatTimerRef.current = setTimeout(() => {
+        setIsInCombat(false);
+      }, 1000);
+    }
 
     let rowsToRender = rows;
 
@@ -78,25 +98,29 @@ export const useCombatController = () => {
 
     snapshotRef.current = null;
     lastJsonRef.current = null;
-
     setPlayers([]);
     setTargetName("");
+    setIsInCombat(false);
+    setBattleTime(null);
+
+    if (combatTimerRef.current) {
+      clearTimeout(combatTimerRef.current);
+    }
   };
 
   const toggleCollapse = () => {
-    setIsCollapse((prev) => {
-      const next = !prev;
+    const next = !isCollapseRef.current;
+    isCollapseRef.current = next;
+    setIsCollapse(next);
 
-      if (next) {
-        stopPolling();
-        reset();
-      } else {
-        startPolling();
-        fetchDps();
-      }
-
-      return next;
-    });
+    if (next) {
+      stopPolling();
+      reset();
+      window?.javaBridge?.resetDps?.();
+    } else {
+      startPolling();
+      fetchDps();
+    }
   };
 
   useEffect(() => {
@@ -111,6 +135,7 @@ export const useCombatController = () => {
     targetName,
     isCollapse,
     battleTime,
+    isInCombat,
     formatBattleTime,
     reset,
     toggleCollapse,

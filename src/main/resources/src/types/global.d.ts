@@ -1,5 +1,3 @@
-// src/types/global.d.ts
-
 export {};
 
 declare global {
@@ -10,6 +8,7 @@ declare global {
     };
 
     javaBridge?: {
+      
       resetDps?: () => void;
       moveWindow?: (x: number, y: number) => void;
       startKeyCapture: () => void;

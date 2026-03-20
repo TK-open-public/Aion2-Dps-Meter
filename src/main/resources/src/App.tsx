@@ -1,63 +1,104 @@
 import { useState, useCallback, useEffect } from "react";
-import { useCombatController } from "./hooks/useCombatController";
+import { useMeter } from "./hooks/useMeter";
 
 import { MeterList } from "./components/MeterList";
-import { DetailsPanel } from "./components/DetailsPanel";
 import { useDragWindow } from "./hooks/useDragWindow";
 
 import type { Player } from "./types";
-import { SettingsPanel } from "./components/SettingsPanel.tsx";
-import { DebugPanel } from "./components/DebugPanel.tsx";
-
+import { Header } from "./components/Header.tsx";
+import { TargetInfo } from "./components/TargetInfo";
+import { SidePanel } from "./components/SidePanel.tsx";
+import type { PanelType } from "./components/SidePanel.tsx";
+import { CombatTimer } from "./components/CombatTimer.tsx";
 export default function App() {
-  const { players, targetName, reset, toggleCollapse } = useCombatController();
-  const [settings, setSettings] = useState(false);
+ 
+  const {
+    players,
+    targetName,
+    isCollapse,
+    reset,
+    toggleCollapse,
+    battleTime,
+    formatBattleTime,
+    isInCombat,
+  } = useMeter();
+
+  const [activePanel, setActivePanel] = useState<PanelType>(null);
+
+  const handlePanelToggle = useCallback((panel: PanelType) => {
+    setActivePanel((prev) => (prev === panel ? null : panel));
+  }, []);
 
   const [selected, setSelected] = useState<Player | null>(null);
+
   useDragWindow(".drag-area");
+
+  const handleToggleCollapse = useCallback(() => {
+    toggleCollapse();
+    setActivePanel(null);
+    setSelected(null);
+  }, [toggleCollapse]);
+
+  const handleReset = useCallback(() => {
+    reset();
+    setActivePanel(null);
+    setSelected(null);
+  }, [reset]);
+
   const handleSelect = useCallback(
     (id: string) => {
       const player = players.find((p) => p.id === id);
-      if (player) setSelected(player);
+      if (!player) return;
+
+      if (activePanel === "details" && selected?.id === player.id) {
+        setActivePanel(null);
+        return;
+      }
+
+      setSelected(player);
+      setActivePanel("details");
     },
-    [players],
+    [players, activePanel, selected],
   );
+
   useEffect(() => {
     (window as any).resetDpsUI = () => {
       reset();
+      setActivePanel(null);
+      setSelected(null);
     };
   }, []);
 
   return (
-    <div className="w-full h-full bg-transparent flex items-start">
-      <div className="w-100 h-75 bg-black text-white">
-        <div className="drag-area cursor-move select-none flex justify-between items-center p-2 border-b border-gray-700 text-sm">
-          <div>{targetName || "DPS METER"}</div>
-
-          <div className="flex gap-2">
-            <button onClick={reset}>Reset</button>
-            <button onClick={() => setSettings(true)}>Settings</button>
-            <button onClick={toggleCollapse}>Toggle</button>
-          </div>
-        </div>
-
-        <div className="flex">
-          <div className="w-1/2 p-2">
-            <MeterList
-              players={players}
-              selectedId={selected?.id}
-              onSelect={handleSelect}
-            />
-          </div>
-          <SettingsPanel
-            open={settings}
-            onClose={() => setSettings(false)}
+    <div
+      style={{ width: "fit-content" }}
+      className="relative">
+      <div className="w-[400px] rounded-lg meter p-4">
+        <Header
+          reset={handleReset}
+          setSettings={handlePanelToggle}
+          isCollapse={isCollapse}
+          toggleCollapse={handleToggleCollapse}
+        />
+        <TargetInfo targetName={targetName} />
+        <MeterList
+          players={players}
+          selectedId={selected?.id}
+          onSelect={handleSelect}
+        />
+        {battleTime && (
+          <CombatTimer
+            isInCombat={isInCombat}
+            combatTime={formatBattleTime(battleTime)}
           />
-          <div className="w-1/2 p-2">{selected && <DetailsPanel player={selected} />}</div>
-
-          <DebugPanel></DebugPanel>
-        </div>
+        )}
       </div>
+      <SidePanel
+        type={activePanel}
+        player={selected}
+        onClose={() => setActivePanel(null)}
+        combatTime={formatBattleTime(battleTime)}
+      />
     </div>
   );
 }
