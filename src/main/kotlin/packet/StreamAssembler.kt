@@ -32,8 +32,9 @@ class StreamAssembler(private val processor: StreamProcessor) {
 
             if (fullPacket.size < realLength) break
             processor.onPacketReceived(fullPacket.copyOfRange(0, realLength))
-
             buffer.discardBytes(realLength)
         }
     }
+
+
 }

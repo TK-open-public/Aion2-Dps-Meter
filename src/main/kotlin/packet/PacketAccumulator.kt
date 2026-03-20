@@ -65,6 +65,14 @@ class PacketAccumulator {
         }
     }
 
+    @Synchronized
+    fun discardLastBytes(length: Int) {
+        val allBytes = buffer.toByteArray()
+        buffer.reset()
+        val newSize = (allBytes.size - length).coerceAtLeast(0)
+        buffer.write(allBytes, 0, newSize)
+    }
+
     fun flush(){
         buffer.reset()
     }

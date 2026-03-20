@@ -2,18 +2,15 @@ package com.tbread.packet
 
 import com.tbread.config.PcapCapturerConfig
 import kotlinx.coroutines.channels.Channel
-import org.pcap4j.core.BpfProgram
-import org.pcap4j.core.PacketListener
-import org.pcap4j.core.PcapNativeException;
-import org.pcap4j.core.PcapNetworkInterface
-import org.pcap4j.core.Pcaps
+import org.pcap4j.core.*
+import org.pcap4j.packet.IpV4Packet
 import org.pcap4j.packet.TcpPacket
 import org.slf4j.LoggerFactory
 import java.net.DatagramSocket
 import java.net.InetAddress
 import kotlin.system.exitProcess
 
-class PcapCapturer(private val config: PcapCapturerConfig, private val channel: Channel<ByteArray>) {
+class PcapCapturer(private val config: PcapCapturerConfig, private val channel: Channel<Triple<String,Long,ByteArray>>) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(javaClass.enclosingClass)
@@ -69,7 +66,9 @@ class PcapCapturer(private val config: PcapCapturerConfig, private val channel: 
                 if (payload != null) {
                     val data = payload.rawData
                     if (data.isNotEmpty()) {
-                        channel.trySend(data)
+                        val srcIp = packet.get(IpV4Packet::class.java).header.srcAddr.hostAddress
+                        val seq = tcpPacket.header.sequenceNumber.toLong() and 0xffffffffL
+                        channel.trySend(Triple(srcIp,seq,data))
                     }
                 }
             }

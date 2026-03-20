@@ -160,9 +160,12 @@ object DataManager {
 
     private fun saveExecutorId(uid: Int) {
         val executor = userRepository.executor()
-        if (executor != 0) {
-            userRepository.get(executor)!!.isExecutor = false
+        if (executor != uid) {
+            if (executor != 0) {
+                userRepository.get(executor)!!.isExecutor = false
+            }
+            userRepository.executor(uid)
         }
-        userRepository.executor(uid)
+        println("현재 사용자 $uid , 닉네임 ${userRepository.get(uid)?.nickname}")
     }
 }
