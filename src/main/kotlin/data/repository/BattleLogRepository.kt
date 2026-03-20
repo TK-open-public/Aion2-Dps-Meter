@@ -1,16 +1,19 @@
 package com.tbread.data.repository
 
-import com.tbread.entity.ParsedDamagePacket
-import java.util.concurrent.CopyOnWriteArrayList
+import com.tbread.entity.DpsReport
 
 class BattleLogRepository {
-    private val storage = mutableListOf<CopyOnWriteArrayList<ParsedDamagePacket>>()
+    private val storage = mutableListOf<DpsReport>()
 
-    fun save(data: CopyOnWriteArrayList<ParsedDamagePacket>) {
+    fun save(data: DpsReport) {
         storage.add(data)
     }
 
-    fun get(idx: Int): CopyOnWriteArrayList<ParsedDamagePacket>? {
+    fun get(idx: Int): DpsReport? {
         return storage[idx]
+    }
+
+    fun getAll(): List<DpsReport> {
+        return storage
     }
 }

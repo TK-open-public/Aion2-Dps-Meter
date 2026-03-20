@@ -4,7 +4,8 @@ import com.tbread.DpsCalculator
 import com.tbread.config.HotkeyHandler
 import com.tbread.config.PropertyHandler
 import com.tbread.config.VersionConfig
-import com.tbread.entity.DpsData
+import com.tbread.data.DataManager
+import com.tbread.entity.DpsReport
 import javafx.animation.KeyFrame
 import javafx.animation.Timeline
 import javafx.application.Application
@@ -80,7 +81,15 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
         }
 
         fun getBattleDetail(uid: Int): String {
-            return Json.encodeToString(dpsData.map[uid]?.analyzedData)
+            return Json.encodeToString(dpsCalculator.battleDetails(dpsData, uid))
+        }
+
+        fun getBattleDetail(idx: Int, uid: Int): String {
+            return Json.encodeToString(dpsCalculator.battleDetails(DataManager.battleLog(idx), uid))
+        }
+
+        fun getBattleList():String{
+            return Json.encodeToString(DataManager.recentBattleList())
         }
 
         fun getVersion(): String {
@@ -90,7 +99,7 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
     }
 
     @Volatile
-    private var dpsData: DpsData = dpsCalculator.getDps()
+    private var dpsData: DpsReport = dpsCalculator.getDps()
 
     private val debugMode = false
 

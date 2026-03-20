@@ -1,6 +1,7 @@
 package com.tbread.data
 
 import com.tbread.data.repository.*
+import com.tbread.entity.DpsReport
 import com.tbread.entity.Mob
 import com.tbread.entity.ParsedDamagePacket
 import com.tbread.entity.User
@@ -17,21 +18,38 @@ object DataManager {
     private val packetRepository = PacketRepository()
     private val summonRepository = SummonRepository()
     private val battleLogRepository = BattleLogRepository()
+    private val skillRepository = SkillRepository()
 
     fun load() {
+        loadMobJson()
+        loadSkillJson()
+    }
+
+    private fun loadMobJson() {
         val mobJson = object {}.javaClass.getResourceAsStream("/json/mobs.json")
             ?.bufferedReader()
             ?.readText()!!
         Json.decodeFromString<List<Mob>>(mobJson).forEach { saveMob(it) }
     }
 
+    private fun loadSkillJson() {
+        val skillJson = object {}.javaClass.getResourceAsStream("/json/skills.json")
+            ?.bufferedReader()
+            ?.readText()!!
+        Json.decodeFromString<Map<String, String>>(skillJson).forEach { (skillId, skillName) ->
+            saveSkill(skillId.toLong(), skillName)
+        }
+    }
 
     /*
-    복합 영역
+    skill 영역
      */
-    @Synchronized
-    fun saveDamage(pdp: ParsedDamagePacket) {
-        packetRepository.save(pdp)
+    fun saveSkill(skillId: Long, skillName: String): String? {
+        return skillRepository.save(skillId, skillName)
+    }
+
+    fun skill(skillId: Long): String? {
+        return skillRepository.get(skillId)
     }
 
 
@@ -87,12 +105,30 @@ object DataManager {
         packetRepository.flush()
     }
 
+    @Synchronized
+    fun saveDamage(pdp: ParsedDamagePacket) {
+        packetRepository.save(pdp)
+    }
+
 
     /*
     battleLog 영역
      */
-    fun saveBattleLog(data: CopyOnWriteArrayList<ParsedDamagePacket>) {
+    fun saveBattleLog(data: DpsReport) {
         battleLogRepository.save(data)
+    }
+
+    fun recentBattleList(): List<Pair<Int, DpsReport>> {
+        val battleList: MutableList<Pair<Int, DpsReport>> = mutableListOf()
+        val battleLogs = battleLogRepository.getAll()
+        battleLogs.forEachIndexed { idx, it ->
+            battleList.add(Pair(idx, it))
+        }
+        return battleList
+    }
+
+    fun battleLog(idx: Int): DpsReport? {
+        return battleLogRepository.get(idx)
     }
 
 
@@ -143,6 +179,10 @@ object DataManager {
         return userRepository.get(uid)
     }
 
+    fun saveUser(uid: Int, user: User) {
+        userRepository.save(uid, user)
+    }
+
     fun saveNickname(uid: Int, nickname: String, isExecutor: Boolean = false) {
         if (!userRepository.exist(uid)) {
             userRepository.save(uid, User(uid, nickname, -1, null, isExecutor))
@@ -166,6 +206,5 @@ object DataManager {
             }
             userRepository.executor(uid)
         }
-        println("현재 사용자 $uid , 닉네임 ${userRepository.get(uid)?.nickname}")
     }
 }
