@@ -3,6 +3,7 @@ package com.tbread
 import com.tbread.config.PcapCapturerConfig
 import com.tbread.config.VersionConfig
 import com.tbread.data.DataManager
+import com.tbread.packet.PacketAlignmenter
 import com.tbread.packet.PcapCapturer
 import com.tbread.packet.StreamAssembler
 import com.tbread.packet.StreamProcessor
@@ -22,19 +23,23 @@ fun main() = runBlocking {
 
     DataManager.load()
 
-    val channel = Channel<ByteArray>(Channel.UNLIMITED)
+    val channel = Channel<Pair<Long,ByteArray>>(Channel.UNLIMITED)
     val pcapConfig = PcapCapturerConfig.loadFromProperties()
     val versionConfig = VersionConfig.loadFromProperties()
 
 
     val processor = StreamProcessor()
+    val alignmenter = PacketAlignmenter()
     val assembler = StreamAssembler(processor)
     val capturer = PcapCapturer(pcapConfig, channel)
     val calculator = DpsCalculator()
 
     launch(Dispatchers.Default) {
-        for (chunk in channel) {
-            assembler.processChunk(chunk)
+        for ((seq, data) in channel) {
+            val chunks = alignmenter.feed(seq, data)
+            for (chunk in chunks) {
+                assembler.processChunk(chunk)
+            }
         }
     }
 
