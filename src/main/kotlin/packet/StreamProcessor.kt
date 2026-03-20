@@ -33,6 +33,7 @@ class StreamProcessor() {
                 return
             }
         }
+        parseJoinRequestPacket(packet,lengthInfo,extraFlag)
         searchOwnNickname(packet, lengthInfo)
         searchOtherNickname(packet, lengthInfo)
         var flag = false
@@ -633,6 +634,44 @@ class StreamProcessor() {
             DataManager.toggleBattle(battleInfo.value)
         }
         return true
+    }
+
+    private fun parseJoinRequestPacket(packet: ByteArray,lengthInfo: VarIntOutput,extraFlag: Boolean){
+        var offset = lengthInfo.length
+        if (extraFlag) {
+            offset++
+        }
+        if (packet.size < offset + 2) return
+
+        if (packet[offset] != 0x07.toByte()) return
+        if (packet[offset+1] != 0x97.toByte()) return
+
+        val roomNum = parseUInt32le(packet,offset)
+        offset += 4
+
+        val unknown = parseUInt32le(packet,offset)
+        offset += 4
+        val unknown2 = parseUInt32le(packet,offset)
+        offset += 4
+        val unknown3 = parseUInt32le(packet,offset)
+        offset += 4
+        val unknown4 = parseUInt32le(packet,offset)
+        offset += 4
+        val unknown5 = parseUInt32le(packet,offset) // 여기 첫 2바이트 varint uid 값 가능성있음
+        offset += 4
+
+        val nicknameLengthInfo = readVarInt(packet,offset)
+        offset += nicknameLengthInfo.length
+        val np = packet.copyOfRange(offset, offset + nicknameLengthInfo.value)
+        offset += nicknameLengthInfo.value
+
+        val server = ByteBuffer.wrap(packet, offset, 2)
+            .order(ByteOrder.LITTLE_ENDIAN)
+            .getShort()
+            .toInt() and 0xffff
+        offset += 6
+
+        val power = parseUInt32le(packet,offset)
     }
 
 }
