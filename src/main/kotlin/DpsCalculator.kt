@@ -840,75 +840,56 @@ class DpsCalculator() {
             ).apply { sort() }
     }
 
-    private val targetInfoMap = hashMapOf<Int, TargetInfo>()
-
     private var currentTarget: Int = 0
 
-    private var recentData = DpsData()
+    private var recentData = DpsReport()
 
     private fun battleData(): CopyOnWriteArrayList<ParsedDamagePacket>? {
         return DataManager.battleData(currentTarget)
     }
 
 
-    fun getDps(): DpsData {
-        val dpsData = DpsData()
+    fun getDps(): DpsReport {
+        val data = battleData()
         val storageTarget = DataManager.currentTarget()
-        if (currentTarget != storageTarget) {
+        if (storageTarget != currentTarget) {
             battleData()?.let {
                 DataManager.saveBattleLog(it)
+                //그냥 recent 저장하는거 고민하기
             }
-            targetInfoMap.clear()
         }
         currentTarget = storageTarget
-        if (currentTarget == -1){
+        if (currentTarget == -1) {
             DataManager.flushPacket()
             return recentData
         }
-        val pdpMap = battleData()
-        var totalDamage = 0.0
-        val targetInfo = TargetInfo(currentTarget, 0, 0, 0)
-        pdpMap?.forEach {
-            totalDamage += it.getDamage()
-            targetInfo.processPdp(it)
+        val report =
+            DpsReport(battleStart = DataManager.currentBattleStart(), battleEnd = DataManager.currentBattleEnd())
+        if (currentTarget > 0) {
+            val mobCode = DataManager.mobId(currentTarget)
+            val mob = DataManager.mob(mobCode!!)
+            report.target = MobInfo(currentTarget, mob!!)
+            //남은체력 여기서 불러오기
+        }
+        data?.forEach {
             val actor = DataManager.summonerId(it.getActorId()) ?: it.getActorId()
-            val user = DataManager.user(actor) ?: User(
-                actor,
-                nickname = actor.toString()
-            )
-            if (!dpsData.map.containsKey(actor)) {
-                dpsData.map[actor] = PersonalData(user = user)
-            }
-
-            it.setSkillCode(inferOriginalSkillCode(it.getSkillCode1()) ?: it.getSkillCode1())
-            dpsData.map[actor]!!.processPdp(it)
+            val user = DataManager.user(actor) ?: User(actor, nickname = actor.toString())
+            report.contributors.remove(user)
+            report.contributors.add(user)
             if (user.job == null) {
                 user.job = JobClass.convertFromSkill(inferOriginalSkillCode(it.getSkillCode1()) ?: -1)
             }
-
-        } ?: return dpsData
-
-        targetInfoMap[currentTarget] = targetInfo
-        val battleTime = targetInfo.parseBattleTime()
-        val mobId = DataManager.mobId(currentTarget)
-        dpsData.targetName = mobId?.let { DataManager.mob(it)?.name } ?: ""
-        dpsData.battleTime = battleTime
-        wrapUpData(dpsData,totalDamage)
-        recentData = dpsData
-        return dpsData
-    }
-
-    private fun wrapUpData(dpsData: DpsData,totalDamage:Double){
-        val iterator = dpsData.map.iterator()
-        while (iterator.hasNext()) {
-            val (_, data) = iterator.next()
-            if (data.user.job == null) {
-                iterator.remove()
-            } else {
-                data.dps = data.amount / dpsData.battleTime * 1000
-                data.damageContribution = data.amount / totalDamage  * 100
-            }
+            DataManager.saveUser(user.id, user)
+            report.information.getOrPut(user.id) { DpsInformation() }.addDamage(it.getDamage().toDouble())
+            report.compareBattleTime(it.getTimeStamp())
         }
+        report.information.forEach { (_, info) ->
+            info.dps = info.amount / (report.battleEnd - report.battleStart) * 1000
+            info.contribution = info.amount / report.information.values.sumOf { it.amount } * 100
+        }
+
+        recentData = report
+        return report
     }
 
     private fun inferOriginalSkillCode(skillCode: Int): Int? {
@@ -925,9 +906,10 @@ class DpsCalculator() {
 
     fun resetDataStorage() {
         battleData()?.let { DataManager.saveBattleLog(it) }
+        //그냥 recent 저장하기?
+
         DataManager.flushPacket()
         currentTarget = -1
-        targetInfoMap.clear()
         logger.info("대상 데미지 누적 데이터 초기화 완료")
     }
 

@@ -3,7 +3,7 @@ package com.tbread.webview
 import com.tbread.DpsCalculator
 import com.tbread.config.HotkeyHandler
 import com.tbread.config.VersionConfig
-import com.tbread.entity.DpsData
+import com.tbread.entity.DpsReport
 import javafx.animation.KeyFrame
 import javafx.animation.Timeline
 import javafx.application.Application
@@ -65,7 +65,7 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
     }
 
     @Volatile
-    private var dpsData: DpsData = dpsCalculator.getDps()
+    private var dpsData: DpsReport = dpsCalculator.getDps()
 
     private val debugMode = false
 
@@ -136,7 +136,8 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
     }
 
     fun getBattleDetail(uid: Int): String {
-        return Json.encodeToString(dpsData.map[uid]?.analyzedData)
+//        return Json.encodeToString(dpsData.map[uid]?.analyzedData)
+        return ""
     }
 
     fun getVersion(): String {

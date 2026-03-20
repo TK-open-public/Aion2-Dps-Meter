@@ -143,6 +143,10 @@ object DataManager {
         return userRepository.get(uid)
     }
 
+    fun saveUser(uid:Int,user: User){
+        userRepository.save(uid,user)
+    }
+
     fun saveNickname(uid: Int, nickname: String, isExecutor: Boolean = false) {
         if (!userRepository.exist(uid)) {
             userRepository.save(uid, User(uid, nickname, -1, null, isExecutor))
