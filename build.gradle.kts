@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "com.tbread"
-version = "1.2.3"
+version = "1.2.4"
 
 tasks.processResources {
     outputs.upToDateWhen { false }
@@ -18,7 +18,7 @@ tasks.processResources {
     }
 }
 
-repositories {
+repositories { 
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     maven("https://jogamp.org/deployment/maven")

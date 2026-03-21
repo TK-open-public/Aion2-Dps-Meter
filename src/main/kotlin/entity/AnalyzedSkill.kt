@@ -14,7 +14,8 @@ data class AnalyzedSkill(
     var backTimes: Int = 0,
     var perfectTimes: Int = 0,
     var doubleTimes: Int = 0,
-    var parryTimes: Int = 0
+    var parryTimes: Int = 0,
+    var img:String? = null
 ) {
     constructor(pdp: ParsedDamagePacket) : this(
         pdp.getSkillCode1(),

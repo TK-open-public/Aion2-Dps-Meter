@@ -1,10 +1,7 @@
 package com.tbread.data
 
 import com.tbread.data.repository.*
-import com.tbread.entity.DpsReport
-import com.tbread.entity.Mob
-import com.tbread.entity.ParsedDamagePacket
-import com.tbread.entity.User
+import com.tbread.entity.*
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 import java.util.concurrent.CopyOnWriteArrayList
@@ -37,8 +34,8 @@ object DataManager {
         val skillJson = object {}.javaClass.getResourceAsStream("/json/skills.json")
             ?.bufferedReader()
             ?.readText()!!
-        Json.decodeFromString<Map<String, String>>(skillJson).forEach { (skillId, skillName) ->
-            saveSkill(skillId.toLong(), skillName)
+        Json.decodeFromString<List<Skill>>(skillJson).forEach {
+            saveSkill(it)
         }
     }
 
@@ -46,22 +43,22 @@ object DataManager {
     mobHp 영역
      */
 
-    fun mobHp(mobId:Int):Int?{
+    fun mobHp(mobId: Int): Int? {
         return mobHpRepository.get(mobId)
     }
 
-    fun mobHp(mobId:Int,mobHp:Int){
+    fun mobHp(mobId: Int, mobHp: Int) {
         mobHpRepository.set(mobId, mobHp)
     }
 
     /*
     skill 영역
      */
-    fun saveSkill(skillId: Long, skillName: String): String? {
-        return skillRepository.save(skillId, skillName)
+    private fun saveSkill(skill: Skill) {
+        return skillRepository.save(skill.code, skill)
     }
 
-    fun skill(skillId: Long): String? {
+    fun skill(skillId: Long): Skill? {
         return skillRepository.get(skillId)
     }
 
