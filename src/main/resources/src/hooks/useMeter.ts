@@ -11,6 +11,7 @@ export const useMeter = () => {
   const [remainHp, setRemainHp] = useState<string | number>(0);
   const [isCollapse, setIsCollapse] = useState(false);
   const [isInCombat, setIsInCombat] = useState(false);
+  const resetTimestampRef = useRef<number>(0);
 
   const [battleTime, setBattleTime] = useState<number | null>(null);
   // const addLog = useDebugStore((s) => s.addLog);
@@ -24,7 +25,7 @@ export const useMeter = () => {
   const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const formatBattleTime = (ms: number | null | undefined) => {
-    if (!ms || !Number.isFinite(ms)) return "00:00";
+    if (!ms || !Number.isFinite(ms) || ms < 0) return "00:00";
 
     const totalSec = Math.floor(ms / 1000);
     const min = Math.floor(totalSec / 60);
@@ -49,13 +50,11 @@ export const useMeter = () => {
   const fetchDps = () => {
     if (isCollapseRef.current) return;
     const raw = window.javaBridge?.getDpsData?.();
+    // addLog(` ${raw}`);
     if (typeof raw !== "string") return;
     if (raw === lastJsonRef.current) {
       return;
     }
-    //  else {
-    //   addLog(`raw${raw}`);
-    // }
 
     lastJsonRef.current = raw;
 
@@ -63,10 +62,16 @@ export const useMeter = () => {
     const { players: rows, targetName, remainHp } = parseCombatData(parsed);
 
     if (resetPendingRef.current) {
-      if (rows.length > 0) {
-        return;
+      const contributors = parsed.contributors ?? [];
+      if (contributors.length > 0) {
+        if (parsed.battleStart > resetTimestampRef.current) {
+          resetPendingRef.current = false;
+        } else {
+          return;
+        }
       } else {
         resetPendingRef.current = false;
+        return;
       }
     }
 
@@ -116,6 +121,7 @@ export const useMeter = () => {
 
   const reset = () => {
     resetPendingRef.current = true;
+    resetTimestampRef.current = Date.now();
 
     snapshotRef.current = null;
     lastJsonRef.current = null;
@@ -131,6 +137,8 @@ export const useMeter = () => {
       clearTimeout(combatTimerRef.current);
       combatTimerRef.current = null;
     }
+
+    // addLog("---------리셋------------");
   };
 
   const toggleCollapse = () => {

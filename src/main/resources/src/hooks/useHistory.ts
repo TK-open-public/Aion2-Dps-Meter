@@ -23,18 +23,18 @@ export interface HistoryItem {
   battleStart: number;
   raw: any;
 }
-import { useDebugStore } from "../stores/debugStore";
+// import { useDebugStore } from "../stores/debugStore";
 
 export const useHistory = () => {
   const [historyList, setHistoryList] = useState<HistoryItem[]>([]);
   const [loading, setLoading] = useState(false);
-  const addLog = useDebugStore.getState().addLog;
+  // const addLog = useDebugStore.getState().addLog;
 
   const fetchHistory = useCallback(async () => {
     setLoading(true);
     try {
       const raw = window.javaBridge?.getBattleList?.();
-      addLog(`raw${raw}`);
+      // addLog(`히스토리 ${raw}`);
 
       if (!raw) return;
 
