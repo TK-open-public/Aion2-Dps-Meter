@@ -1,13 +1,15 @@
 package com.tbread.data.repository
 
-class SkillRepository {
-    private val storage = HashMap<Long, String>()
+import com.tbread.entity.Skill
 
-    fun save(key: Long, value: String): String? {
-        return storage.put(key, value)
+class SkillRepository {
+    private val storage = HashMap<Long, Skill>()
+
+    fun save(key: Long, value: Skill) {
+        storage[key] = value
     }
 
-    fun get(key: Long): String? {
+    fun get(key: Long): Skill? {
         return storage[key]
     }
 
