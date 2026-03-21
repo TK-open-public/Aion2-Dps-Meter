@@ -26,7 +26,7 @@ class DpsCalculator() {
     fun getDps(): DpsReport {
         val data = battleData()
         val storageTarget = DataManager.currentTarget()
-        if (storageTarget != currentTarget) {
+        if (storageTarget != currentTarget && !DataManager.isCurrentBattleDummy()) {
             DataManager.saveBattleLog(recentData)
         }
         currentTarget = storageTarget
@@ -104,7 +104,7 @@ class DpsCalculator() {
     }
 
     fun resetDataStorage() {
-        if (!recentData.isEmpty()) {
+        if (!recentData.isEmpty() && !DataManager.isCurrentBattleDummy()) {
             DataManager.saveBattleLog(recentData)
         }
         DataManager.flushPacket()

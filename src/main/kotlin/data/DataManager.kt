@@ -63,8 +63,11 @@ object DataManager {
                 !existMobId(it.getTargetId())
             })
         }
+        if (topDummyId != 0) return packetRepository.get(topDummyId)
         return packetRepository.get(targetId)
     }
+
+    fun isCurrentBattleDummy(): Boolean = topDummyId != 0
 
     fun currentTarget(): Int {
         return packetRepository.currentTarget()
@@ -72,6 +75,7 @@ object DataManager {
 
     private val dummyLastDamageTime = ConcurrentHashMap<Int, Long>()
     private val DUMMY_TIMEOUT_MS = 5000L
+    private var topDummyId: Int = 0
 
     private fun topDummy(): Int? {
         if (dummyLastDamageTime.isEmpty()) return null
@@ -99,9 +103,12 @@ object DataManager {
             if (currentMob != null && !currentMob.isDummy) return
         }
         dummyLastDamageTime[mobId] = now
-        val top = topDummy() ?: return
-        if (current <= 0) saveCurrentBattleStart()
-        if (current != top) saveCurrentTarget(top)
+        // 전투 시작은 처음 한 번만 (currentTarget은 더 이상 dummy 간 전환에 쓰지 않음)
+        if (current <= 0) {
+            saveCurrentBattleStart()
+            saveCurrentTarget(mobId)
+        }
+        topDummyId = topDummy() ?: mobId
     }
 
     fun checkDummyTimeout() {
@@ -109,6 +116,7 @@ object DataManager {
         val current = currentTarget()
         if (current <= 0) {
             dummyLastDamageTime.clear()
+            topDummyId = 0
             return
         }
         val currentMob = mobId(current)?.let { mob(it) }
@@ -117,10 +125,10 @@ object DataManager {
         if (dummyLastDamageTime.isEmpty()) {
             saveCurrentBattleEnd()
             saveCurrentTarget(-1)
+            topDummyId = 0
             return
         }
-        val top = topDummy() ?: return
-        if (current != top) saveCurrentTarget(top)
+        topDummyId = topDummy() ?: return
     }
 
     fun toggleBattle(mobId: Int) {
