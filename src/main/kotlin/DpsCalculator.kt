@@ -11,6 +11,7 @@ class DpsCalculator() {
     private val logger = LoggerFactory.getLogger(DpsCalculator::class.java)
 
     private var currentTarget: Int = 0
+    private var recentTargetWasDummy: Boolean = false
 
     private var recentData = DpsReport()
 
@@ -27,15 +28,18 @@ class DpsCalculator() {
         val storageTarget = DataManager.currentTarget()
         val data = DataManager.battleData(storageTarget)
         val prevTargetDummy = DataManager.isCurrentTargetDummy()
+        val isNewBattleEnd = storageTarget == -1 && storageTarget != currentTarget
         if (storageTarget != currentTarget && !prevTargetDummy
             && storageTarget != -1 && currentTarget != -1) {
             DataManager.saveBattleLog(recentData)
         }
         currentTarget = storageTarget
+        recentTargetWasDummy = prevTargetDummy
         if (currentTarget == -1) {
+            val battleEnd = DataManager.currentBattleEnd()
             DataManager.flushPacket()
-            recentData.battleEnd = DataManager.currentBattleEnd()
-            if (!recentData.isEmpty() && !prevTargetDummy) {
+            recentData.battleEnd = battleEnd
+            if (isNewBattleEnd && !recentData.isEmpty() && !recentTargetWasDummy) {
                 DataManager.saveBattleLog(recentData)
             }
             return recentData

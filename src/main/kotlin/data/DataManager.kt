@@ -133,6 +133,9 @@ object DataManager {
     @Synchronized
     fun flushPacket() {
         packetRepository.flush()
+        packetRepository.currentTarget(-1)
+        packetRepository.flushBattleTime()
+        lastDummyHitTime = 0
     }
 
     @Synchronized
