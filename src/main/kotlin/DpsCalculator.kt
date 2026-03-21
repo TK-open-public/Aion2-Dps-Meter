@@ -104,7 +104,8 @@ class DpsCalculator() {
         }
         data.packets?.forEach {
             val skillName = DataManager.skill(it.getSkillCode1().toLong()) ?: it.getSkillCode1().toString()
-            if (it.getActorId() == uid) {
+            val realActor = DataManager.summonerId(it.getActorId()) ?: it.getActorId()
+            if (realActor == uid) {
                 if (!analyzedData.containsKey(skillName)) {
                     val analyzedSkill = AnalyzedSkill(it)
                     analyzedData[skillName] = analyzedSkill
