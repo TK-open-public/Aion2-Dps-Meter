@@ -11,7 +11,7 @@ import { CombatTimer } from "@/components/CombatTimer.tsx";
 import { useVersionCheck } from "@/hooks/useVersionCheck";
 import { useResizable } from "@/hooks/useResizable";
 import { useSettingsStore } from "@/stores/useSettingsStore";
-// import { DebugConsole } from "./components/DebugConsole";
+import { DebugConsole } from "./components/DebugConsole";
 
 export default function App() {
   const {
@@ -156,7 +156,7 @@ export default function App() {
           </div>
         )}
       </div>
-      {/* <DebugConsole></DebugConsole> */}
+      <DebugConsole></DebugConsole>
       <div>
         <SidePanel
           type={activePanel}
