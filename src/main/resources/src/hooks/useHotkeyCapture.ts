@@ -11,48 +11,22 @@ export const useHotkeyCapture = (initialHotkey: any) => {
   useEffect(() => {
     if (!isCapturing) return;
 
-    const handleNative = (event: any) => {
-      const d = event?.detail || {};
-
-      if (d.shift || d.meta) return;
-
-      const mods = (d.ctrl ? MOD_CTRL : 0) | (d.alt ? MOD_ALT : 0);
-      if (!mods) return;
-
-      const vkCode = Number(d.keyCode);
-      if (!Number.isFinite(vkCode)) return;
-      if (MODIFIER_VKS.has(vkCode)) return;
-
-      setPending({ modifiers: mods, vkCode });
-    };
-
     const handleKeydown = (e: KeyboardEvent) => {
       if (e.shiftKey || e.metaKey) return;
       if (!(e.ctrlKey || e.altKey)) return;
-      if (MODIFIER_VKS.has(e.keyCode)) return; 
+      if (MODIFIER_VKS.has(e.keyCode)) return;
 
       e.preventDefault();
       const mods = (e.ctrlKey ? MOD_CTRL : 0) | (e.altKey ? MOD_ALT : 0);
       setPending({ modifiers: mods, vkCode: e.keyCode });
     };
 
-    window.addEventListener("settings:captureKey", handleNative);
-
-    if (window.javaBridge?.startKeyCapture) {
-      window.javaBridge.startKeyCapture();
-    } else {
-      window.addEventListener("keydown", handleKeydown);
-    }
+    window.addEventListener("keydown", handleKeydown);
 
     return () => {
-      window.removeEventListener("settings:captureKey", handleNative);
       window.removeEventListener("keydown", handleKeydown);
-      if (window.javaBridge?.stopKeyCapture) {
-        window.javaBridge.stopKeyCapture();
-      }
     };
   }, [isCapturing]);
-
   return {
     pending,
     isCapturing,

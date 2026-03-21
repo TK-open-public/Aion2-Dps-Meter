@@ -105,10 +105,10 @@ object HotkeyHandler {
 
         listenerThread!!.start()
     }
-
     fun stop() {
         running = false
         listenerThread?.interrupt()
+        listenerThread?.join()
         listenerThread = null
     }
 }
