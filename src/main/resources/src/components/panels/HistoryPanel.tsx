@@ -28,7 +28,9 @@ export const HistoryPanel = ({ onClose, onReady, formatBattleTime, onSelectHisto
   }, []);
 
   return (
-    <div className="relative text-white font-bold rounded-lg p-4 w-90">
+    <div
+      style={{ maxHeight: "60vh" }}
+      className="relative  text-white font-bold rounded-lg p-4 w-90">
       <div className="flex items-center pb-3 border-b border-white/10">
         <span>전투 기록</span>
         <Button
@@ -40,9 +42,9 @@ export const HistoryPanel = ({ onClose, onReady, formatBattleTime, onSelectHisto
       </div>
 
       <div
-        className="mt-3 flex flex-col gap-2 overflow-y-auto"
+        className="mt-3 flex flex-col gap-2 overflow-y-auto flex-1"
         style={{ maxHeight: "60vh" }}>
-        {loading && <div className="text-center opacity-40 py-8">불러오는 중...</div>}
+        {loading && <div className="text-center opacity-40 py-8">불러오는 중</div>}
         {!loading && historyList.length === 0 && (
           <div className="text-center opacity-40 py-8">전투 기록이 없습니다</div>
         )}
