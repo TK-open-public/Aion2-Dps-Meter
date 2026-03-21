@@ -7,6 +7,7 @@ import com.tbread.entity.ParsedDamagePacket
 import com.tbread.entity.User
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 
 object DataManager {
@@ -67,6 +68,59 @@ object DataManager {
 
     fun currentTarget(): Int {
         return packetRepository.currentTarget()
+    }
+
+    private val dummyLastDamageTime = ConcurrentHashMap<Int, Long>()
+    private val DUMMY_TIMEOUT_MS = 5000L
+
+    private fun topDummy(): Int? {
+        if (dummyLastDamageTime.isEmpty()) return null
+        val executorId = userRepository.executor()
+        val executorHasHit = executorId != 0 && dummyLastDamageTime.keys.any { id ->
+            packetRepository.get(id)?.any { it.getActorId() == executorId } == true
+        }
+        return if (executorHasHit) {
+            dummyLastDamageTime.keys.maxByOrNull { id ->
+                packetRepository.get(id)?.filter { it.getActorId() == executorId }
+                    ?.sumOf { it.getDamage().toLong() } ?: 0L
+            }
+        } else {
+            dummyLastDamageTime.keys.maxByOrNull { id ->
+                packetRepository.get(id)?.sumOf { it.getDamage().toLong() } ?: 0L
+            }
+        }
+    }
+
+    fun touchDummyBattle(mobId: Int) {
+        val now = System.currentTimeMillis()
+        val current = currentTarget()
+        if (current > 0) {
+            val currentMob = mobId(current)?.let { mob(it) }
+            if (currentMob != null && !currentMob.isDummy) return
+        }
+        dummyLastDamageTime[mobId] = now
+        val top = topDummy() ?: return
+        if (current <= 0) saveCurrentBattleStart()
+        if (current != top) saveCurrentTarget(top)
+    }
+
+    fun checkDummyTimeout() {
+        val now = System.currentTimeMillis()
+        val current = currentTarget()
+        if (current <= 0) {
+            dummyLastDamageTime.clear()
+            return
+        }
+        val currentMob = mobId(current)?.let { mob(it) }
+        if (currentMob == null || !currentMob.isDummy) return
+        dummyLastDamageTime.entries.removeIf { (_, lastTime) -> now - lastTime > DUMMY_TIMEOUT_MS }
+        if (dummyLastDamageTime.isEmpty()) {
+            saveCurrentBattleEnd()
+            saveCurrentTarget(-1)
+            return
+        }
+        val top = topDummy() ?: return
+        if (current != top) saveCurrentTarget(top)
     }
 
     fun toggleBattle(mobId: Int) {

@@ -12,6 +12,7 @@ import javafx.application.Platform
 import javafx.stage.Stage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -51,6 +52,14 @@ fun main() = runBlocking {
     launch(Dispatchers.IO) {
         capturer.start()
     }
+
+    launch {
+        while (true) {
+            delay(1000)
+            DataManager.checkDummyTimeout()
+        }
+    }
+
 
     Platform.startup {
         val browserApp = BrowserApp(versionConfig,calculator)

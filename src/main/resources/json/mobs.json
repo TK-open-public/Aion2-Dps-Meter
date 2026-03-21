@@ -7987,7 +7987,8 @@
   {
     "code": 2300229,
     "name": "훈련용 허수아비",
-    "boss": false
+    "boss": false,
+    "isDummy":true
   },
   {
     "code": 2300301,
@@ -8597,7 +8598,8 @@
   {
     "code": 2300919,
     "name": "훈련용 허수아비",
-    "boss": false
+    "boss": false,
+    "isDummy":true
   },
   {
     "code": 2300920,
@@ -9112,7 +9114,8 @@
   {
     "code": 2310229,
     "name": "훈련용 허수아비",
-    "boss": false
+    "boss": false,
+    "isDummy":true
   },
   {
     "code": 2310301,
@@ -9652,7 +9655,8 @@
   {
     "code": 2310919,
     "name": "훈련용 허수아비",
-    "boss": false
+    "boss": false,
+    "isDummy":true
   },
   {
     "code": 2310920,
@@ -10002,7 +10006,8 @@
   {
     "code": 2320229,
     "name": "훈련용 허수아비",
-    "boss": false
+    "boss": false,
+    "isDummy":true
   },
   {
     "code": 2320301,
@@ -10572,7 +10577,8 @@
   {
     "code": 2320919,
     "name": "훈련용 허수아비",
-    "boss": false
+    "boss": false,
+    "isDummy":true
   },
   {
     "code": 2320920,
@@ -17737,7 +17743,8 @@
   {
     "code": 2400392,
     "name": "훈련용 허수아비",
-    "boss": false
+    "boss": false,
+    "isDummy":true
   },
   {
     "code": 2400401,
@@ -20432,12 +20439,14 @@
   {
     "code": 2500075,
     "name": "훈련용 허수아비",
-    "boss": false
+    "boss": false,
+    "isDummy":true
   },
   {
     "code": 2500076,
     "name": "훈련용 허수아비",
-    "boss": false
+    "boss": false,
+    "isDummy":true
   },
   {
     "code": 2500077,
