@@ -4,8 +4,8 @@ import type { PanelType } from "@/types";
 import {
   Settings,
   RefreshCcw,
-  ArrowUpFromLine,
-  ArrowDownFromLine,
+  // ArrowUpFromLine,
+  // ArrowDownFromLine,
   ClipboardClock,
 } from "lucide-react";
 interface Props {
@@ -15,7 +15,13 @@ interface Props {
   toggleCollapse: () => void;
   className: string;
 }
-export const Header = ({ className, isCollapse, reset, setSettings, toggleCollapse }: Props) => {
+export const Header = ({
+  className,
+  // isCollapse,
+  reset,
+  setSettings,
+  //  toggleCollapse
+}: Props) => {
   return (
     <div className="drag-area cursor-move select-none">
       <div className="pb-4  flex justify-between items-center ">
@@ -39,7 +45,7 @@ export const Header = ({ className, isCollapse, reset, setSettings, toggleCollap
             className="rounded-full">
             <Settings className={`scale-125 ${className}`} />
           </Button>
-          <Button
+          {/* <Button
             variant="ghost"
             size="icon"
             onClick={toggleCollapse}
@@ -49,12 +55,13 @@ export const Header = ({ className, isCollapse, reset, setSettings, toggleCollap
             ) : (
               <ArrowUpFromLine className={`scale-125 ${className}`} />
             )}
-          </Button>
+          </Button> */}
           <Button
             variant="ghost"
             size="icon"
+            onClick={() => setSettings("history")}
             className="rounded-full">
-            <ClipboardClock className={`scale-125 ${className}`} />
+            <ClipboardClock className={`scale-125 ${className} `} />
           </Button>
         </div>
       </div>

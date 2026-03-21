@@ -16,7 +16,11 @@ interface Props {
 
 const DISPLAY_MODES: { value: DisplayMode; label: string; description: string }[] = [
   { value: "dps_percent", label: "DPS / 기여도", description: "45,000/초 (35.5%)" },
-  { value: "amount_dps_percent", label: "누적 / DPS / 기여도", description: "1.2M 45,000/초 (35.5%)" },
+  {
+    value: "amount_dps_percent",
+    label: "누적 / DPS / 기여도",
+    description: "1.2M 45,000/초 (35.5%)",
+  },
   { value: "amount_percent", label: "누적 / 기여도", description: "1.2M (35.5%)" },
 ];
 
@@ -82,25 +86,30 @@ export const SettingsPanel = ({ onClose, onReady }: Props) => {
   };
 
   return (
-    <div className="font-bold rounded-lg py-4 px-7 w-[360px]">
+    <div className="font-bold rounded-lg py-4 px-7 w-90">
       <div className="flex items-center pb-3 border-b border-white/10">
         <span>설정</span>
-        <Button variant="ghost" className="ml-auto" onClick={handleCancel}>
+        <Button
+          variant="ghost"
+          className="ml-auto"
+          onClick={handleCancel}>
           <X className="scale-125" />
         </Button>
       </div>
 
-      {/* 새로고침 단축키 */}
       <div className="py-4 border-b border-white/10">
         <div className="text-sm mb-2 opacity-80">새로고침 단축키</div>
         <input
           readOnly
-          onClick={() => { if (isCapturing) stop(); else start(); }}
+          onClick={() => {
+            if (isCapturing) stop();
+            else start();
+          }}
           value={formatHotkey(pending.modifiers, pending.vkCode)}
-          className="w-full p-2 rounded-md bg-white/5 border text-sm cursor-pointer hover:border-white/10 transition-colors"
+          className="w-full p-2 rounded-md bg-white/5 border text-sm cursor-pointer  "
         />
         {isCapturing && (
-          <p className="text-xs text-purple-400 mt-1 opacity-80">
+          <p className="text-xs text-purple-400 mt-2 opacity-80">
             키 조합을 입력하세요 (Ctrl / Alt + 키)
           </p>
         )}
@@ -110,9 +119,7 @@ export const SettingsPanel = ({ onClose, onReady }: Props) => {
         <div className="flex items-center justify-between">
           <div>
             <div className="text-sm opacity-80">최소화 모드</div>
-            <div className="text-xs opacity-40 font-normal mt-0.5">
-              DPS 행만 표시하고 나머지를 숨깁니다
-            </div>
+            <div className="text-xs opacity-40  mt-1">DPS만 표시하고 나머지를 숨깁니다</div>
           </div>
           <Switch
             checked={isMinimal}
@@ -122,7 +129,6 @@ export const SettingsPanel = ({ onClose, onReady }: Props) => {
         </div>
       </div>
 
-      {/* 표시 형식 */}
       <div className="py-4 border-b border-white/10">
         <div className="text-sm mb-3 opacity-80">표시 형식</div>
         <ToggleGroup
@@ -136,11 +142,11 @@ export const SettingsPanel = ({ onClose, onReady }: Props) => {
             <ToggleGroupItem
               key={value}
               value={value}
-              className="w-full data-[state=on]:border-purple-500 data-[state=on]:bg-purple-500/40
+              className=" w-full data-[state=on]:border-purple-500 data-[state=on]:bg-purple-500/40
                 hover:bg-purple-300/10 hover:text-gray-200 transition-colors
                 flex flex-col items-start gap-1 p-3 h-auto">
               <span className="font-bold">{label}</span>
-              <span className="text-sm opacity-50 font-normal">{description}</span>
+              <span className="text-sm opacity-50 ">{description}</span>
             </ToggleGroupItem>
           ))}
         </ToggleGroup>

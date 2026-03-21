@@ -11,7 +11,7 @@ import { CombatTimer } from "@/components/CombatTimer.tsx";
 import { useVersionCheck } from "@/hooks/useVersionCheck";
 import { useResizable } from "@/hooks/useResizable";
 import { useSettingsStore } from "@/stores/useSettingsStore";
-import { DebugConsole } from "./components/DebugConsole";
+// import { DebugConsole } from "./components/DebugConsole";
 
 export default function App() {
   const {
@@ -24,6 +24,7 @@ export default function App() {
     toggleCollapse,
     battleTime,
     formatBattleTime,
+    setHistoryData,
   } = useMeter();
 
   const activePanelRef = useRef<PanelType>(null);
@@ -33,11 +34,11 @@ export default function App() {
   const { meterWidth, onMouseDown, isDragging } = useResizable();
   const rowHeight = useSettingsStore((s) => s.rowHeight);
   const isMinimal = useSettingsStore((s) => s.isMinimal);
+  const [selectedHistoryIdx, setSelectedHistoryIdx] = useState<number | undefined>(undefined);
 
   const handlePanelToggle = useCallback((panel: PanelType) => {
     setActivePanel((prev) => (prev === panel ? null : panel));
   }, []);
-
   const [selected, setSelected] = useState<Player | null>(null);
 
   useDragWindow(".drag-area");
@@ -50,6 +51,7 @@ export default function App() {
 
   const handleReset = useCallback(() => {
     reset();
+    setSelectedHistoryIdx(undefined);
     setActivePanel(null);
     setSelected(null);
   }, [reset]);
@@ -67,7 +69,6 @@ export default function App() {
     },
     [players],
   );
-
   const handleClose = useCallback(() => {
     setActivePanel(null);
   }, []);
@@ -155,7 +156,7 @@ export default function App() {
           </div>
         )}
       </div>
-      <DebugConsole></DebugConsole>
+      {/* <DebugConsole></DebugConsole> */}
       <div>
         <SidePanel
           type={activePanel}
@@ -164,6 +165,12 @@ export default function App() {
           combatTime={formatBattleTime(battleTime)}
           updateInfo={updateInfo}
           onUpdate={openReleasePage}
+          formatBattleTime={formatBattleTime}
+          historyIdx={selectedHistoryIdx}
+          onSelectHistory={(idx, report) => {
+            setHistoryData(report);
+            setSelectedHistoryIdx(idx);
+          }}
         />
       </div>
     </div>

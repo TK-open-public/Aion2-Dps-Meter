@@ -10,11 +10,12 @@ interface Props {
   onClose: () => void;
   onReady?: () => void;
   combatTime: string;
+  historyIdx?: number;
 }
 
 const col = { name: 180, stat: 80, dmg: 220 };
 
-export const DetailsPanel = ({ player, onClose, onReady, combatTime }: Props) => {
+export const DetailsPanel = ({ player, onClose, onReady, combatTime, historyIdx }: Props) => {
   const { getDetails } = useDetails();
   const [details, setDetails] = useState<Details | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -24,7 +25,7 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime }: Props) =>
   useEffect(() => {
     if (!player) return;
     setDetails(null);
-    getDetails(player, combatTime).then((data) => {
+    getDetails(player, combatTime, historyIdx).then((data) => {
       setDetails(data);
     });
   }, [player]);
@@ -47,7 +48,6 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime }: Props) =>
 
   return (
     <div className="relative text-white font-bold rounded-lg py-4 px-7">
-
       <div className="flex items-center pb-3 border-b border-white/10">
         <span>{player.name} 상세내역</span>
         <Button
@@ -58,7 +58,6 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime }: Props) =>
         </Button>
       </div>
 
-   
       {details && (
         <div className="grid grid-cols-2 py-3">
           {[
@@ -80,7 +79,6 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime }: Props) =>
           ))}
         </div>
       )}
-
 
       <div className="flex items-center py-3 gap-2 border-b border-white/10">
         <span
@@ -141,7 +139,7 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime }: Props) =>
                     i < details.skills.length - 1 ? "1px solid rgba(255,255,255,0.08)" : "none",
                 }}>
                 <span
-                  className="text-left text-row-fill truncate shrink-0"
+                  className="text-left text-row-fill text-shadow-meter truncate shrink-0"
                   style={{ width: col.name }}>
                   {s.name}
                 </span>
@@ -180,10 +178,13 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime }: Props) =>
                   className="relative h-8 shrink-0 text-end"
                   style={{ width: col.dmg }}>
                   <div
-                    className="absolute inset-0 origin-left rounded-md bg-isUser-fill"
-                    style={{ transform: `scaleX(${ratio})` }}
+                    className="absolute inset-0 origin-left rounded-md "
+                    style={{
+                      background: "linear-gradient(to right, #55c42a, #3a9e20)",
+                      transform: `scaleX(${ratio})`,
+                    }}
                   />
-                  <div className="relative z-10 h-full flex items-center justify-end gap-2 text-dps">
+                  <div className="relative z-10 h-full flex items-center justify-end gap-2 text-row-fill text-shadow-meter">
                     <span>{s.dmg.toLocaleString()}</span>
                     <span>({(ratio * 100).toFixed(1)}%)</span>
                   </div>

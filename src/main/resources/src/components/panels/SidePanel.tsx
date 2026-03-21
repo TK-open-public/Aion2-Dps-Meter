@@ -5,6 +5,7 @@ import { SettingsPanel } from "./SettingsPanel.tsx";
 import { UpdatePanel } from "./UpdatePanel";
 import type { UpdateInfo, PanelType } from "@/types";
 import { useSettingsStore } from "@/stores/useSettingsStore";
+import { HistoryPanel } from "./HistoryPanel";
 
 interface SidePanelProps {
   type: PanelType;
@@ -13,6 +14,9 @@ interface SidePanelProps {
   combatTime: string;
   updateInfo?: UpdateInfo | null;
   onUpdate?: () => void;
+  formatBattleTime: (ms: number) => string;
+  onSelectHistory: (idx: number, report: any) => void; // idx 추가
+  historyIdx?: number;
 }
 
 export const SidePanel = ({
@@ -21,7 +25,10 @@ export const SidePanel = ({
   onClose,
   combatTime,
   updateInfo,
+  onSelectHistory,
   onUpdate,
+  historyIdx,
+  formatBattleTime,
 }: SidePanelProps) => {
   const [visible, setVisible] = useState(false);
   const [rendered, setRendered] = useState(false);
@@ -69,7 +76,7 @@ export const SidePanel = ({
   return (
     <div
       style={{ left: meterWidth }}
-      className={` min-w-0 fixed top-0  ml-3 h-auto z-50 bg-[rgb(12,22,40)] text-white rounded-lg
+      className={` min-w-0 fixed top-0  ml-3 h-auto z-50 bg-[rgba(12,22,40,0.8)] text-white rounded-lg
     transition-all duration-200 ease-in-out
     ${visible ? "visible  translate-x-0" : "invisible  -translate-x-2"}`}>
       {currentType === "details" && (
@@ -78,6 +85,7 @@ export const SidePanel = ({
           player={currentPlayer}
           onClose={onClose}
           combatTime={combatTime}
+          historyIdx={historyIdx}
           onReady={() => setTimeout(() => setVisible(true), 10)}
         />
       )}
@@ -93,6 +101,15 @@ export const SidePanel = ({
           onClose={onClose}
           onUpdate={onUpdate ?? (() => {})}
           onReady={() => setTimeout(() => setVisible(true), 10)}
+        />
+      )}
+      {currentType === "history" && (
+        <HistoryPanel
+          key={currentPlayer?.id}
+          onClose={onClose}
+          onReady={() => setTimeout(() => setVisible(true), 10)}
+          onSelectHistory={onSelectHistory}
+          formatBattleTime={formatBattleTime}
         />
       )}
     </div>

@@ -70,8 +70,7 @@ export interface Hotkey {
   modifiers: number;
   vkCode: number;
 }
-export type PanelType = "details" | "settings" | "history" | "update" | null;
-
+export type PanelType = "details" | "settings" | "update" | "history" | null;
 export interface UpdateInfo {
   currentVersion: string;
   latestVersion: string;

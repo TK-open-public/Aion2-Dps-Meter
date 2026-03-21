@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Player } from "../types";
 import { parseCombatData } from "../utils/parser";
-import { useDebugStore } from "../stores/debugStore";
+// import { useDebugStore } from "../stores/debugStore";
 
 const POLL_MS = 300;
 
@@ -11,8 +11,9 @@ export const useMeter = () => {
   const [remainHp, setRemainHp] = useState<string | number>(0);
   const [isCollapse, setIsCollapse] = useState(false);
   const [isInCombat, setIsInCombat] = useState(false);
+
   const [battleTime, setBattleTime] = useState<number | null>(null);
-  const addLog = useDebugStore((s) => s.addLog);
+  // const addLog = useDebugStore((s) => s.addLog);
   const isCollapseRef = useRef(false);
   const lastBattleTimeRef = useRef<number | null>(null);
   const combatTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -51,9 +52,10 @@ export const useMeter = () => {
     if (typeof raw !== "string") return;
     if (raw === lastJsonRef.current) {
       return;
-    } else {
-      addLog(`raw${raw}`);
     }
+    //  else {
+    //   addLog(`raw${raw}`);
+    // }
 
     lastJsonRef.current = raw;
 
@@ -122,7 +124,6 @@ export const useMeter = () => {
     setPlayers([]);
     setTargetName("");
     setRemainHp(0);
-
     setIsInCombat(false);
     setBattleTime(null);
 
@@ -146,6 +147,14 @@ export const useMeter = () => {
       fetchDps();
     }
   };
+  const setHistoryData = useCallback((report: any) => {
+    const { players: rows, targetName } = parseCombatData(report);
+    const battleTime = (report.battleEnd ?? 0) - (report.battleStart ?? 0);
+    setPlayersIfChanged(rows);
+    setTargetName(targetName);
+    setBattleTime(battleTime);
+    setIsInCombat(false);
+  }, []);
 
   useEffect(() => {
     startPolling();
@@ -164,5 +173,6 @@ export const useMeter = () => {
     formatBattleTime,
     reset,
     toggleCollapse,
+    setHistoryData,
   };
 };

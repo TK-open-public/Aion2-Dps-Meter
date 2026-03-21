@@ -26,7 +26,7 @@ const gradients = {
 const getNameColor = (server?: number) => {
   if (!server) return "#ffffff";
   if (server >= 1001 && server <= 1021) return "#7dd3fc";
-  if (server >= 2001 && server <= 2021) return "#c084fc";
+  if (server >= 2001 && server <= 2021) return "#e879f9";
   return "#ffffff";
 };
 

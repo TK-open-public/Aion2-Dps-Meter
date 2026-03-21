@@ -28,7 +28,7 @@ export const UpdatePanel = ({ updateInfo, onClose, onUpdate, onReady }: Props) =
         </Button>
       </div>
 
-      <div className="py-4 space-y-2 text-sm font-normal opacity-80 border-b border-white/10">
+      <div className="py-4 space-y-2 text-sm  opacity-80 border-b border-white/10">
         <p className="pb-3 font-semibold">
           신규 <span className="text-yellow-400 font-bold">{label}</span> 업데이트가 있습니다!
         </p>
