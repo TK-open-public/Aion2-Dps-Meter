@@ -71,21 +71,21 @@ export const HistoryPanel = ({ onClose, onReady, formatBattleTime, onSelectHisto
                   className={`w-full h-full object-contain ${!item.isBoss ? "opacity-40" : ""}`}
                 />
               </div>
-              <div className="flex flex-col justify-center gap-0.5 flex-1 min-w-0">
-                <div className="flex items-center justify-between">
+              <div className="flex flex justify-between items-center  gap-0.5 flex-1 min-w-0">
+                <div className="flex flex-col">
                   <span
                     className="font-bold text-shadow-meter truncate"
                     style={{ color: "#ffffff" }}>
                     {item.mobName}
                   </span>
-                  <span
-                    className="font-bold text-shadow-meter shrink-0 ml-2"
-                    style={{ color: "#e63333" }}>
-                    {formatBattleTime(item.battleTime)}
+                  <span className="text-xs font-normal opacity-50">
+                    {formatDateTime(item.battleStart)}
                   </span>
                 </div>
-                <span className="text-xs font-normal opacity-50">
-                  {formatDateTime(item.battleStart)}
+                <span
+                  className="font-bold text-shadow-meter shrink-0 ml-2"
+                  style={{ color: "#e63333" }}>
+                  {formatBattleTime(item.battleTime)}
                 </span>
               </div>
             </div>
