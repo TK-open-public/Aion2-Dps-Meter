@@ -14,6 +14,7 @@ class DpsCalculator() {
     private var recentTargetWasDummy: Boolean = false
 
     private var recentData = DpsReport()
+    private var recentDataSaved = false
 
     private fun battleData(): CopyOnWriteArrayList<ParsedDamagePacket>? {
         return DataManager.battleData(currentTarget)
@@ -33,6 +34,7 @@ class DpsCalculator() {
             && storageTarget != -1 && currentTarget != -1
         ) {
             DataManager.saveBattleLog(recentData)
+            recentDataSaved = true
         }
         currentTarget = storageTarget
         recentTargetWasDummy = prevTargetDummy
@@ -44,6 +46,7 @@ class DpsCalculator() {
             }
             if (isNewBattleEnd && !recentData.isEmpty() && !recentTargetWasDummy) {
                 DataManager.saveBattleLog(recentData)
+                recentDataSaved = true
             }
             return recentData
         }
@@ -90,6 +93,7 @@ class DpsCalculator() {
         }
 
         recentData = report
+        recentDataSaved = false
         return report
     }
 
@@ -124,11 +128,14 @@ class DpsCalculator() {
     }
 
     fun resetDataStorage() {
-        if (!recentData.isEmpty() && !DataManager.isCurrentTargetDummy()) {
+        if (!recentData.isEmpty() && !recentDataSaved && !DataManager.isCurrentTargetDummy()) {
             DataManager.saveBattleLog(recentData)
+            recentDataSaved = true
         }
         DataManager.flushPacket()
         currentTarget = -1
+        recentData = DpsReport()
+        recentDataSaved = false
         logger.info("대상 데미지 누적 데이터 초기화 완료")
     }
 
