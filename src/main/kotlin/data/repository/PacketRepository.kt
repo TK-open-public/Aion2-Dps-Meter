@@ -58,7 +58,7 @@ class PacketRepository {
         currentBattleStart = System.currentTimeMillis()
     }
 
-    fun saveCurrentBattleEnd() {
-        currentBattleEnd = System.currentTimeMillis()
+    fun saveCurrentBattleEnd(time: Long = System.currentTimeMillis()) {
+        currentBattleEnd = time
     }
 }

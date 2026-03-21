@@ -69,6 +69,36 @@ object DataManager {
         return packetRepository.currentTarget()
     }
 
+    fun isCurrentTargetDummy(): Boolean {
+        val current = currentTarget()
+        if (current <= 0) return false
+        return mobId(current)?.let { mob(it) }?.isDummy == true
+    }
+
+    fun executorId(): Int = userRepository.executor()
+
+    private var lastDummyHitTime: Long = 0
+    private val DUMMY_TIMEOUT_MS = 5000L
+
+    fun touchDummyBattle(mobId: Int) {
+        lastDummyHitTime = System.currentTimeMillis()
+        if (currentTarget() <= 0) {
+            saveCurrentBattleStart()
+            saveCurrentTarget(mobId)
+        }
+    }
+
+    fun checkDummyTimeout() {
+        val current = currentTarget()
+        if (current <= 0) return
+        if (!isCurrentTargetDummy()) return
+        if (System.currentTimeMillis() - lastDummyHitTime > DUMMY_TIMEOUT_MS) {
+            saveCurrentBattleEnd(lastDummyHitTime)
+            saveCurrentTarget(-1)
+            lastDummyHitTime = 0
+        }
+    }
+
     fun toggleBattle(mobId: Int) {
         val pastTarget = currentTarget()
         if (pastTarget == mobId) {
@@ -92,8 +122,8 @@ object DataManager {
         packetRepository.saveCurrentBattleStart()
     }
 
-    private fun saveCurrentBattleEnd() {
-        packetRepository.saveCurrentBattleEnd()
+    private fun saveCurrentBattleEnd(time: Long = System.currentTimeMillis()) {
+        packetRepository.saveCurrentBattleEnd(time)
     }
 
     private fun saveCurrentTarget(targetId: Int) {
@@ -205,6 +235,7 @@ object DataManager {
                 userRepository.get(executor)!!.isExecutor = false
             }
             userRepository.executor(uid)
+            userRepository.get(uid)!!.isExecutor = true
         }
     }
 }
