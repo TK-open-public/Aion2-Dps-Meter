@@ -60,7 +60,6 @@ fun main() = runBlocking {
         }
     }
 
-
     Platform.startup {
         val browserApp = BrowserApp(versionConfig,calculator)
         browserApp.start(Stage())

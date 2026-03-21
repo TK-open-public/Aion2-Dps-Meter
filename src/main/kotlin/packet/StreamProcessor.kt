@@ -515,11 +515,8 @@ class StreamProcessor() {
             if (pdp.getDamage() < 10000000) {
                 //무의요람 버그수정을 위해 일단 천만이상의 데미지 무시
                 DataManager.saveDamage(pdp)
-                
-                //
-                val mobCode = DataManager.mobId(pdp.getTargetId()) ?: return true
-                val mob = DataManager.mob(mobCode) ?: return true
-                if (mob.isDummy) {
+                val mobCode = DataManager.mobId(pdp.getTargetId())
+                if (mobCode != null && DataManager.mob(mobCode)?.isDummy == true) {
                     DataManager.touchDummyBattle(pdp.getTargetId())
                 }
             }

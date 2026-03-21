@@ -24,15 +24,20 @@ class DpsCalculator() {
 
 
     fun getDps(): DpsReport {
-        val data = battleData()
         val storageTarget = DataManager.currentTarget()
-        if (storageTarget != currentTarget && !DataManager.isCurrentBattleDummy()) {
+        val data = DataManager.battleData(storageTarget)
+        val prevTargetDummy = DataManager.isCurrentTargetDummy()
+        if (storageTarget != currentTarget && !prevTargetDummy
+            && storageTarget != -1 && currentTarget != -1) {
             DataManager.saveBattleLog(recentData)
         }
         currentTarget = storageTarget
         if (currentTarget == -1) {
             DataManager.flushPacket()
             recentData.battleEnd = DataManager.currentBattleEnd()
+            if (!recentData.isEmpty() && !prevTargetDummy) {
+                DataManager.saveBattleLog(recentData)
+            }
             return recentData
         }
         val report =
@@ -66,6 +71,14 @@ class DpsCalculator() {
             }
             if (totalDamage != 0.0) {
                 info.contribution = info.amount / totalDamage * 100
+            }
+        }
+
+        // 허수아비 전투 시 executor가 참가하지 않았으면 표기 안 함 (executor 미확인 시 그대로 표기)
+        if (DataManager.isCurrentTargetDummy()) {
+            val executorId = DataManager.executorId()
+            if (executorId != 0 && !report.contributors.any { it.isExecutor }) {
+                return recentData
             }
         }
 
@@ -104,7 +117,7 @@ class DpsCalculator() {
     }
 
     fun resetDataStorage() {
-        if (!recentData.isEmpty() && !DataManager.isCurrentBattleDummy()) {
+        if (!recentData.isEmpty() && !DataManager.isCurrentTargetDummy()) {
             DataManager.saveBattleLog(recentData)
         }
         DataManager.flushPacket()

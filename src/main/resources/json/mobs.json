@@ -16848,7 +16848,8 @@
   {
     "code": 2400032,
     "name": "훈련용 허수아비",
-    "boss": true
+    "boss": true,
+    "isDummy": true
   },
   {
     "code": 2400033,

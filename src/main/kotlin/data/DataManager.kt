@@ -7,7 +7,6 @@ import com.tbread.entity.ParsedDamagePacket
 import com.tbread.entity.User
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
-import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 
 object DataManager {
@@ -63,72 +62,41 @@ object DataManager {
                 !existMobId(it.getTargetId())
             })
         }
-        if (topDummyId != 0) return packetRepository.get(topDummyId)
         return packetRepository.get(targetId)
     }
-
-    fun isCurrentBattleDummy(): Boolean = topDummyId != 0
 
     fun currentTarget(): Int {
         return packetRepository.currentTarget()
     }
 
-    private val dummyLastDamageTime = ConcurrentHashMap<Int, Long>()
-    private val DUMMY_TIMEOUT_MS = 5000L
-    private var topDummyId: Int = 0
-
-    private fun topDummy(): Int? {
-        if (dummyLastDamageTime.isEmpty()) return null
-        val executorId = userRepository.executor()
-        val executorHasHit = executorId != 0 && dummyLastDamageTime.keys.any { id ->
-            packetRepository.get(id)?.any { it.getActorId() == executorId } == true
-        }
-        return if (executorHasHit) {
-            dummyLastDamageTime.keys.maxByOrNull { id ->
-                packetRepository.get(id)?.filter { it.getActorId() == executorId }
-                    ?.sumOf { it.getDamage().toLong() } ?: 0L
-            }
-        } else {
-            dummyLastDamageTime.keys.maxByOrNull { id ->
-                packetRepository.get(id)?.sumOf { it.getDamage().toLong() } ?: 0L
-            }
-        }
+    fun isCurrentTargetDummy(): Boolean {
+        val current = currentTarget()
+        if (current <= 0) return false
+        return mobId(current)?.let { mob(it) }?.isDummy == true
     }
 
+    fun executorId(): Int = userRepository.executor()
+
+    private var lastDummyHitTime: Long = 0
+    private val DUMMY_TIMEOUT_MS = 5000L
+
     fun touchDummyBattle(mobId: Int) {
-        val now = System.currentTimeMillis()
-        val current = currentTarget()
-        if (current > 0) {
-            val currentMob = mobId(current)?.let { mob(it) }
-            if (currentMob != null && !currentMob.isDummy) return
-        }
-        dummyLastDamageTime[mobId] = now
-        // 전투 시작은 처음 한 번만 (currentTarget은 더 이상 dummy 간 전환에 쓰지 않음)
-        if (current <= 0) {
+        lastDummyHitTime = System.currentTimeMillis()
+        if (currentTarget() <= 0) {
             saveCurrentBattleStart()
             saveCurrentTarget(mobId)
         }
-        topDummyId = topDummy() ?: mobId
     }
 
     fun checkDummyTimeout() {
-        val now = System.currentTimeMillis()
         val current = currentTarget()
-        if (current <= 0) {
-            dummyLastDamageTime.clear()
-            topDummyId = 0
-            return
-        }
-        val currentMob = mobId(current)?.let { mob(it) }
-        if (currentMob == null || !currentMob.isDummy) return
-        dummyLastDamageTime.entries.removeIf { (_, lastTime) -> now - lastTime > DUMMY_TIMEOUT_MS }
-        if (dummyLastDamageTime.isEmpty()) {
-            saveCurrentBattleEnd()
+        if (current <= 0) return
+        if (!isCurrentTargetDummy()) return
+        if (System.currentTimeMillis() - lastDummyHitTime > DUMMY_TIMEOUT_MS) {
+            saveCurrentBattleEnd(lastDummyHitTime)
             saveCurrentTarget(-1)
-            topDummyId = 0
-            return
+            lastDummyHitTime = 0
         }
-        topDummyId = topDummy() ?: return
     }
 
     fun toggleBattle(mobId: Int) {
@@ -154,8 +122,8 @@ object DataManager {
         packetRepository.saveCurrentBattleStart()
     }
 
-    private fun saveCurrentBattleEnd() {
-        packetRepository.saveCurrentBattleEnd()
+    private fun saveCurrentBattleEnd(time: Long = System.currentTimeMillis()) {
+        packetRepository.saveCurrentBattleEnd(time)
     }
 
     private fun saveCurrentTarget(targetId: Int) {
@@ -267,6 +235,7 @@ object DataManager {
                 userRepository.get(executor)!!.isExecutor = false
             }
             userRepository.executor(uid)
+            userRepository.get(uid)!!.isExecutor = true
         }
     }
 }
