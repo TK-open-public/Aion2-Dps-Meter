@@ -61,7 +61,7 @@ export const MeterList = memo(({ players, selectedId, onSelect, rowHeight }: Pro
 
   if (rows.length === 0) {
     return (
-      <div className=" w-full  ">
+      <div className=" w-full ">
         <div
           style={{ height: rowHeight }}
           className="px-2 rounded-sm bg-black/30 h-full flex items-center gap-3">

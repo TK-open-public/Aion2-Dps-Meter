@@ -30,14 +30,9 @@ export default function App() {
 
   const activePanelRef = useRef<PanelType>(null);
   const selectedRef = useRef<Player | null>(null);
-  const {
-    updateInfo,
-    currentVersion,
-    openReleasePage,
-    downloadState,
-    retryDownload,
-    startUpdate,
-  } = useVersionCheck();
+  const { updateInfo, currentVersion, openReleasePage, downloadState, retryDownload, startUpdate } =
+    useVersionCheck();
+  const headerPosition = useSettingsStore((s) => s.headerPosition);
 
   const [activePanel, setActivePanel] = useState<PanelType>(null);
   const { meterWidth, onMouseDown, isDragging } = useResizable();
@@ -50,7 +45,7 @@ export default function App() {
   }, []);
   const [selected, setSelected] = useState<Player | null>(null);
 
-  useDragWindow(".drag-area");
+  const { wasDraggingRef } = useDragWindow(".drag-area");
 
   const handleToggleCollapse = useCallback(() => {
     toggleCollapse();
@@ -67,6 +62,8 @@ export default function App() {
 
   const handleSelect = useCallback(
     (id: string) => {
+      if (wasDraggingRef.current) return;
+
       const player = players.find((p) => p.id === id);
       if (!player) return;
       if (activePanelRef.current === "details" && selectedRef.current?.id === player.id) {
@@ -105,7 +102,7 @@ export default function App() {
 `;
 
   const headerCss = `transition-opacity duration-300 ${
-    isMinimal ? "opacity-0 group-hover:opacity-100" : "opacity-100"
+    isMinimal ? "opacity-0 group-hover:opacity-100" : " opacity-100"
   }`;
   useEffect(() => {
     const handleKeydown = (e: KeyboardEvent) => {
@@ -127,18 +124,22 @@ export default function App() {
     <TooltipProvider>
       <div
         style={{ width: "fit-content" }}
-        className={`relative  group ${isDragging ? "pointer-events-none" : ""}`}>
+        className={`drag-area cursor-move select-none
+ relative  group ${isDragging ? "pointer-events-none" : ""}`}>
         <div
           className={`${meterCss} `}
           style={{ width: meterWidth }}>
-          <Header
-            className={headerCss}
-            reset={handleReset}
-            setSettings={handlePanelToggle}
-            isCollapse={isCollapse}
-            toggleCollapse={handleToggleCollapse}
-          />
-
+          {headerPosition === "top" && (
+            <div className=" mb-4">
+              <Header
+                className={`${headerCss} `}
+                reset={handleReset}
+                setSettings={handlePanelToggle}
+                isCollapse={isCollapse}
+                toggleCollapse={handleToggleCollapse}
+              />
+            </div>
+          )}
           {players.length > 0 && !isMinimal && (
             <TargetInfo
               targetName={targetName}
@@ -163,8 +164,19 @@ export default function App() {
           {!isMinimal && (
             <div
               onMouseDown={onMouseDown}
-              className="absolute top-1/2 -translate-y-1/2 -right-3 w-1 h-16 cursor-e-resize flex items-center justify-center opacity-60 hover:opacity-100 transition-opacity group">
+              className="resizeHandle absolute top-1/2 -translate-y-1/2 -right-3 w-1 h-16 cursor-e-resize flex items-center justify-center opacity-60 hover:opacity-100 transition-opacity group">
               <div className="w-1 h-10 rounded-full bg-white  transition-colors" />
+            </div>
+          )}
+          {headerPosition === "bottom" && (
+            <div className=" mt-4">
+              <Header
+                className={`${headerCss} `}
+                reset={handleReset}
+                setSettings={handlePanelToggle}
+                isCollapse={isCollapse}
+                toggleCollapse={handleToggleCollapse}
+              />
             </div>
           )}
         </div>

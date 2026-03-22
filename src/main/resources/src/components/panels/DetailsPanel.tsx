@@ -14,7 +14,7 @@ interface Props {
   historyIdx?: number;
 }
 
-const col = { name: 180, stat: 80, dmg: 220 };
+const col = { name: 184, stat: 80, dmg: 220 };
 
 const SkillIcon = ({ name }: { name: string }) => {
   const [failed, setFailed] = useState(false);
@@ -70,7 +70,7 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime, historyIdx 
   if (!player || !details) return null;
 
   return (
-    <div className="relative text-white font-bold rounded-lg py-4 px-7">
+    <div className="relative  text-white font-bold rounded-lg py-4 px-7">
       <div className="flex items-center pb-3 border-b border-white/10">
         <span>{player.name} 상세내역</span>
         <Button
@@ -221,10 +221,9 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime, historyIdx 
         </div>
       </div>
 
-      {/* 드래그 핸들 */}
       <div
         onMouseDown={onMouseDown}
-        className="absolute bottom-1 left-1/2 -translate-x-1/2 w-24 h-3 cursor-s-resize flex items-center justify-center opacity-60 hover:opacity-100 transition-opacity group">
+        className="resizeHandle absolute bottom-1 left-1/2 -translate-x-1/2 w-24 h-3 cursor-s-resize flex items-center justify-center opacity-60 hover:opacity-100 transition-opacity group">
         <div className="w-8 h-1 rounded-full bg-white  transition-colors" />
       </div>
     </div>

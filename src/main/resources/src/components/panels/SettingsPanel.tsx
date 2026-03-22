@@ -5,11 +5,18 @@ import { formatHotkey } from "@/utils/hotKey";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import type { DisplayMode, NameDisplay } from "@/stores/useSettingsStore";
+import type { DisplayMode, HeaderPosition, NameDisplay } from "@/stores/useSettingsStore";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { SettingsItem } from "./SettingsItem";
 import type { UpdateInfo } from "@/types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 interface Props {
   onClose: () => void;
   onReady?: () => void;
@@ -56,6 +63,8 @@ export const SettingsPanel = ({
     setRowHeight,
     isMinimal,
     setIsMinimal,
+    headerPosition,
+    setHeaderPosition,
   } = useSettingsStore();
 
   const { isCapturing, pending, start, stop, reset } = useHotkeyCapture(hotkey);
@@ -71,7 +80,7 @@ export const SettingsPanel = ({
     hotkey,
     hideHotkey,
     displayMode,
-
+    headerPosition,
     nameDisplay,
     rowHeight,
     isMinimal,
@@ -108,6 +117,7 @@ export const SettingsPanel = ({
     setHotkey(snapshot.hotkey);
     reset(snapshot.hotkey);
     resetHide(snapshot.hideHotkey);
+    setHeaderPosition(snapshot.headerPosition);
     onClose();
   };
 
@@ -156,6 +166,33 @@ export const SettingsPanel = ({
             onCheckedChange={(v) => setIsMinimal(v)}
             className="data-[state=checked]:bg-purple-500"
           />
+        </div>
+      </SettingsItem>
+      <SettingsItem className="pb-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-sm opacity-80">버튼 위치</div>
+            <div className="text-xs opacity-40 mt-1">헤더 버튼의 위치를 설정합니다</div>
+          </div>
+          <Select
+            value={headerPosition}
+            onValueChange={(v) => setHeaderPosition(v as HeaderPosition)}>
+            <SelectTrigger className="w-24 bg-white/5 border-white/10 text-sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem
+                value="top"
+                className="px-4 py-2">
+                상단
+              </SelectItem>
+              <SelectItem
+                value="bottom"
+                className="px-4 py-2">
+                하단
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </SettingsItem>
       <SettingsItem>

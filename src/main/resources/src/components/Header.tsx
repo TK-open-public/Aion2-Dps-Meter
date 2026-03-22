@@ -25,8 +25,8 @@ export const Header = ({ className, reset, setSettings }: Props) => {
   };
 
   return (
-    <div className="drag-area cursor-move select-none">
-      <div className="pb-4 flex justify-between items-center">
+    <div className="">
+      <div className=" flex justify-between items-center">
         <div className="w-20 h-full">
           <img
             src={logoSrc}

@@ -3,6 +3,7 @@ import type { Hotkey } from "@/types";
 import { parseHotkeyString } from "@/utils/hotKey";
 export type DisplayMode = "dps_percent" | "amount_dps_percent" | "amount_percent";
 export type NameDisplay = "all" | "me_only" | "hidden";
+export type HeaderPosition = "top" | "bottom";
 
 interface SettingsState {
   hotkey: Hotkey;
@@ -21,6 +22,8 @@ interface SettingsState {
   hideHotkey: Hotkey;
   setHideHotkey: (h: Hotkey) => void;
   isDebugMode: boolean;
+  headerPosition: HeaderPosition;
+  setHeaderPosition: (v: HeaderPosition) => void;
 
   setIsMinimal: (v: boolean) => void;
   toggleMinimal: () => void;
@@ -37,6 +40,8 @@ const defaultSettings = {
   detailHeight: 600,
   displayMode: "dps_percent" as DisplayMode,
   nameDisplay: "all" as NameDisplay,
+  headerPosition: "top" as HeaderPosition,
+
   isMinimal: false,
 };
 
@@ -61,6 +66,7 @@ export const useSettingsStore = create<SettingsState>((set) => {
       isDebugMode: j.isDebuggingMode?.() ?? false,
       nameDisplay: j.loadProps?.("nameDisplay") ?? defaultSettings.nameDisplay,
       isMinimal: savedIsMinimal,
+      headerPosition: j.loadProps?.("headerPosition") ?? defaultSettings.headerPosition,
     });
     clearInterval(interval);
   }, 300);
@@ -75,6 +81,8 @@ export const useSettingsStore = create<SettingsState>((set) => {
     displayMode: defaultSettings.displayMode,
     nameDisplay: defaultSettings.nameDisplay,
     isDebugMode: defaultSettings.isDebugMode,
+    headerPosition: defaultSettings.headerPosition,
+
     setHotkey: (hotkey) => {
       set({ hotkey });
       jb()?.updateHotkey?.(hotkey.modifiers, hotkey.vkCode);
@@ -112,6 +120,10 @@ export const useSettingsStore = create<SettingsState>((set) => {
     setDetailHeight: (detailHeight) => {
       set({ detailHeight });
       jb()?.saveProps?.("detailHeight", detailHeight);
+    },
+    setHeaderPosition: (headerPosition) => {
+      set({ headerPosition });
+      jb()?.saveProps?.("headerPosition", headerPosition);
     },
   };
 });
