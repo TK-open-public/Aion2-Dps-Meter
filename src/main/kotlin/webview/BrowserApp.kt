@@ -23,6 +23,10 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import netscape.javascript.JSObject
 import org.slf4j.LoggerFactory
+import java.awt.*
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
+import javax.imageio.ImageIO
 import kotlin.system.exitProcess
 
 class BrowserApp(private val config: VersionConfig, private val dpsCalculator: DpsCalculator) : Application() {
@@ -30,6 +34,7 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
     private val logger = LoggerFactory.getLogger(BrowserApp::class.java)
 
     private lateinit var engine: WebEngine
+    private var trayIcon: TrayIcon? = null
 
     inner class JSBridge(private val stage: Stage, private val hostServices: HostServices) {
 
@@ -73,9 +78,7 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
         }
 
         fun toggleVisibility() {
-            Platform.runLater {
-                if (stage.isShowing) stage.hide() else stage.show()
-            }
+            if (stage.isShowing) hideToTray(stage) else showFromTray(stage)
         }
 
         fun getHideHotkey(): String {
@@ -160,15 +163,16 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
         stage.title = "Aion2 Dps Overlay"
 
         stage.show()
+
+        setupTray(stage)
+
         HotkeyHandler.registerCallback {
             Platform.runLater {
                 bridge.resetDps()
             }
         }
         HotkeyHandler.registerVisibilityCallback {
-            Platform.runLater {
-                if (stage.isShowing) stage.hide() else stage.show()
-            }
+            if (stage.isShowing) hideToTray(stage) else showFromTray(stage)
         }
         HotkeyHandler.start()
         Timeline(KeyFrame(Duration.millis(500.0), {
@@ -176,6 +180,68 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
         })).apply {
             cycleCount = Timeline.INDEFINITE
             play()
+        }
+    }
+
+    private fun setupTray(stage: Stage) {
+        if (!SystemTray.isSupported()) return
+        EventQueue.invokeLater {
+            try {
+                val tray = SystemTray.getSystemTray()
+                val iconUrl = javaClass.getResource("/src/assets/logo.png")
+                val image = if (iconUrl != null) {
+                    ImageIO.read(iconUrl)
+                } else {
+                    java.awt.image.BufferedImage(16, 16, java.awt.image.BufferedImage.TYPE_INT_ARGB)
+                }
+
+                val popup = PopupMenu()
+                val showItem = MenuItem("보이기")
+                showItem.addActionListener { showFromTray(stage) }
+                val exitItem = MenuItem("종료")
+                exitItem.addActionListener {
+                    tray.remove(trayIcon)
+                    Platform.exit()
+                    exitProcess(0)
+                }
+                popup.add(showItem)
+                popup.addSeparator()
+                popup.add(exitItem)
+
+                trayIcon = TrayIcon(image, "Aion2 DPS Overlay", popup).apply {
+                    isImageAutoSize = true
+                    addMouseListener(object : MouseAdapter() {
+                        override fun mouseClicked(e: MouseEvent) {
+                            if (e.button == MouseEvent.BUTTON1) showFromTray(stage)
+                        }
+                    })
+                }
+            } catch (e: AWTException) {
+                logger.error("트레이 설정 실패", e)
+            }
+        }
+    }
+
+    private fun hideToTray(stage: Stage) {
+        Platform.runLater { stage.hide() }
+        EventQueue.invokeLater {
+            try {
+                val icon = trayIcon ?: return@invokeLater
+                SystemTray.getSystemTray().add(icon)
+                icon.displayMessage("Aion2 DPS Overlay", "미터기가 아직 실행 중 입니다.", TrayIcon.MessageType.INFO)
+            } catch (e: AWTException) {
+                logger.error("트레이 추가 실패", e)
+            }
+        }
+    }
+
+    private fun showFromTray(stage: Stage) {
+        Platform.runLater {
+            stage.show()
+            stage.toFront()
+        }
+        EventQueue.invokeLater {
+            SystemTray.getSystemTray().remove(trayIcon)
         }
     }
 
