@@ -14,6 +14,7 @@ interface Props {
   onClose: () => void;
   onReady?: () => void;
   currentVersion?: string;
+
   updateInfo?: UpdateInfo | null;
   onCheckUpdate?: () => void;
 }

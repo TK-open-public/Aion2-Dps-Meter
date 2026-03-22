@@ -1,5 +1,5 @@
 import type { Player, Skill, Details } from "@/types";
-import { useDebugStore } from "../stores/debugStore";
+// import { useDebugStore } from "../stores/debugStore";
 
 export const useDetails = () => {
   const getDetails = async (
@@ -7,12 +7,12 @@ export const useDetails = () => {
     combatTime: string = "00:00",
     historyIdx?: number,
   ): Promise<Details> => {
-    const addLog = useDebugStore.getState().addLog;
+    // const addLog = useDebugStore.getState().addLog;
     const raw =
       historyIdx !== undefined
         ? await window.javaBridge?.getBattleDetailFromList?.(historyIdx, Number(row.id))
         : await window.javaBridge?.getBattleDetail?.(Number(row.id));
-    addLog(`${historyIdx ? `히스토리 디테일 ${raw}` : `일반 detail rowID${row.id} ${raw}`}`);
+    // addLog(`${historyIdx ? `히스토리 디테일 ${raw}` : `일반 detail rowID${row.id} ${raw}`}`);
     let detailObj = typeof raw === "string" ? JSON.parse(raw) : raw;
     if (!detailObj || typeof detailObj !== "object") detailObj = {};
 

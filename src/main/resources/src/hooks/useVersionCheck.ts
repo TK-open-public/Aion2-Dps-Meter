@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Version, UpdateInfo, DownloadState } from "@/types";
 // import { useDebugStore } from "../stores/debugStore";
+
 const API = "https://api.github.com/repos/TK-open-public/Aion2-Dps-Meter/releases?per_page=10";
 const RELEASE_URL = "https://github.com/TK-open-public/Aion2-Dps-Meter/releases";
 
@@ -32,7 +33,7 @@ const compareVersion = (a: Version, b: Version): number => {
   return a.pre.localeCompare(b.pre);
 };
 
-const pickLatestRelease = (
+const pickLatest = (
   releases: any[],
   wantPrerelease: boolean,
 ): { version: Version; msiUrl: string } | null => {
@@ -53,26 +54,24 @@ export const useVersionCheck = () => {
   const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
   const [downloadState, setDownloadState] = useState<DownloadState>({ status: "idle" });
   const retryCountRef = useRef(0);
+
   const currentVersionRef = useRef<Version | null>(null);
+  // const addLog = useDebugStore((s) => s.addLog);
 
   useEffect(() => {
-    let cancelled = false; 
+    let cancelled = false;
 
     const check = async () => {
-      if (cancelled) return; 
-      // if (import.meta.env.DEV) {
-      //   setUpdateInfo({
-      //     currentVersion: "1.2.1",
-      //     latestVersion: "1.2.3",
-      //     isPrerelease: false,
-      //     msiUrl: "https://example.com/mock.msi",
-      //   });
-      //   return;
-      // }
-      const version = window.javaBridge?.getVersion?.();
+      if (cancelled) return;
+
+      const version = (window as any).javaBridge?.getVersion?.();
+      // addLog(`version: ${version}`);
+
       const current = parseVersion(version ?? "");
-      if (current) currentVersionRef.current = current; 
+      // addLog(`current: ${JSON.stringify(current)}`);
+
       if (!current || !(window as any).javaBridge) {
+        // addLog(`재시도: ${retryCountRef.current}`);
         if (retryCountRef.current < RETRY_LIMIT) {
           retryCountRef.current++;
           setTimeout(check, RETRY_INTERVAL);
@@ -80,16 +79,28 @@ export const useVersionCheck = () => {
         return;
       }
 
+      currentVersionRef.current = current;
+
       try {
+        // addLog("릴리즈 대기");
         const res = await fetch(API, {
           headers: { Accept: "application/vnd.github+json" },
           cache: "no-store",
         });
-        if (!res.ok || cancelled) return; 
+
+        if (cancelled) return;
+
+        if (!res.ok) {
+          // addLog(`실패: ${res.status}`);
+          return;
+        }
 
         const releases = await res.json();
-        const latestStable = pickLatestRelease(releases, false);
-        const latestBeta = pickLatestRelease(releases, true);
+        // addLog(`릴리즈: ${releases.length}`);
+
+        const latestStable = pickLatest(releases, false);
+        const latestBeta = pickLatest(releases, true);
+        // addLog(`마지막: ${latestStable?.version.raw} 마지막베타: ${latestBeta?.version.raw}`);
 
         let target: { version: Version; msiUrl: string } | null = null;
         let isPrerelease = false;
@@ -102,9 +113,11 @@ export const useVersionCheck = () => {
           isPrerelease = true;
         }
 
+        // addLog(`타겟: ${target?.version.raw ?? "없음"}`);
+
         if (target && !cancelled) {
           setUpdateInfo((prev) => {
-            if (prev?.latestVersion === target.version.raw) return prev; 
+            if (prev?.latestVersion === target.version.raw) return prev;
             return {
               currentVersion: current.raw,
               latestVersion: target.version.raw,
@@ -113,7 +126,9 @@ export const useVersionCheck = () => {
             };
           });
         }
-      } catch (e) {}
+      } catch (e) {
+        // addLog(`에러: ${e}`);
+      }
     };
 
     check();
@@ -140,16 +155,19 @@ export const useVersionCheck = () => {
     };
   }, []);
 
-  const startUpdate = (msiUrl: string) => {
-    setDownloadState({ status: "error" });
-    console.log(msiUrl);
-    // setDownloadState({ status: "downloading", percent: 0 });
-    // (window as any).javaBridge.startUpdate(msiUrl);
-  };
-
-  const retryDownload = () => {
+  // const startUpdate = () => {
+  //   if (!updateInfo) return;
+  //   setDownloadState({ status: "downloading", percent: 0 });
+  //   (window as any).javaBridge.startUpdate(updateInfo.msiUrl);
+  // };
+  const startUpdate = () => {
+    // addLog(`startUpdate 호출 - updateInfo: ${JSON.stringify(updateInfo)}`);
     if (!updateInfo) return;
-    startUpdate(updateInfo.msiUrl);
+    setDownloadState({ status: "downloading", percent: 0 });
+    (window as any).javaBridge.startUpdate("https://invalid-url-test.com/fake.msi");
+  };
+  const retryDownload = () => {
+    startUpdate();
   };
 
   const openReleasePage = () => {
@@ -159,10 +177,10 @@ export const useVersionCheck = () => {
 
   return {
     updateInfo,
+    currentVersion: currentVersionRef.current?.raw ?? null,
     downloadState,
     startUpdate,
     retryDownload,
     openReleasePage,
-    currentVersion: currentVersionRef.current?.raw ?? null, 
   };
 };

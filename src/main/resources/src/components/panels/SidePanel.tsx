@@ -15,13 +15,14 @@ interface SidePanelProps {
   updateInfo?: UpdateInfo | null;
   onUpdate?: () => void;
   formatBattleTime: (ms: number) => string;
-  onSelectHistory: (idx: number, report: any) => void; 
+  onSelectHistory: (idx: number, report: any) => void;
   historyIdx?: number;
   onOpenReleasePage: () => void;
   downloadState: DownloadState;
+
   onRetryDownload: () => void;
-  currentVersion?: string; 
-  onCheckUpdate?: () => void; 
+  currentVersion?: string;
+  onCheckUpdate?: () => void;
 }
 
 export const SidePanel = ({
@@ -103,14 +104,14 @@ export const SidePanel = ({
         <SettingsPanel
           onClose={onClose}
           onReady={() => setTimeout(() => setVisible(true), 10)}
-          currentVersion={currentVersion} 
-          updateInfo={updateInfo} 
-          onCheckUpdate={onCheckUpdate} 
+          currentVersion={currentVersion}
+          updateInfo={updateInfo}
+          onCheckUpdate={onCheckUpdate}
         />
       )}
-      {currentType === "update" && updateInfo && (
+      {currentType === "update" && (
         <UpdatePanel
-          updateInfo={updateInfo}
+          updateInfo={updateInfo ?? null}
           onClose={onClose}
           downloadState={downloadState}
           onRetryDownload={onRetryDownload}

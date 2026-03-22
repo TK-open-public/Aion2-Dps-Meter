@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface Props {
-  updateInfo: UpdateInfo;
+  updateInfo: UpdateInfo | null;
   downloadState: DownloadState;
   onClose: () => void;
   onUpdate: () => void;
@@ -12,8 +12,6 @@ interface Props {
   onReady?: () => void;
   onOpenReleasePage: () => void;
 }
-
-// ── 상태별 상수 ──────────────────────────────────────────────────────────────
 
 const DOT_CLS: Record<DownloadState["status"], string> = {
   idle: "bg-purple-400 shadow-[0_0_6px_rgba(167,139,250,0.55)]",
@@ -29,25 +27,18 @@ const HEADER_TITLE: Record<DownloadState["status"], string> = {
   error: "설치 실패",
 };
 
-// ── 공통 className 조각 ───────────────────────────────────────────────────────
-
 const CLS = {
-  // 레이아웃
   body: "flex-1 px-4  ",
   footer: "px-4 py-3 flex-shrink-0",
 
-  // 버전 row
   verRow: "text-sm flex justify-between items-center p-2 mb-1" + "text-sm",
   errRow: "text-sm flex justify-between items-center p-2 mb-1" + "text-sm",
   verLabel: "text-white/[0.5] ",
   verCur: "text-slate-400  tabular-nums",
   verNew: "text-green-400  tabular-nums",
 
-  // 구분선
   dividerLine: "flex-1 h-px bg-white/[0.07]",
   dividerText: "text-[10.5px] font-semibold tracking-[0.07em] uppercase whitespace-nowrap",
-
-  // 버튼
 } as const;
 
 const Divider = ({ label, labelCls }: { label: string; labelCls: string }) => (
@@ -89,12 +80,15 @@ export const UpdatePanel = ({
 
   useEffect(() => {
     if (prevStatus.current === downloadState.status) return;
+    prevStatus.current = downloadState.status;
     setVisible(false);
     const t = setTimeout(() => {
-      prevStatus.current = downloadState.status;
       setVisible(true);
     }, 150);
-    return () => clearTimeout(t);
+    return () => {
+      clearTimeout(t);
+      setVisible(true);
+    };
   }, [downloadState.status]);
 
   const { status } = downloadState;
@@ -115,8 +109,38 @@ export const UpdatePanel = ({
           </Button>
         )}
       </div>
+      {status === "idle" && !updateInfo && (
+        <>
+          <div className={CLS.body}>
+            <Divider
+              label="버전 확인 실패"
+              labelCls="text-red-400/50"
+            />
+            <div className={CLS.verRow}>
+              <span className={CLS.verLabel}>현재</span>
+              <span className={CLS.verCur}>알 수 없음</span>
+            </div>
+            <div className={CLS.errRow}>
+              <span className={CLS.verLabel}>오류</span>
+              <span className="text-red-300">네트워크 또는 권한 문제</span>
+            </div>
+          </div>
+          <div className={`${CLS.footer} flex gap-2`}>
+            <Button
+              onClick={onClose}
+              className="flex-1 p-4 w-20 opacity-60 hover:opacity-100 transition-opacity">
+              닫기
+            </Button>
+            <Button
+              onClick={onOpenReleasePage}
+              className="flex-1 bg-/70 transition-colors p-4 w-20">
+              수동 설치
+            </Button>
+          </div>
+        </>
+      )}
 
-      {status === "idle" && (
+      {status === "idle" && updateInfo && (
         <>
           <div className={CLS.body}>
             <Divider
@@ -151,10 +175,12 @@ export const UpdatePanel = ({
               label="다운로드 중"
               labelCls="text-purple-400/60"
             />
-            <VersionRows
-              current={updateInfo.currentVersion}
-              latest={updateInfo.latestVersion}
-            />
+            {updateInfo && (
+              <VersionRows
+                current={updateInfo.currentVersion}
+                latest={updateInfo.latestVersion}
+              />
+            )}
           </div>
           <div className={`${CLS.footer} flex flex-col gap-2`}>
             <div className="flex justify-between text-sm">
@@ -172,9 +198,8 @@ export const UpdatePanel = ({
         </>
       )}
 
-      {/* ── complete ── */}
       {status === "complete" && (
-        <div className="flex-1 flex flex-col items-center justify-center gpa-1.25">
+        <div className="flex-1 py-10 flex flex-col items-center justify-center gpa-1.25">
           <div
             className="w-9 h-9 rounded-full flex items-center justify-center mb-1
                           bg-green-400/10 border border-green-400/20 text-green-400 text-[15px]">
@@ -192,10 +217,12 @@ export const UpdatePanel = ({
               label="설치 오류"
               labelCls="text-red-400/50 "
             />
-            <div className={CLS.verRow}>
-              <span className={CLS.verLabel}>현재</span>
-              <span className={CLS.verCur}>v{updateInfo.currentVersion}</span>
-            </div>
+            {updateInfo && (
+              <div className={CLS.verRow}>
+                <span className={CLS.verLabel}>현재</span>
+                <span className={CLS.verCur}>v{updateInfo.currentVersion}</span>
+              </div>
+            )}
             <div className={CLS.errRow}>
               <span className={CLS.verLabel}>오류</span>
               <span className="text-red-300">네트워크 또는 권한 문제</span>

@@ -72,9 +72,9 @@ export interface Hotkey {
 export type PanelType = "details" | "settings" | "update" | "history" | null;
 export interface UpdateInfo {
   currentVersion: string;
+  msiUrl: string;
   latestVersion: string;
   isPrerelease: boolean;
-  msiUrl: string;
 }
 
 export type DownloadState =
