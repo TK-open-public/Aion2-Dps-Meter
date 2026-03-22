@@ -22,18 +22,20 @@ const SkillIcon = ({ name }: { name: string }) => {
 
   if (!src || failed) {
     return (
-      <div className="w-7 h-7 shrink-0 rounded bg-white/10 flex items-center justify-center">
+      <div className="w-7 h-7 shrink-0 rounded-md bg-white/10 flex items-center justify-center">
         <span className="text-xs opacity-40">?</span>
       </div>
     );
   }
 
   return (
-    <img
-      src={src}
-      className="w-7 h-7 shrink-0 rounded object-contain"
-      onError={() => setFailed(true)}
-    />
+    <div className="rounded-md">
+      <img
+        src={src}
+        className="w-7 h-7 shrink-0 rounded object-contain"
+        onError={() => setFailed(true)}
+      />
+    </div>
   );
 };
 export const DetailsPanel = ({ player, onClose, onReady, combatTime, historyIdx }: Props) => {
@@ -162,9 +164,7 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime, historyIdx 
                 <div
                   className="flex items-center gap-2 shrink-0 overflow-hidden"
                   style={{ width: col.name }}>
-                  <SkillIcon
-                    name={s.name}
-                  />
+                  <SkillIcon name={s.name} />
                   <span className="text-left text-row-fill text-shadow-meter truncate">
                     {s.name}
                   </span>

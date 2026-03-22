@@ -39,23 +39,19 @@ const defaultSettings = {
 };
 
 export const useSettingsStore = create<SettingsState>((set) => {
-  const raw = jb()?.getHotkey?.();
-  const rawHide = jb()?.getHideHotkey?.();
-  const parsedHotkey = raw ? parseHotkeyString(raw) : null;
-  const parsedHideHotkey = rawHide ? parseHotkeyString(rawHide) : null;
-
   const interval = setInterval(() => {
     const j = jb();
     if (!j || typeof j.loadProps !== "function") return;
 
     const raw = j.getHotkey?.();
+    const rawHide = j.getHideHotkey?.();
     const parsedHotkey = raw ? parseHotkeyString(raw) : null;
+    const parsedHideHotkey = rawHide ? parseHotkeyString(rawHide) : null;
     const savedIsMinimal = j.loadProps("isMinimal") === "true";
 
     set({
       hotkey: parsedHotkey ?? defaultSettings.hotkey,
       hideHotkey: parsedHideHotkey ?? defaultSettings.hideHotkey,
-
       meterWidth: Number(j.loadProps?.("meterWidth")) || defaultSettings.meterWidth,
       rowHeight: Number(j.loadProps?.("rowHeight")) || defaultSettings.rowHeight,
       detailHeight: Number(j.loadProps?.("detailHeight")) || defaultSettings.detailHeight,
@@ -67,9 +63,8 @@ export const useSettingsStore = create<SettingsState>((set) => {
   }, 300);
 
   return {
-    hotkey: parsedHotkey ?? defaultSettings.hotkey,
-    hideHotkey: parsedHideHotkey ?? defaultSettings.hideHotkey,
-
+    hotkey: defaultSettings.hotkey,
+    hideHotkey: defaultSettings.hideHotkey,
     isMinimal: defaultSettings.isMinimal,
     meterWidth: defaultSettings.meterWidth,
     rowHeight: defaultSettings.rowHeight,

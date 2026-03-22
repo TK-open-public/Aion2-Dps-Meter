@@ -11,7 +11,9 @@ import { CombatTimer } from "@/components/CombatTimer.tsx";
 import { useVersionCheck } from "@/hooks/useVersionCheck";
 import { useResizable } from "@/hooks/useResizable";
 import { useSettingsStore } from "@/stores/useSettingsStore";
-import { DebugConsole } from "./components/DebugConsole";
+import { TooltipProvider } from "@/components/ui/tooltip";
+
+// import { DebugConsole } from "./components/DebugConsole";
 export default function App() {
   const {
     players,
@@ -112,66 +114,68 @@ export default function App() {
     isMinimal ? "opacity-0 group-hover:opacity-100" : "opacity-100"
   }`;
   return (
-    <div
-      style={{ width: "fit-content" }}
-      className={`relative  group ${isDragging ? "pointer-events-none" : ""}`}>
+    <TooltipProvider>
       <div
-        className={`${meterCss} `}
-        style={{ width: meterWidth }}>
-        <Header
-          className={headerCss}
-          reset={handleReset}
-          setSettings={handlePanelToggle}
-          isCollapse={isCollapse}
-          toggleCollapse={handleToggleCollapse}
-        />
+        style={{ width: "fit-content" }}
+        className={`relative  group ${isDragging ? "pointer-events-none" : ""}`}>
+        <div
+          className={`${meterCss} `}
+          style={{ width: meterWidth }}>
+          <Header
+            className={headerCss}
+            reset={handleReset}
+            setSettings={handlePanelToggle}
+            isCollapse={isCollapse}
+            toggleCollapse={handleToggleCollapse}
+          />
 
-        {players.length > 0 && !isMinimal && (
-          <TargetInfo
-            targetName={targetName}
+          {players.length > 0 && !isMinimal && (
+            <TargetInfo
+              targetName={targetName}
+              rowHeight={rowHeight}
+              remainHp={remainHp}
+            />
+          )}
+          <MeterList
+            players={players}
+            selectedId={selected?.id}
+            onSelect={handleSelect}
             rowHeight={rowHeight}
-            remainHp={remainHp}
           />
-        )}
-        <MeterList
-          players={players}
-          selectedId={selected?.id}
-          onSelect={handleSelect}
-          rowHeight={rowHeight}
-        />
 
-        {battleTime && !isMinimal && (
-          <CombatTimer
-            isInCombat={isInCombat}
+          {battleTime && !isMinimal && (
+            <CombatTimer
+              isInCombat={isInCombat}
+              combatTime={formatBattleTime(battleTime)}
+            />
+          )}
+
+          {!isMinimal && (
+            <div
+              onMouseDown={onMouseDown}
+              className="absolute top-1/2 -translate-y-1/2 -right-3 w-1 h-16 cursor-e-resize flex items-center justify-center opacity-60 hover:opacity-100 transition-opacity group">
+              <div className="w-1 h-10 rounded-full bg-white  transition-colors" />
+            </div>
+          )}
+        </div>
+        {/* <DebugConsole></DebugConsole> */}
+        <div>
+          <SidePanel
+            type={activePanel}
+            player={selected}
+            onClose={handleClose}
             combatTime={formatBattleTime(battleTime)}
+            updateInfo={updateInfo}
+            onUpdate={openReleasePage}
+            formatBattleTime={formatBattleTime}
+            historyIdx={selectedHistoryIdx}
+            onSelectHistory={(idx, report) => {
+              setHistoryData(report);
+              setSelectedHistoryIdx(idx);
+            }}
           />
-        )}
-
-        {!isMinimal && (
-          <div
-            onMouseDown={onMouseDown}
-            className="absolute top-1/2 -translate-y-1/2 -right-3 w-1 h-16 cursor-e-resize flex items-center justify-center opacity-60 hover:opacity-100 transition-opacity group">
-            <div className="w-1 h-10 rounded-full bg-white  transition-colors" />
-          </div>
-        )}
+        </div>
       </div>
-      {/* <DebugConsole></DebugConsole> */}
-      <div>
-        <SidePanel
-          type={activePanel}
-          player={selected}
-          onClose={handleClose}
-          combatTime={formatBattleTime(battleTime)}
-          updateInfo={updateInfo}
-          onUpdate={openReleasePage}
-          formatBattleTime={formatBattleTime}
-          historyIdx={selectedHistoryIdx}
-          onSelectHistory={(idx, report) => {
-            setHistoryData(report);
-            setSelectedHistoryIdx(idx);
-          }}
-        />
-      </div>
-    </div>
+    </TooltipProvider>
   );
 }

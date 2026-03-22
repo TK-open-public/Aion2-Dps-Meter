@@ -13,13 +13,14 @@ export const getJobIconSrc = (job: string | undefined) => {
   const result = jobIconModules[key];
   return result;
 };
+const normalizeSkillName = (name: string) => name.split("-")[0].trim();
 
-const normalizeSkillName = (name: string) => {
-  let normalized = name.split("-")[0].trim();
-  normalized = normalized.split(":")[0].trim();
-  return normalized;
-};
-const nameToFilename = (name: string) => name.replace(/[\\/:*?"<>|]/g, "_").replace(/\s+/g, "_");
+const nameToFilename = (name: string) =>
+  name
+    .replace(/[\\/:*?"<>|]/g, "_")
+    .replace(/\s+/g, "_")
+    .replace(/_+/g, "_")
+    .trim();
 
 const skillIconKeys = Object.keys(skillIconModules);
 
@@ -39,9 +40,7 @@ export const getSkillIconSrc = (name: string | undefined) => {
   }
 
   const partialFilename = nameToFilename(beforeColon || normalized);
-  const matched = skillIconKeys.find(
-    (key) => key.endsWith(`__${partialFilename}.png`) || key.endsWith(`/${partialFilename}.png`),
-  );
+  const matched = skillIconKeys.find((key) => key.endsWith(`_${partialFilename}.png`));
   if (matched) return skillIconModules[matched];
 
   return undefined;
