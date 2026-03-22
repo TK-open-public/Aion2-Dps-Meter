@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import type { Version, UpdateInfo, DownloadState } from "@/types";
-// import { useDebugStore } from "../stores/debugStore";
 
 const API = "https://api.github.com/repos/TK-open-public/Aion2-Dps-Meter/releases?per_page=10";
 const RELEASE_URL = "https://github.com/TK-open-public/Aion2-Dps-Meter/releases";
@@ -54,24 +53,22 @@ export const useVersionCheck = () => {
   const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
   const [downloadState, setDownloadState] = useState<DownloadState>({ status: "idle" });
   const retryCountRef = useRef(0);
-
   const currentVersionRef = useRef<Version | null>(null);
-  // const addLog = useDebugStore((s) => s.addLog);
+  const cancelledRef = useRef(false);
 
-  useEffect(() => {
-    let cancelled = false;
+  const checkUpdate = useCallback(async () => {
+    cancelledRef.current = true;
+    await new Promise((r) => setTimeout(r, 0));
+    cancelledRef.current = false;
+    retryCountRef.current = 0;
 
     const check = async () => {
-      if (cancelled) return;
+      if (cancelledRef.current) return;
 
       const version = (window as any).javaBridge?.getVersion?.();
-      // addLog(`version: ${version}`);
-
       const current = parseVersion(version ?? "");
-      // addLog(`current: ${JSON.stringify(current)}`);
 
       if (!current || !(window as any).javaBridge) {
-        // addLog(`재시도: ${retryCountRef.current}`);
         if (retryCountRef.current < RETRY_LIMIT) {
           retryCountRef.current++;
           setTimeout(check, RETRY_INTERVAL);
@@ -82,25 +79,17 @@ export const useVersionCheck = () => {
       currentVersionRef.current = current;
 
       try {
-        // addLog("릴리즈 대기");
         const res = await fetch(API, {
           headers: { Accept: "application/vnd.github+json" },
           cache: "no-store",
         });
 
-        if (cancelled) return;
-
-        if (!res.ok) {
-          // addLog(`실패: ${res.status}`);
-          return;
-        }
+        if (cancelledRef.current) return;
+        if (!res.ok) return;
 
         const releases = await res.json();
-        // addLog(`릴리즈: ${releases.length}`);
-
         const latestStable = pickLatest(releases, false);
         const latestBeta = pickLatest(releases, true);
-        // addLog(`마지막: ${latestStable?.version.raw} 마지막베타: ${latestBeta?.version.raw}`);
 
         let target: { version: Version; msiUrl: string } | null = null;
         let isPrerelease = false;
@@ -113,9 +102,7 @@ export const useVersionCheck = () => {
           isPrerelease = true;
         }
 
-        // addLog(`타겟: ${target?.version.raw ?? "없음"}`);
-
-        if (target && !cancelled) {
+        if (target && !cancelledRef.current) {
           setUpdateInfo((prev) => {
             if (prev?.latestVersion === target.version.raw) return prev;
             return {
@@ -126,14 +113,16 @@ export const useVersionCheck = () => {
             };
           });
         }
-      } catch (e) {
-        // addLog(`에러: ${e}`);
-      }
+      } catch (e) {}
     };
 
     check();
+  }, []);
+
+  useEffect(() => {
+    checkUpdate();
     return () => {
-      cancelled = true;
+      cancelledRef.current = true;
     };
   }, []);
 
@@ -160,12 +149,7 @@ export const useVersionCheck = () => {
     setDownloadState({ status: "downloading", percent: 0 });
     (window as any).javaBridge.startUpdate(updateInfo.msiUrl);
   };
-  // const startUpdate = () => {
-  //   // addLog(`startUpdate 호출 - updateInfo: ${JSON.stringify(updateInfo)}`);
-  //   if (!updateInfo) return;
-  //   setDownloadState({ status: "downloading", percent: 0 });
-  //   (window as any).javaBridge.startUpdate("https://invalid-url-test.com/fake.msi");
-  // };
+
   const retryDownload = () => {
     startUpdate();
   };
@@ -182,5 +166,6 @@ export const useVersionCheck = () => {
     startUpdate,
     retryDownload,
     openReleasePage,
+    checkUpdate,
   };
 };

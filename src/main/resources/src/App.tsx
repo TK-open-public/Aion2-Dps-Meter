@@ -30,8 +30,15 @@ export default function App() {
 
   const activePanelRef = useRef<PanelType>(null);
   const selectedRef = useRef<Player | null>(null);
-  const { updateInfo, currentVersion, openReleasePage, downloadState, retryDownload, startUpdate } =
-    useVersionCheck();
+  const {
+    updateInfo,
+    currentVersion,
+    openReleasePage,
+    checkUpdate,
+    downloadState,
+    retryDownload,
+    startUpdate,
+  } = useVersionCheck();
   const headerPosition = useSettingsStore((s) => s.headerPosition);
 
   const [activePanel, setActivePanel] = useState<PanelType>(null);
@@ -79,6 +86,8 @@ export default function App() {
     setActivePanel(null);
   }, []);
   const handleCheckUpdate = useCallback(() => {
+    checkUpdate();
+
     handlePanelToggle("update");
   }, []);
 
