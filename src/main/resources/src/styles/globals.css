@@ -108,7 +108,7 @@
     @apply bg-background text-foreground;
   }
 }
-/* * {
+* {
   -webkit-user-select: none;
   user-select: none;
   -webkit-user-drag: none;
@@ -117,7 +117,7 @@
 img {
   -webkit-user-drag: none;
   pointer-events: none;
-} */
+}
 
 body {
   min-width: 100%;
