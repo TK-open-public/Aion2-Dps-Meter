@@ -113,6 +113,64 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
             return version
         }
 
+        fun startUpdate(msiUrl: String) {
+            Thread {
+                try {
+                    val tempDir = System.getProperty("java.io.tmpdir")
+                    val msiFile = java.io.File(tempDir, "aion2meter_update.msi")
+
+                    val connection = java.net.URI(msiUrl).toURL().openConnection() as java.net.HttpURLConnection
+                    connection.connect()
+                    val totalBytes = connection.contentLengthLong
+
+                    var downloadedBytes = 0L
+                    connection.inputStream.use { input ->
+                        java.io.FileOutputStream(msiFile).use { output ->
+                            val buffer = ByteArray(8192)
+                            var bytesRead: Int
+                            while (input.read(buffer).also { bytesRead = it } != -1) {
+                                output.write(buffer, 0, bytesRead)
+                                downloadedBytes += bytesRead
+                                if (totalBytes > 0) {
+                                    val percent = (downloadedBytes * 100 / totalBytes).toInt()
+                                    Platform.runLater {
+                                        engine.executeScript("onDownloadProgress($percent)")
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Platform.runLater { engine.executeScript("onDownloadComplete()") }
+
+                    val currentExe = ProcessHandle.current().info().command().orElse(null)
+                    val relaunchLine = if (currentExe != null)
+                        "Start-Process '${currentExe.replace("'", "''")}'"
+                    else ""
+
+                    val psFile = java.io.File(tempDir, "aion2meter_updater.ps1")
+                    psFile.writeText(
+                        """
+                        Start-Process msiexec -ArgumentList '/i','${msiFile.absolutePath.replace("'", "''")}','/qn' -Wait
+                        $relaunchLine
+                        """.trimIndent()
+                    )
+
+                    ProcessBuilder(
+                        "powershell", "-ExecutionPolicy", "Bypass",
+                        "-WindowStyle", "Hidden",
+                        "-File", psFile.absolutePath
+                    ).start()
+
+                    Platform.exit()
+                    exitProcess(0)
+                } catch (e: Exception) {
+                    logger.error("업데이트 실패", e)
+                    Platform.runLater { engine.executeScript("onDownloadError()") }
+                }
+            }.start()
+        }
+
     }
 
     @Volatile

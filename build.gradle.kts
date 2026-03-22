@@ -65,6 +65,10 @@ compose.desktop {
         nativeDistributions {
             windows{
                 includeAllModules = true
+                shortcut = true
+                menu = true
+                menuGroup = "aion2meter4j"
+                dirChooser = true
             }
             targetFormats(TargetFormat.Msi)
             packageName = "aion2meter4j"
@@ -75,3 +79,4 @@ compose.desktop {
 
     }
 }
+
