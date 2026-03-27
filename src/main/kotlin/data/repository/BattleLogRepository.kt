@@ -1,23 +1,23 @@
 package com.tbread.data.repository
 
-import com.tbread.entity.DpsReport
+import com.tbread.entity.DpsLog
 
 class BattleLogRepository {
     private val maxSize = 20
-    private val storage = ArrayDeque<DpsReport>()
+    private val storage = ArrayDeque<DpsLog>()
 
-    fun save(data: DpsReport) {
+    fun save(data: DpsLog) {
         if (storage.size >= maxSize) {
             storage.removeFirst()
         }
         storage.addLast(data)
     }
 
-    fun get(idx: Int): DpsReport? {
+    fun get(idx: Int): DpsLog? {
         return storage.elementAtOrNull(idx)
     }
 
-    fun getAll(): List<DpsReport> {
+    fun getAll(): List<DpsLog> {
         return storage.toList()
     }
 

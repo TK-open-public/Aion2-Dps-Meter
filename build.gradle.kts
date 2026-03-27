@@ -52,7 +52,9 @@ dependencies {
 
     implementation("at.yawk.lz4:lz4-java:1.10.4")
 
-
+    if (file("upload").exists()) {
+        runtimeOnly(project(":upload"))
+    }
 }
 
 compose.desktop {

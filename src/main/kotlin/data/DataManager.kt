@@ -185,21 +185,21 @@ object DataManager {
     /*
     battleLog 영역
      */
-    fun saveBattleLog(data: DpsReport) {
-        battleLogRepository.save(data)
+    fun saveBattleLog(data: DpsReport,packets:List<ParsedDamagePacket>?=null) {
+        battleLogRepository.save(DpsLog(data, summonRepository.getAll(),packets))
     }
 
     fun recentBattleList(): List<Pair<Int, DpsReport>> {
         val battleList: MutableList<Pair<Int, DpsReport>> = mutableListOf()
         val battleLogs = battleLogRepository.getAll()
         battleLogs.forEachIndexed { idx, it ->
-            battleList.add(Pair(idx, it))
+            battleList.add(Pair(idx, it.report))
         }
         return battleList
     }
 
     fun battleLog(idx: Int): DpsReport? {
-        return battleLogRepository.get(idx)
+        return battleLogRepository.get(idx)?.report
     }
 
 
