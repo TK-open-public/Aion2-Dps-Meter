@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { X } from "lucide-react";
+import { X, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useHistory } from "@/hooks/useHistory";
 import bossIcon from "@/assets/bossIcon.png";
@@ -27,10 +27,17 @@ export const HistoryPanel = ({ onClose, onReady, formatBattleTime, onSelectHisto
     });
   }, []);
 
+  const handleUpload = async (e: React.MouseEvent, idx: number) => {
+    e.stopPropagation();
+    try {
+      window.javaBridge?.upload?.(idx);
+    } catch {}
+  };
+
   return (
     <div
       style={{ maxHeight: "60vh" }}
-      className="relative  text-white font-bold rounded-lg p-4 w-90">
+      className="relative text-white font-bold rounded-lg p-4 w-90">
       <div className="flex items-center pb-3 border-b border-white/10">
         <span>전투 기록</span>
         <Button
@@ -42,7 +49,7 @@ export const HistoryPanel = ({ onClose, onReady, formatBattleTime, onSelectHisto
       </div>
 
       <div
-        className="pt-3  pr-2 flex flex-col gap-2 overflow-y-auto flex-1"
+        className="pt-3 pr-2 flex flex-col gap-2 overflow-y-auto flex-1"
         style={{ maxHeight: "450px" }}>
         {loading && <div className="text-center opacity-40 py-8">불러오는 중</div>}
         {!loading && historyList.length === 0 && (
@@ -52,7 +59,7 @@ export const HistoryPanel = ({ onClose, onReady, formatBattleTime, onSelectHisto
           <div
             onClick={() => onSelectHistory(item.idx, item.raw)}
             key={item.idx}
-            className="relative  w-full px-3 rounded-lg overflow-hidden bg-black/30 cursor-pointer hover:brightness-125 transition-all duration-200"
+            className="relative w-full px-3 rounded-lg overflow-hidden bg-black/30 cursor-pointer hover:brightness-125 transition-all duration-200"
             style={{ minHeight: 56 }}>
             <div
               className="absolute inset-0 origin-left"
@@ -62,7 +69,7 @@ export const HistoryPanel = ({ onClose, onReady, formatBattleTime, onSelectHisto
               }}
             />
             <div
-              className="relative  flex items-center gap-3"
+              className="relative flex items-center gap-3"
               style={{ minHeight: 56 }}>
               <div
                 className="flex items-center justify-center shrink-0"
@@ -73,7 +80,7 @@ export const HistoryPanel = ({ onClose, onReady, formatBattleTime, onSelectHisto
                   className={`w-full h-full object-contain ${!item.isBoss ? "opacity-40" : ""}`}
                 />
               </div>
-              <div className="flex  h-full justify-between items-center  gap-0.5 flex-1 min-w-0">
+              <div className="flex h-full justify-between items-center gap-0.5 flex-1 min-w-0">
                 <div className="flex flex-col">
                   <span
                     className="font-bold text-shadow-meter truncate"
@@ -84,11 +91,20 @@ export const HistoryPanel = ({ onClose, onReady, formatBattleTime, onSelectHisto
                     {formatDateTime(item.battleStart)}
                   </span>
                 </div>
-                <span
-                  className="font-bold text-shadow-meter shrink-0 ml-2"
-                  style={{ color: "#e63333" }}>
-                  {formatBattleTime(item.battleTime)}
-                </span>
+                <div className="flex items-center gap-2 shrink-0 ml-2">
+                  <span
+                    className="font-bold text-shadow-meter"
+                    style={{ color: "#e63333" }}>
+                    {formatBattleTime(item.battleTime)}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="ml-0.5 w-7 h-7  hover:none"
+                    onClick={(e) => handleUpload(e, item.idx)}>
+                    <Upload className="w-3.5 h-3.5" />
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
