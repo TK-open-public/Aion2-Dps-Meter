@@ -56,7 +56,7 @@ cd Aion2-Dps-Meter
 
 <br />
 
-![image](./readme-asset/uiDesc2.png)
+![image](./readme-asset/uiDesc.png)
 
 <br />
 
