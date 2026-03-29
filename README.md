@@ -108,12 +108,12 @@ cd Aion2-Dps-Meter
 
 
 ### 실제 전투를 시작했을 때 그려지는 모습
-![image](./readme-asset/start.png)
+![image](./readme-asset/start.gif)
 
 <br />
 
 ### 컴팩트 모드 + 버튼 위치 하단을 설정 했을 경우
-![image](./readme-asset/compact.png)
+![image](./readme-asset/compact.gif)
 
 
 ## FAQ
