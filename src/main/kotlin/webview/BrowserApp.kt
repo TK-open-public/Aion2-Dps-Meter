@@ -155,14 +155,16 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
                     Platform.runLater { engine.executeScript("onDownloadComplete()") }
 
                     val currentExe = ProcessHandle.current().info().command().orElse(null)
+                    val installDir = if (currentExe != null) java.io.File(currentExe).parentFile?.absolutePath else null
                     val relaunchLine = if (currentExe != null)
                         "Start-Process '${currentExe.replace("'", "''")}'"
                     else ""
+                    val installDirArg = if (installDir != null) ",'INSTALLDIR=${installDir.replace("'", "''")}'" else ""
 
                     val psFile = java.io.File(tempDir, "aion2meter_updater.ps1")
                     psFile.writeText(
                         """
-                        Start-Process msiexec -ArgumentList '/i','${msiFile.absolutePath.replace("'", "''")}','/qn','/norestart' -Wait
+                        Start-Process msiexec -ArgumentList '/i','${msiFile.absolutePath.replace("'", "''")}','/qn','/norestart'$installDirArg -Wait
                         $relaunchLine
                         """.trimIndent()
                     )
