@@ -6,7 +6,6 @@
 [![GitHub Issues](https://img.shields.io/github/issues/TK-open-public/Aion2-Dps-Meter)](https://github.com/TK-open-public/Aion2-Dps-Meter/issues)
 [![GitHub Pull Requests](https://img.shields.io/github/issues-pr/TK-open-public/Aion2-Dps-Meter)](https://github.com/TK-open-public/Aion2-Dps-Meter/pulls)
 
-Fonts:
 - Spoqa Han Sans Neo, Freesentation, Pretendard (OFL 1.1)
 - NEXON Lv2 Gothic, Tmoney Round Wind (Custom License)
 
