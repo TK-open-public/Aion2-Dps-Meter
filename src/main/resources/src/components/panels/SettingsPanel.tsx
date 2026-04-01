@@ -158,7 +158,7 @@ export const SettingsPanel = ({
         </Button>
       </div>
 
-      <div className="max-h-200 py-2 -mr-4 pr-4 overflow-y-auto">
+      <div className="max-h-170 py-2 -mr-4 pr-4 overflow-y-auto">
         <SettingsItem>
           <SettingsRow
             title="버전 정보"
