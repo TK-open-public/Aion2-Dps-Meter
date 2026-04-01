@@ -72,7 +72,8 @@ cd Aion2-Dps-Meter
 
 <br />
 
-![image](./readme-asset/settingPanel.png)
+![image](./readme-asset/setting_panel.png)
+![image](./readme-asset/setting_panel2.png)
 
 헤더에서 설정 버튼을 눌렀을 경우 해당 패널이 열립니다.
 
