@@ -9,6 +9,10 @@ class BuffRepository {
         storage[value.code] = value
     }
 
+    fun get(code: Int): Buff? {
+        return storage[code]
+    }
+
 
 
 }

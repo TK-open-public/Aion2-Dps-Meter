@@ -325,6 +325,14 @@ object DataManager {
         useBuffRepository.save(uid, useBuff)
     }
 
+    fun battleBuff(uid:Int,start:Long,end:Long): List<UseBuff> {
+        return useBuffRepository.findOverlapping(uid,start,end)
+    }
+
+    fun buff(buffCode:Int):Buff?{
+        return buffRepository.get(buffCode)
+    }
+
     private fun saveBuff(buff: Buff){
         buffRepository.save(buff)
     }

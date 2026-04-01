@@ -39,11 +39,11 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
 
     inner class JSBridge(private val stage: Stage, private val hostServices: HostServices) {
 
-        fun saveProps(key:String,value:String){
-            PropertyHandler.setProperty(key,value)
+        fun saveProps(key: String, value: String) {
+            PropertyHandler.setProperty(key, value)
         }
 
-        fun loadProps(key:String): String?{
+        fun loadProps(key: String): String? {
             return PropertyHandler.getProperty(key)
         }
 
@@ -111,11 +111,16 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
             return Json.encodeToString(dpsCalculator.battleDetails(DataManager.battleLog(idx)?.report, uid))
         }
 
-        fun getBattleList():String{
+        fun getBattleList(): String {
             return Json.encodeToString(DataManager.recentBattleList())
         }
 
-        fun upload(idx:Int):Boolean{
+        fun getBuffOperatingRate(idx: Int, uid: Int): String {
+            val report = DataManager.battleLog(idx)?.report ?: return ""
+            return Json.encodeToString(dpsCalculator.getBuffOperatingRate(uid,report.battleStart,report.battleEnd))
+        }
+
+        fun upload(idx: Int): Boolean {
             val log = DataManager.battleLog(idx) ?: return false
             return UploadManager.upload(log)
         }
@@ -164,7 +169,12 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
                     val psFile = java.io.File(tempDir, "aion2meter_updater.ps1")
                     psFile.writeText(
                         """
-                        Start-Process msiexec -ArgumentList '/i','${msiFile.absolutePath.replace("'", "''")}','/qn','/norestart'$installDirArg -Wait
+                        Start-Process msiexec -ArgumentList '/i','${
+                            msiFile.absolutePath.replace(
+                                "'",
+                                "''"
+                            )
+                        }','/qn','/norestart'$installDirArg -Wait
                         $relaunchLine
                         """.trimIndent()
                     )
