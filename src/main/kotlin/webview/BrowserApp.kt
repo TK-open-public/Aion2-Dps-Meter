@@ -6,6 +6,7 @@ import com.tbread.config.PropertyHandler
 import com.tbread.config.VersionConfig
 import com.tbread.data.DataManager
 import com.tbread.entity.DpsReport
+import com.tbread.upload.UploadManager
 import javafx.animation.KeyFrame
 import javafx.animation.Timeline
 import javafx.application.Application
@@ -107,11 +108,16 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
         }
 
         fun getBattleDetailFromList(idx: Int, uid: Int): String {
-            return Json.encodeToString(dpsCalculator.battleDetails(DataManager.battleLog(idx), uid))
+            return Json.encodeToString(dpsCalculator.battleDetails(DataManager.battleLog(idx)?.report, uid))
         }
 
         fun getBattleList():String{
             return Json.encodeToString(DataManager.recentBattleList())
+        }
+
+        fun upload(idx:Int):Boolean{
+            val log = DataManager.battleLog(idx) ?: return false
+            return UploadManager.upload(log)
         }
 
         fun getVersion(): String {
@@ -149,14 +155,16 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
                     Platform.runLater { engine.executeScript("onDownloadComplete()") }
 
                     val currentExe = ProcessHandle.current().info().command().orElse(null)
+                    val installDir = if (currentExe != null) java.io.File(currentExe).parentFile?.absolutePath else null
                     val relaunchLine = if (currentExe != null)
                         "Start-Process '${currentExe.replace("'", "''")}'"
                     else ""
+                    val installDirArg = if (installDir != null) ",'INSTALLDIR=${installDir.replace("'", "''")}'" else ""
 
                     val psFile = java.io.File(tempDir, "aion2meter_updater.ps1")
                     psFile.writeText(
                         """
-                        Start-Process msiexec -ArgumentList '/i','${msiFile.absolutePath.replace("'", "''")}','/qn','/norestart' -Wait
+                        Start-Process msiexec -ArgumentList '/i','${msiFile.absolutePath.replace("'", "''")}','/qn','/norestart'$installDirArg -Wait
                         $relaunchLine
                         """.trimIndent()
                     )

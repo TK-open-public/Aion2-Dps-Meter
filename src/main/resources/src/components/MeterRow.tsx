@@ -17,18 +17,9 @@ interface Props {
   rowHeight: number;
   server: number;
 }
-const gradients = {
-  user: "linear-gradient(to right, #55c42a, #3a9e20)",
-  normal: "linear-gradient(to right, #ffc837, #e8960a)",
-  warning: "linear-gradient(to right, #ffa537, #7a3d00)",
-  error: "linear-gradient(to right, #c24343, #5c1010)",
-};
-const getNameColor = (server?: number) => {
-  if (!server) return "#ffffff";
-  if (server >= 1001 && server <= 1021) return "#95ddff";
-  if (server >= 2001 && server <= 2021) return "#f3a5ff";
-  return "#ffffff";
-};
+
+const makeGradient = (from: string, to: string) =>
+  `linear-gradient(to right, ${from}, ${to})`;
 
 export const MeterRow = memo(
   ({
@@ -46,9 +37,25 @@ export const MeterRow = memo(
   }: Props) => {
     const displayMode = useSettingsStore((s) => s.displayMode);
     const nameDisplay = useSettingsStore((s) => s.nameDisplay);
+    const theme = useSettingsStore((s) => s.theme);
+
+    const gradients = {
+      user: makeGradient(...theme.userBar),
+      normal: makeGradient(...theme.normalBar),
+      warning: makeGradient(...theme.warningBar),
+      error: makeGradient(...theme.errorBar),
+    };
+
+    const getNameColor = (server?: number) => {
+      if (!server) return theme.serverDefaultColor;
+      if (server >= 1001 && server <= 1021) return theme.serverAColor;
+      if (server >= 2001 && server <= 2021) return theme.serverBColor;
+      return theme.serverDefaultColor;
+    };
+
     const maskedName = (name: string) => `${name[0]}***`;
     const iconSize = Math.round(rowHeight * 0.7);
-    const fontSize = `${Math.max(10, Math.round(rowHeight * 0.4))}px`; 
+    const fontSize = `${Math.max(10, Math.round(rowHeight * 0.4))}px`;
 
     const ratio = Math.max(0, Math.min(1, dps / topDps));
     const iconSrc = getJobIconSrc(job);
@@ -61,23 +68,20 @@ export const MeterRow = memo(
           : gradients.normal;
 
     const renderStats = () => {
+      const amountColor = theme.meterStatAmount;
+      const dpsColor = theme.meterStatDps;
+      const percentColor = theme.meterStatPercent;
       switch (displayMode) {
         case "amount_dps_percent":
           return (
             <>
-              <span
-                className="text-end"
-                style={{ color: "#ffe566", fontSize }}>
+              <span className="text-end" style={{ color: amountColor, fontSize }}>
                 {formatAmount(amount)}
               </span>
-              <span
-                className="text-end"
-                style={{ color: "#ffffff", fontSize }}>
+              <span className="text-end" style={{ color: dpsColor, fontSize }}>
                 {dps.toLocaleString()}/초
               </span>
-              <span
-                className="text-end "
-                style={{ color: "#ffe566", fontSize }}>
+              <span className="text-end" style={{ color: percentColor, fontSize }}>
                 {contribution.toFixed(1)}%
               </span>
             </>
@@ -85,14 +89,35 @@ export const MeterRow = memo(
         case "amount_percent":
           return (
             <>
-              <span
-                className=" text-end"
-                style={{ color: "#ffffff", fontSize }}>
+              <span className="text-end" style={{ color: amountColor, fontSize }}>
                 {formatAmount(amount)}
               </span>
-              <span
-                className="text-end "
-                style={{ color: "#ffe566", fontSize }}>
+              <span className="text-end" style={{ color: percentColor, fontSize }}>
+                {contribution.toFixed(1)}%
+              </span>
+            </>
+          );
+        case "amount_full_dps_percent":
+          return (
+            <>
+              <span className="text-end" style={{ color: amountColor, fontSize }}>
+                {amount.toLocaleString()}
+              </span>
+              <span className="text-end" style={{ color: dpsColor, fontSize }}>
+                {dps.toLocaleString()}/초
+              </span>
+              <span className="text-end" style={{ color: percentColor, fontSize }}>
+                {contribution.toFixed(1)}%
+              </span>
+            </>
+          );
+        case "amount_full_percent":
+          return (
+            <>
+              <span className="text-end" style={{ color: amountColor, fontSize }}>
+                {amount.toLocaleString()}
+              </span>
+              <span className="text-end" style={{ color: percentColor, fontSize }}>
                 {contribution.toFixed(1)}%
               </span>
             </>
@@ -101,20 +126,17 @@ export const MeterRow = memo(
         default:
           return (
             <>
-              <span
-                className=" text-end"
-                style={{ color: "#ffffff", fontSize }}>
+              <span className="text-end" style={{ color: dpsColor, fontSize }}>
                 {dps.toLocaleString()}/초
               </span>
-              <span
-                className="text-end "
-                style={{ color: "#ffe566", fontSize }}>
+              <span className="text-end" style={{ color: percentColor, fontSize }}>
                 {contribution.toFixed(1)}%
               </span>
             </>
           );
       }
     };
+
     const displayName = (() => {
       switch (nameDisplay) {
         case "all":
@@ -130,7 +152,8 @@ export const MeterRow = memo(
       <div
         onClick={() => onSelect(id)}
         style={{ height: rowHeight }}
-        className={`w-full relative  px-2 rounded-sm overflow-hidden bg-black/30 cursor-pointer `}>
+        className={`w-full relative px-2 rounded-sm overflow-hidden bg-black/30 cursor-pointer`}
+      >
         <div
           className="absolute inset-0 origin-left transition-transform duration-150 ease-out"
           style={{
@@ -138,31 +161,27 @@ export const MeterRow = memo(
             transform: `scaleX(${ratio})`,
           }}
         />
-
         <div className="relative h-full flex items-center gap-3">
           <div
             style={{ width: iconSize, height: iconSize }}
-            className=" flex items-center justify-center shrink-0 ">
+            className="flex items-center justify-center shrink-0"
+          >
             {iconSrc && (
               <img
                 src={iconSrc}
                 draggable={false}
                 className="w-full h-full object-contain"
-                style={{
-                  filter: "drop-shadow(0 0 3px rgba(20,20,20,0.6))",
-                }}
+                style={{ filter: "drop-shadow(0 0 3px rgba(20,20,20,0.6))" }}
               />
             )}
           </div>
           <span
             className="font-bold text-shadow-meter flex-1 truncate"
-            style={{
-              color: getNameColor(server),
-              fontSize,
-            }}>
+            style={{ color: getNameColor(server), fontSize }}
+          >
             {displayName}
           </span>
-          <div className=" flex items-center gap-2 font-bold text-shadow-meter">
+          <div className="flex items-center gap-2 font-bold text-shadow-meter">
             {renderStats()}
           </div>
         </div>

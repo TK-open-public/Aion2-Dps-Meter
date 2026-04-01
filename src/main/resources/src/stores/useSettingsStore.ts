@@ -1,9 +1,50 @@
 import { create } from "zustand";
 import type { Hotkey } from "@/types";
 import { parseHotkeyString } from "@/utils/hotKey";
-export type DisplayMode = "dps_percent" | "amount_dps_percent" | "amount_percent";
+export type DisplayMode =
+  | "dps_percent"
+  | "amount_dps_percent"
+  | "amount_percent"
+  | "amount_full_dps_percent"
+  | "amount_full_percent";
 export type NameDisplay = "all" | "me_only" | "hidden";
 export type HeaderPosition = "top" | "bottom";
+export type FontFamily =
+  | "Spoqa Han Sans Neo"
+  | "Freesentation"
+  | "Tmoney Round Wind"
+  | "Pretendard"
+  | "NEXON Lv2 Gothic";
+
+export interface ThemeColors {
+  userBar: [string, string];
+  normalBar: [string, string];
+  warningBar: [string, string];
+  errorBar: [string, string];
+  bossBar: [string, string];
+  serverAColor: string; // 1001~1021
+  serverBColor: string; // 2001~2021
+  serverDefaultColor: string;
+  meterStatAmount: string;
+  meterStatDps: string;
+  meterStatPercent: string;
+  bossRightValue: string;
+}
+
+export const DEFAULT_THEME: ThemeColors = {
+  userBar: ["#55c42a", "#3a9e20"],
+  normalBar: ["#ffc837", "#e8960a"],
+  warningBar: ["#ffa537", "#e77808"],
+  errorBar: ["#c24343", "#d91717"],
+  bossBar: ["#6b0f1a", "#5c1a24"],
+  serverAColor: "#95ddff",
+  serverBColor: "#f3a5ff",
+  serverDefaultColor: "#ffffff",
+  meterStatAmount: "#ffe566",
+  meterStatDps: "#ffffff",
+  meterStatPercent: "#ffe566",
+  bossRightValue: "#e63333",
+};
 
 interface SettingsState {
   hotkey: Hotkey;
@@ -11,6 +52,8 @@ interface SettingsState {
   setDisplayMode: (mode: DisplayMode) => void;
   nameDisplay: NameDisplay;
   setNameDisplay: (mode: NameDisplay) => void;
+  fontFamily: FontFamily;
+  setFontFamily: (v: FontFamily) => void;
   meterWidth: number;
   setMeterWidth: (w: number) => void;
   rowHeight: number;
@@ -24,9 +67,12 @@ interface SettingsState {
   isDebugMode: boolean;
   headerPosition: HeaderPosition;
   setHeaderPosition: (v: HeaderPosition) => void;
-
   setIsMinimal: (v: boolean) => void;
   toggleMinimal: () => void;
+  theme: ThemeColors;
+  setTheme: (theme: ThemeColors) => void;
+  setThemeColor: <K extends keyof ThemeColors>(key: K, value: ThemeColors[K]) => void;
+  resetTheme: () => void;
 }
 
 const jb = () => (window as any).javaBridge;
@@ -40,8 +86,10 @@ const defaultSettings = {
   detailHeight: 600,
   displayMode: "dps_percent" as DisplayMode,
   nameDisplay: "all" as NameDisplay,
+  fontFamily: "Spoqa Han Sans Neo" as FontFamily,
   headerPosition: "top" as HeaderPosition,
   isMinimal: false,
+  theme: DEFAULT_THEME,
 };
 
 export const useSettingsStore = create<SettingsState>((set) => {
@@ -55,6 +103,12 @@ export const useSettingsStore = create<SettingsState>((set) => {
     const parsedHideHotkey = rawHide ? parseHotkeyString(rawHide) : null;
     const savedIsMinimal = j.loadProps("isMinimal") === "true";
 
+    const savedThemeRaw = j.loadProps?.("theme");
+    let savedTheme: ThemeColors = DEFAULT_THEME;
+    try {
+      if (savedThemeRaw) savedTheme = { ...DEFAULT_THEME, ...JSON.parse(savedThemeRaw) };
+    } catch {}
+
     set({
       hotkey: parsedHotkey ?? defaultSettings.hotkey,
       hideHotkey: parsedHideHotkey ?? defaultSettings.hideHotkey,
@@ -64,8 +118,10 @@ export const useSettingsStore = create<SettingsState>((set) => {
       displayMode: j.loadProps?.("displayMode") ?? defaultSettings.displayMode,
       isDebugMode: j.isDebuggingMode?.() ?? false,
       nameDisplay: j.loadProps?.("nameDisplay") ?? defaultSettings.nameDisplay,
+      fontFamily: (j.loadProps?.("fontFamily") as FontFamily) ?? defaultSettings.fontFamily,
       isMinimal: savedIsMinimal,
       headerPosition: j.loadProps?.("headerPosition") ?? defaultSettings.headerPosition,
+      theme: savedTheme,
     });
     clearInterval(interval);
   }, 300);
@@ -79,8 +135,10 @@ export const useSettingsStore = create<SettingsState>((set) => {
     detailHeight: defaultSettings.detailHeight,
     displayMode: defaultSettings.displayMode,
     nameDisplay: defaultSettings.nameDisplay,
+    fontFamily: defaultSettings.fontFamily,
     isDebugMode: defaultSettings.isDebugMode,
     headerPosition: defaultSettings.headerPosition,
+    theme: defaultSettings.theme,
 
     setHotkey: (hotkey) => {
       set({ hotkey });
@@ -108,6 +166,10 @@ export const useSettingsStore = create<SettingsState>((set) => {
       set({ nameDisplay });
       jb()?.saveProps?.("nameDisplay", nameDisplay);
     },
+    setFontFamily: (fontFamily) => {
+      set({ fontFamily });
+      jb()?.saveProps?.("fontFamily", fontFamily);
+    },
     setMeterWidth: (meterWidth) => {
       set({ meterWidth });
       jb()?.saveProps?.("meterWidth", meterWidth);
@@ -123,6 +185,20 @@ export const useSettingsStore = create<SettingsState>((set) => {
     setHeaderPosition: (headerPosition) => {
       set({ headerPosition });
       jb()?.saveProps?.("headerPosition", headerPosition);
+    },
+    setTheme: (theme) => {
+      set({ theme });
+      jb()?.saveProps?.("theme", JSON.stringify(theme));
+    },
+    setThemeColor: (key, value) =>
+      set((s) => {
+        const next = { ...s.theme, [key]: value };
+        jb()?.saveProps?.("theme", JSON.stringify(next));
+        return { theme: next };
+      }),
+    resetTheme: () => {
+      set({ theme: DEFAULT_THEME });
+      jb()?.saveProps?.("theme", JSON.stringify(DEFAULT_THEME));
     },
   };
 });

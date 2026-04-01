@@ -10,7 +10,9 @@ import java.net.DatagramSocket
 import java.net.InetAddress
 import kotlin.system.exitProcess
 
-class PcapCapturer(private val config: PcapCapturerConfig, private val channel: Channel<Triple<String,Long,ByteArray>>) {
+data class CapturedPacket(val ip: String, val seq: Long, val data: ByteArray, val arrivedAt: Long)
+
+class PcapCapturer(private val config: PcapCapturerConfig, private val channel: Channel<CapturedPacket>) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(javaClass.enclosingClass)
@@ -67,7 +69,7 @@ class PcapCapturer(private val config: PcapCapturerConfig, private val channel: 
                     if (data.isNotEmpty()) {
                         val srcIp = packet.get(IpV4Packet::class.java).header.srcAddr.hostAddress
                         val seq = tcpPacket.header.sequenceNumber.toLong() and 0xffffffffL
-                        channel.trySend(Triple(srcIp,seq,data))
+                        channel.trySend(CapturedPacket(srcIp, seq, data, System.currentTimeMillis()))
                     }
                 }
             }

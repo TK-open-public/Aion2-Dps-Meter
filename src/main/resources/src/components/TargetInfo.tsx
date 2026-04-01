@@ -1,5 +1,6 @@
 import { memo } from "react";
 import bossIcon from "@/assets/bossIcon.png";
+import { useSettingsStore } from "@/stores/useSettingsStore";
 interface Props {
   targetName: string;
   rowHeight: number;
@@ -7,6 +8,7 @@ interface Props {
 }
 
 export const TargetInfo = memo(({ targetName, rowHeight, remainHp }: Props) => {
+  const theme = useSettingsStore((s) => s.theme);
   const displayName = targetName || "타겟 인식 실패";
   const isFailed = !targetName;
 
@@ -20,7 +22,7 @@ export const TargetInfo = memo(({ targetName, rowHeight, remainHp }: Props) => {
       <div
         className="absolute inset-0 origin-left"
         style={{
-          background: "linear-gradient(to right, #6b0f1a, #5c1a24)",
+          background: `linear-gradient(to right, ${theme.bossBar[0]}, ${theme.bossBar[1]})`,
           opacity: isFailed ? 0.2 : 0.8,
         }}
       />
@@ -41,7 +43,10 @@ export const TargetInfo = memo(({ targetName, rowHeight, remainHp }: Props) => {
         </span>
         {!isFailed && (
           <div className="ml-auto font-bold text-shadow-meter">
-            <span style={{ color: "#e63333", fontSize }}> {Number(remainHp).toLocaleString()}</span>
+            <span style={{ color: theme.bossRightValue, fontSize }}>
+              {" "}
+              {Number(remainHp).toLocaleString()}
+            </span>
           </div>
         )}
       </div>

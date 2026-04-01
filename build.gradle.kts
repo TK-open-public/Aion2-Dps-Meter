@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "com.tbread"
-version = "1.3.5"
+version = "1.3.6"
 
 tasks.processResources {
     outputs.upToDateWhen { false }
@@ -52,7 +52,9 @@ dependencies {
 
     implementation("at.yawk.lz4:lz4-java:1.10.4")
 
-
+    if (file("upload").exists()) {
+        runtimeOnly(project(":upload"))
+    }
 }
 
 compose.desktop {
@@ -64,6 +66,7 @@ compose.desktop {
 
         nativeDistributions {
             windows{
+                upgradeUuid = "B8A7C3D2-1F4E-4A8B-9C6D-E5F234567890"
                 includeAllModules = true
                 shortcut = true
                 menu = true

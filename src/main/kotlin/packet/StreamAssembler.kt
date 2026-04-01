@@ -11,7 +11,7 @@ class StreamAssembler(private val processor: StreamProcessor) {
         buffer.flush()
     }
 
-    suspend fun processChunk(chunk: ByteArray) {
+    suspend fun processChunk(chunk: ByteArray, arrivedAt: Long) {
         buffer.append(chunk)
         while (true) {
             val fullPacket = buffer.getRange(0)
@@ -35,7 +35,7 @@ class StreamAssembler(private val processor: StreamProcessor) {
             }
 
             if (fullPacket.size < realLength) break
-            processor.onPacketReceived(fullPacket.copyOfRange(0, realLength))
+            processor.onPacketReceived(fullPacket.copyOfRange(0, realLength), arrivedAt)
             buffer.discardBytes(realLength)
         }
     }

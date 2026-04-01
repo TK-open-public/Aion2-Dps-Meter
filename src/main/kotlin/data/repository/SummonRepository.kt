@@ -11,6 +11,10 @@ class SummonRepository {
         return storage[id]
     }
 
+    fun getAll():HashMap<Int,Int>{
+        return storage
+    }
+
     fun exist(id: Int): Boolean {
         return storage.containsKey(id)
     }

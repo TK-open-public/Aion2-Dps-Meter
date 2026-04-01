@@ -16,7 +16,7 @@ class ParsedDamagePacket {
         private var switchVariable = 0
         private var loop = 0
         private var skipValues = mutableListOf<Int>()
-        private val timestamp = System.currentTimeMillis()
+        private var timestamp = 0L
         private var specials:List<SpecialDamage> = arrayListOf()
         private var dot = false
 
@@ -86,6 +86,9 @@ class ParsedDamagePacket {
         }
         fun getType():Int{
                 return this.type
+        }
+        fun setTimestamp(ts: Long) {
+                this.timestamp = ts
         }
         fun getTimeStamp(): Long {
                 return this.timestamp

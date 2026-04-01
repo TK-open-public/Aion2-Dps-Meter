@@ -3,26 +3,26 @@ package com.tbread.packet
 import java.util.*
 
 class PacketAlignmenter {
-    private val holdBuffer = TreeMap<Long, ByteArray>()
+    private val holdBuffer = TreeMap<Long, Pair<ByteArray, Long>>()
     private var nextExpectedSeq: Long = -1L
 
-    fun feed(seq: Long, data: ByteArray): List<ByteArray> {
+    fun feed(seq: Long, data: ByteArray, arrivedAt: Long): List<Pair<ByteArray, Long>> {
         if (nextExpectedSeq == -1L) {
             nextExpectedSeq = seq
         }
 
-        holdBuffer[seq] = data
+        holdBuffer[seq] = Pair(data, arrivedAt)
 //        println("holdBuffer keys: ${holdBuffer.keys}, nextExpected: $nextExpectedSeq, 들어온 seq: $seq")
-        val result = mutableListOf<ByteArray>()
+        val result = mutableListOf<Pair<ByteArray, Long>>()
 
         while (holdBuffer.isNotEmpty()) {
             val firstSeq = holdBuffer.firstKey()
 
             when {
                 firstSeq == nextExpectedSeq -> {
-                    val chunk = holdBuffer.remove(firstSeq)!!
+                    val (chunk, ts) = holdBuffer.remove(firstSeq)!!
                     nextExpectedSeq = (nextExpectedSeq + chunk.size) and 0xffffffffL
-                    result.add(chunk)
+                    result.add(Pair(chunk, ts))
                 }
                 firstSeq < nextExpectedSeq -> {
                     holdBuffer.remove(firstSeq)

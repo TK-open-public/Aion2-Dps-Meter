@@ -3,10 +3,7 @@ package com.tbread
 import com.tbread.config.PcapCapturerConfig
 import com.tbread.config.VersionConfig
 import com.tbread.data.DataManager
-import com.tbread.packet.PacketAlignmenter
-import com.tbread.packet.PcapCapturer
-import com.tbread.packet.StreamAssembler
-import com.tbread.packet.StreamProcessor
+import com.tbread.packet.*
 import com.tbread.webview.BrowserApp
 import javafx.application.Platform
 import javafx.stage.Stage
@@ -24,7 +21,7 @@ fun main() = runBlocking {
 
     DataManager.load()
 
-    val channel = Channel<Triple<String,Long,ByteArray>>(Channel.UNLIMITED)
+    val channel = Channel<CapturedPacket>(Channel.UNLIMITED)
     val pcapConfig = PcapCapturerConfig.loadFromProperties()
     val versionConfig = VersionConfig.loadFromProperties()
 
@@ -40,14 +37,14 @@ fun main() = runBlocking {
 
     launch(Dispatchers.Default) {
         var currentIp = ""
-        for ((ip, seq, data) in channel) {
+        for ((ip, seq, data, arrivedAt) in channel) {
             if (ip != currentIp) {
                 currentIp = ip
                 alignmenter.reset()
             }
-            val chunks = alignmenter.feed(seq, data)
-            for (chunk in chunks) {
-                assembler.processChunk(chunk)
+            val chunks = alignmenter.feed(seq, data, arrivedAt)
+            for ((chunk, ts) in chunks) {
+                assembler.processChunk(chunk, ts)
             }
         }
     }

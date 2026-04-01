@@ -45,6 +45,13 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+
   --color-row-fill: #ffc837;
   --color-isUser-fill: #65d635;
   --color-warning-fill: #ffa537;
@@ -86,26 +93,23 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --success: oklch(0.64 0.16 155);
+  --success-foreground: oklch(0.99 0.002 155);
+
+  --warning: oklch(0.68 0.14 65);
+  --warning-foreground: oklch(0.08 0.006 65);
+
+  --info: oklch(0.6 0.17 260);
+  --info-foreground: oklch(0.99 0.002 260);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    font-family:
-      "Paperlogy",
-      -apple-system,
-      BlinkMacSystemFont,
-      "Segoe UI",
-      Roboto,
-      Oxygen,
-      Ubuntu,
-      Cantarell,
-      "Open Sans",
-      "Helvetica Neue",
-      sans-serif;
   }
   body {
     @apply bg-background text-foreground;
+    font-family: "Spoqa Han Sans Neo";
   }
 }
 * {
@@ -127,7 +131,7 @@ body {
 .text-shadow-meter {
   text-shadow:
     0 1px 3px rgba(0, 0, 0, 0.9),
-    0 0 5px rgba(0, 0, 0, 0.6);
+    0 0 6px rgba(0, 0, 0, 0.6);
 }
 
 ::-webkit-scrollbar {
@@ -137,8 +141,8 @@ body {
 ::-webkit-scrollbar-track {
   background: rgba(30, 30, 30);
   border-radius: 999px;
-  margin-top: 8px;
-  margin-bottom: -8px;
+  margin-top: 4px;
+  margin-bottom: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
