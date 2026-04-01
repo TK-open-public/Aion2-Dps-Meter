@@ -66,7 +66,7 @@ compose.desktop {
 
         nativeDistributions {
             windows{
-                upgradeUuid = "B8A7C3D2-1F4E-4A8B-9C6D-E5F234567890"
+                // upgradeUuid = "B8A7C3D2-1F4E-4A8B-9C6D-E5F234567890"
                 includeAllModules = true
                 shortcut = true
                 menu = true
