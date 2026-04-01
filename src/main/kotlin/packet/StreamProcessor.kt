@@ -278,13 +278,14 @@ class StreamProcessor() {
         pdp.setDamage(damageInfo)
 
         logger.debug("{}", toHex(packet))
-        logger.debug(
+        logger.info(
             "도트데미지 공격자 {},피격자 {},스킬 {},데미지 {}",
             pdp.getActorId(),
             pdp.getTargetId(),
             pdp.getSkillCode1(),
             pdp.getDamage()
         )
+        logger.info("{}",toHex(packet))
         logger.debug("----------------------------------")
         if (pdp.getActorId() != pdp.getTargetId()) {
             pdp.setTimestamp(arrivedAt)
