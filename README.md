@@ -9,7 +9,6 @@
 Fonts:
 - Spoqa Han Sans Neo, Freesentation, Pretendard (OFL 1.1)
 - NEXON Lv2 Gothic, Tmoney Round Wind (Custom License)
-- 
 해당 프로젝트는 운영측의 요청, 패킷암호화등의 조치, 공식적인 사용중단 언급이 있다면 중지 및 비공개상태로 전환됩니다.
 
 
