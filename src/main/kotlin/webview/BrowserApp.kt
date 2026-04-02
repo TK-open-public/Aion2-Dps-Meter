@@ -205,7 +205,7 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
     @Volatile
     private var dpsData: DpsReport = dpsCalculator.getDps()
 
-    private val debugMode = true
+    private val debugMode = false
 
     private val version = config.version
 
