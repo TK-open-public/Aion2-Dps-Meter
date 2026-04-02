@@ -793,6 +793,7 @@ class StreamProcessor() {
 
             val buff = UseBuff(skillCode, arrivedAt, arrivedAt + duration, duration, actorInfo.value)
             DataManager.saveUseBuff(targetInfo.value, buff)
+            println("대상자: ${targetInfo.value}, 사용자: ${actorInfo.value}, 버프코드: ${skillCode},버프이름: ${DataManager.buff(skillCode)?.name} 길이: $duration")
             return true
         } catch (_:Exception){
             return false
