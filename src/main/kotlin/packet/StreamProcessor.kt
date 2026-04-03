@@ -1,5 +1,6 @@
 package com.tbread.packet
 
+import com.tbread.addon.PacketAddonManager
 import com.tbread.data.DataManager
 import com.tbread.entity.ParsedDamagePacket
 import com.tbread.entity.UseBuff
@@ -41,8 +42,8 @@ class StreamProcessor() {
             }
         }
         parseJoinRequestPacket(packet, lengthInfo, extraFlag)
-        searchOwnNickname(packet, lengthInfo)
-        searchOtherNickname(packet, lengthInfo)
+        searchOwnNickname(packet, lengthInfo,arrivedAt)
+        searchOtherNickname(packet, lengthInfo,arrivedAt)
         var flag = false
         flag = parseBattlePacket(packet, lengthInfo, extraFlag)
         if (flag) return
@@ -99,7 +100,7 @@ class StreamProcessor() {
         logger.trace("압축 패킷 해제 종료")
     }
 
-    private fun searchOwnNickname(packet: ByteArray, lengthInfo: VarIntOutput) {
+    private fun searchOwnNickname(packet: ByteArray, lengthInfo: VarIntOutput,arrivedAt: Long) {
         var offset = lengthInfo.length
         if (packet[offset] != 0x33.toByte()) return
         if (packet[offset + 1] != 0x36.toByte()) return
@@ -144,10 +145,10 @@ class StreamProcessor() {
             }
         }
         if (server != -1) DataManager.saveServer(userInfo.value, server)
-
+        PacketAddonManager.parse(packet,arrivedAt)
     }
 
-    private fun searchOtherNickname(packet: ByteArray, lengthInfo: VarIntOutput) {
+    private fun searchOtherNickname(packet: ByteArray, lengthInfo: VarIntOutput,arrivedAt: Long) {
         var offset = lengthInfo.length
         if (packet[offset] != 0x44.toByte()) return
         if (packet[offset + 1] != 0x36.toByte()) return
@@ -229,6 +230,7 @@ class StreamProcessor() {
 //                legionName = legionNameCandidate
 //                break
 //            }
+            PacketAddonManager.parse(packet,arrivedAt)
         }
 
         DataManager.saveNickname(userInfo.value, nickname)
@@ -786,7 +788,11 @@ class StreamProcessor() {
             // 임시
 
             val duration = readUInt32leAsLong(packet, offset)
-            offset += 16
+            offset += 8
+
+            val serverTime = readUInt64le(packet,offset)
+            offset += 8
+            PacketAddonManager.loggingServerTime(arrivedAt, duration, serverTime)
 
             val actorInfo = readVarInt(packet, offset)
 
