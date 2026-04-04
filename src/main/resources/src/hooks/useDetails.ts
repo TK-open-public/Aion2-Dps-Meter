@@ -18,6 +18,7 @@ export const useDetails = () => {
         ? await window.javaBridge?.getBuffOperatingRate?.(historyIdx, Number(row.id))
         : await window.javaBridge?.getLiveBuffOperatingRate?.(Number(row.id));
     // addLog(`${historyIdx ? `히스토리 디테일 ${raw}` : `일반 detail rowID${row.id} ${raw}`}`);
+    // addLog(`${historyIdx ? ` ${buffRaw}` : `일반 detail rowID${row.id} ${buffRaw}`}`);
     let detailObj = typeof raw === "string" ? JSON.parse(raw) : raw;
     if (!detailObj || typeof detailObj !== "object") detailObj = {};
 

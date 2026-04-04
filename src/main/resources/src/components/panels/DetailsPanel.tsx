@@ -207,7 +207,7 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime, historyIdx 
                         <TableHead className="text-left  py-2 font-bold text-white">
                           스킬명
                         </TableHead>
-                        <TableHead className="py-2 font-bold text-white">명중 횟수</TableHead>
+                        <TableHead className="py-2 font-bold text-center text-white">명중 횟수</TableHead>
                         <TableHead className="py-2 font-bold text-center text-white">
                           봉혼석
                         </TableHead>

@@ -5,6 +5,7 @@ import { SkillIcon } from "./SkillIcon";
 interface BuffRateBarProps {
   id: string;
   rate: number;
+  code?: string; 
 
   info?: BuffInfo;
 }
@@ -14,7 +15,7 @@ export interface BuffInfo {
   effect: string;
 }
 
-export const BuffRateBar = ({ id, rate, info }: BuffRateBarProps) => {
+export const BuffRateBar = ({ id, rate, code, info }: BuffRateBarProps) => {
   const pct = Math.min(100, Math.max(0, rate));
 
   const color =
@@ -29,7 +30,7 @@ export const BuffRateBar = ({ id, rate, info }: BuffRateBarProps) => {
       <Tooltip>
         <TooltipTrigger asChild>
           <div className="flex items-center gap-2 p-2 group hover:bg-muted rounded-lg transition-all duration-200 ease-in cursor-pointer">
-            <SkillIcon code={id} />
+            <SkillIcon code={code} />
             <span className="w-22 text-sm truncate opacity-90 group-hover:opacity-100">
               {info?.name ?? id}
             </span>
@@ -52,7 +53,7 @@ export const BuffRateBar = ({ id, rate, info }: BuffRateBarProps) => {
           <Card className="px-1 w-58 bg-[#0f1b2e] border border-white/10 shadow-2xl">
             <CardContent className=" space-y-2">
               <div className="flex gap-3 items-center">
-                <SkillIcon code={id} />
+                <SkillIcon code={code} />
 
                 <div className="flex-1 space-y-1">
                   <p className="text-sm font-semibold text-white">{info?.name ?? id}</p>

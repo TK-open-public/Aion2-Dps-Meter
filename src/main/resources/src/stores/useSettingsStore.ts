@@ -97,7 +97,7 @@ const defaultSettings = {
   isLoaded: false,
   displayMode: "dps_percent" as DisplayMode,
   nameDisplay: "all" as NameDisplay,
-  fontFamily: "Spoqa Han Sans Neo" as FontFamily,
+  fontFamily: "NEXON Lv2 Gothic" as FontFamily,
   headerPosition: "top" as HeaderPosition,
   isMinimal: false,
   theme: DEFAULT_THEME,
