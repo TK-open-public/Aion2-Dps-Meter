@@ -56,6 +56,7 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime, historyIdx 
   const FIXED_AREA_HEIGHT = isCompact ? 220 : 264;
 
   if (!player || !details) return null;
+  const buffCount = Object.keys(details.buffOperatingRate ?? {}).length;
 
   return (
     <div
@@ -104,7 +105,9 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime, historyIdx 
           <AccordionItem
             value="buff"
             className="border-none ">
-            <AccordionTrigger className="px-4 py-2.5 bg-black/20 cursor-pointer text-sm">
+            <AccordionTrigger
+              className="px-4 py-2.5 bg-black/20 cursor-pointer text-sm"
+              disabled={buffCount === 0}>
               <div className="flex w-full items-center justify-between pr-2">
                 <span>버프 가동률</span>
                 <span className="text-xs opacity-60">
@@ -112,7 +115,7 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime, historyIdx 
                 </span>
               </div>
             </AccordionTrigger>
-            <AccordionContent key={buffColumns}>
+            <AccordionContent  key={buffColumns}>
               <BuffRateSection
                 buffOperatingRate={details.buffOperatingRate}
                 columns={buffColumns}
@@ -207,7 +210,9 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime, historyIdx 
                         <TableHead className="text-left  py-2 font-bold text-white">
                           스킬명
                         </TableHead>
-                        <TableHead className="py-2 font-bold text-center text-white">명중 횟수</TableHead>
+                        <TableHead className="py-2 font-bold text-center text-white">
+                          명중 횟수
+                        </TableHead>
                         <TableHead className="py-2 font-bold text-center text-white">
                           봉혼석
                         </TableHead>

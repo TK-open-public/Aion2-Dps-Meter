@@ -71,10 +71,10 @@ const SectionGrid = ({ label, entries, gridClass }: SectionGridProps) => {
   if (entries.length === 0) return null;
   return (
     <div>
-      <p className="text-xs text-white/40 font-semibold px-1 pt-2 pb-1 uppercase tracking-wider">
+      <div className="mb-3 text-xs text-white/40 font-semibold px-1 pt-2 pb-1 ">
         {label}
         <span className="ml-1.5 opacity-60">({entries.length})</span>
-      </p>
+      </div>
       <div className={`grid ${gridClass} gap-x-4 gap-y-0.5`}>
         {entries
           .sort((a, b) => b[1].operatingRate - a[1].operatingRate)
@@ -108,8 +108,8 @@ export const BuffRateSection = ({ buffOperatingRate, columns = 1, playerJob }: P
   const { mine, party, other } = categorize(entries, myPrefix);
 
   return (
-    <div className="mb-3 rounded-lg overflow-hidden">
-      <div className="px-4 py-2 space-y-1">
+    <div className="rounded-lg overflow-hidden">
+      <div className="px-4 pt-2 space-y-2">
         <SectionGrid
           label="내 버프"
           entries={mine}
