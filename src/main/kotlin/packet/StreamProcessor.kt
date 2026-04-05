@@ -2,8 +2,10 @@ package com.tbread.packet
 
 import com.tbread.addon.PacketAddonManager
 import com.tbread.data.DataManager
+import com.tbread.entity.JoinRequestUser
 import com.tbread.entity.ParsedDamagePacket
 import com.tbread.entity.UseBuff
+import com.tbread.entity.enums.JobClass
 import com.tbread.entity.enums.SpecialDamage
 import net.jpountz.lz4.LZ4Factory
 import org.slf4j.LoggerFactory
@@ -40,6 +42,9 @@ class StreamProcessor() {
                 decompressPacket(packet, lengthInfo.length, false, epoch, arrivedAt)
                 return
             }
+        }
+        if (packet[lengthInfo.length +1] == 0x97.toByte()){
+            println(toHex(packet))
         }
         parseJoinRequestPacket(packet, lengthInfo, extraFlag)
         searchOwnNickname(packet, lengthInfo,arrivedAt)
@@ -706,15 +711,16 @@ class StreamProcessor() {
 
         if (packet[offset] != 0x07.toByte()) return
         if (packet[offset + 1] != 0x97.toByte()) return
+        offset += 2
 
         val roomNum = parseUInt32le(packet, offset)
         offset += 4
 
-        val unknown = parseUInt32le(packet, offset)
+        val requester = parseUInt32le(packet, offset)
         offset += 4
         val unknown2 = parseUInt32le(packet, offset)
         offset += 4
-        val unknown3 = parseUInt32le(packet, offset)
+        val job = parseUInt32le(packet, offset)
         offset += 4
         val unknown4 = parseUInt32le(packet, offset)
         offset += 4
@@ -733,6 +739,24 @@ class StreamProcessor() {
         offset += 6
 
         val power = parseUInt32le(packet, offset)
+        val realClass = JobClass.convertFromCode(job)
+        val request = JoinRequestUser(String(np,Charsets.UTF_8),power,realClass?.name,server,requester)
+        PacketEventBus.events.tryEmit(PacketEvent.JoinRequest(request))
+    }
+
+    private fun parseCancelJoinRequest(packet: ByteArray,lengthInfo: VarIntOutput, extraFlag: Boolean) {
+        var offset = lengthInfo.length
+        if (extraFlag) {
+            offset++
+        }
+        if (packet.size < offset + 2) return
+
+        if (packet[offset] != 0x25.toByte()) return
+        if (packet[offset + 1] != 0x97.toByte()) return
+        offset += 2
+
+        val requester = parseUInt32le(packet, offset)
+        PacketEventBus.events.tryEmit(PacketEvent.JoinRequestRemove(requester))
     }
 
     private fun parseRemainHp(packet: ByteArray, lengthInfo: VarIntOutput, extraFlag: Boolean): Boolean {

@@ -7,6 +7,9 @@ import com.tbread.config.PropertyHandler
 import com.tbread.config.VersionConfig
 import com.tbread.data.DataManager
 import com.tbread.entity.DpsReport
+import com.tbread.entity.JoinRequestUser
+import com.tbread.packet.PacketEvent
+import com.tbread.packet.PacketEventBus
 import javafx.animation.KeyFrame
 import javafx.animation.Timeline
 import javafx.application.Application
@@ -20,6 +23,9 @@ import javafx.scene.web.WebView
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import javafx.util.Duration
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import netscape.javascript.JSObject
@@ -200,6 +206,14 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
             }.start()
         }
 
+        fun pushJoinRequest(data: JoinRequestUser) {
+            engine.executeScript("onJoinRequest(${Json.encodeToString(data)})")
+        }
+
+        fun pushJoinRequestRemove(id: Int) {
+            engine.executeScript("onJoinRequestRemove($id)")
+        }
+
     }
 
     @Volatile
@@ -262,6 +276,20 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
             if (stage.isShowing) hideToTray(stage) else showFromTray(stage)
         }
         HotkeyHandler.start()
+        
+        
+        CoroutineScope(Dispatchers.IO).launch {
+            PacketEventBus.events.collect { event ->
+                Platform.runLater {
+                    when (event) {
+                        is PacketEvent.JoinRequest -> bridge.pushJoinRequest(event.user)
+                        is PacketEvent.JoinRequestRemove -> bridge.pushJoinRequestRemove(event.id)
+                    }
+                }
+            }
+        }
+        
+        
         Timeline(KeyFrame(Duration.millis(500.0), {
             dpsData = dpsCalculator.getDps()
         })).apply {

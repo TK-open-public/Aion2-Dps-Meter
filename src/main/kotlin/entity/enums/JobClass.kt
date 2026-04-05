@@ -42,5 +42,43 @@ enum class JobClass(val className: String, val basicSkillCode: Int) {
             }
             return null
         }
+
+        fun convertFromCode(job: Int): JobClass? {
+            when (job) {
+                13, 14, 16 -> {
+                    return RANGER
+                }
+
+                34, 36 -> {
+                    return CHANTER
+                }
+
+                20 -> {
+                    return ASSASSIN
+                }
+
+                29, 30, 32 -> {
+                    return CLERIC
+                }
+
+                22, 24 -> {
+                    return ELEMENTALIST
+                }
+
+                25, 28 -> {
+                    return SORCERER
+                }
+
+                6, 8 -> {
+                    return GLADIATOR
+                }
+
+                11, 12 -> {
+                    return TEMPLAR
+                }
+
+                else -> return null
+            }
+        }
     }
 }
