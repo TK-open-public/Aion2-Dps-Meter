@@ -142,13 +142,14 @@ class DpsCalculator(private val streamResetCallback: (() -> Unit)? = null) {
         return analyzedData
     }
 
-    fun getBuffOperatingRate(uid: Int, start: Long, end: Long): Map<Int, OperatingData> {
+    fun getBuffOperatingRate(uid: Int, start: Long, end: Long): List<OperatingData> {
         val totalDuration = end - start
-        if (totalDuration <= 0) return emptyMap()
+        if (totalDuration <= 0) return emptyList()
 
         return DataManager.battleBuff(uid, start, end)
-            .groupBy { it.skillCode }
-            .mapValues { (skillCode, buffs) ->
+            .groupBy { it.skillCode to it.actorId }
+            .map { (key, buffs) ->
+                val (skillCode, actorId) = key
                 val buff = DataManager.buff(skillCode)
                 val clamped = buffs
                     .map { maxOf(it.buffStart, start) to minOf(it.buffEnd, end) }
@@ -165,7 +166,7 @@ class DpsCalculator(private val streamResetCallback: (() -> Unit)? = null) {
                 }
 
                 val rate = merged.sumOf { it.second - it.first }.toDouble() / totalDuration * 100.0
-                OperatingData(skillCode, buff, rate)
+                OperatingData(skillCode, buff, rate, actorId)
             }
     }
 
