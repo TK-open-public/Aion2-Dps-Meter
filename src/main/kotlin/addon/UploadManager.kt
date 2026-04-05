@@ -1,4 +1,4 @@
-package com.tbread.upload
+package com.tbread.addon
 
 import com.tbread.entity.DpsLog
 
@@ -7,7 +7,7 @@ object UploadManager {
 
     private fun tryLoad(): BattleLogUploader? = try {
         @Suppress("UNCHECKED_CAST")
-        val cls = Class.forName("com.tbread.upload.SecretUploader")
+        val cls = Class.forName("com.tbread.addon.UploadAddonImpl")
         cls.getDeclaredConstructor().newInstance() as BattleLogUploader
     } catch (_: ClassNotFoundException) {
         null

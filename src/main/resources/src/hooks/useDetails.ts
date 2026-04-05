@@ -8,11 +8,17 @@ export const useDetails = () => {
     historyIdx?: number,
   ): Promise<Details> => {
     // const addLog = useDebugStore.getState().addLog;
+
     const raw =
       historyIdx !== undefined
         ? await window.javaBridge?.getBattleDetailFromList?.(historyIdx, Number(row.id))
         : await window.javaBridge?.getBattleDetail?.(Number(row.id));
+    const buffRaw =
+      historyIdx !== undefined
+        ? await window.javaBridge?.getBuffOperatingRate?.(historyIdx, Number(row.id))
+        : await window.javaBridge?.getLiveBuffOperatingRate?.(Number(row.id));
     // addLog(`${historyIdx ? `히스토리 디테일 ${raw}` : `일반 detail rowID${row.id} ${raw}`}`);
+    // addLog(`${historyIdx ? ` ${buffRaw}` : `일반 detail rowID${row.id} ${buffRaw}`}`);
     let detailObj = typeof raw === "string" ? JSON.parse(raw) : raw;
     if (!detailObj || typeof detailObj !== "object") detailObj = {};
 
@@ -35,6 +41,7 @@ export const useDetails = () => {
         time?: number;
         dmg?: number;
         crit?: number;
+        shardTimes?: number;
         parry?: number;
         back?: number;
         perfect?: number;
@@ -51,7 +58,7 @@ export const useDetails = () => {
       const back = skill.back ?? 0;
       const perfect = skill.perfect ?? 0;
       const double_ = skill.double ?? 0;
-
+      const shardTimes = skill.shardTimes ?? 0;
       totalDmg += dmg;
       if (!isDot) {
         totalTimes += time;
@@ -70,6 +77,7 @@ export const useDetails = () => {
         parry,
         back,
         perfect,
+        shardTimes,
         double: double_,
         dmg,
         critPct: isDot ? "-" : pctInt(crit, time),
@@ -84,13 +92,14 @@ export const useDetails = () => {
       if (!value || typeof value !== "object") continue;
 
       const v = value as Record<string, unknown>;
-      const baseName = code;
+      const name = v.name as string;
 
       pushSkill({
         code,
-        name: baseName,
+        name: name,
         time: Number(v.times) || 0,
         dmg: Number(v.damageAmount) || 0,
+        shardTimes: Number(v.shardTimes) || 0,
         crit: Number(v.critTimes) || 0,
         parry: Number(v.parryTimes) || 0,
         back: Number(v.backTimes) || 0,
@@ -101,8 +110,8 @@ export const useDetails = () => {
       if (Number(v.dotDamageAmount) > 0) {
         pushSkill(
           {
-            code: `${code}-dot`,
-            name: `${baseName} - 지속`,
+            code: code,
+            name: `${name} - 지속`,
             time: Number(v.dotTimes) || 0,
             dmg: Number(v.dotDamageAmount) || 0,
           },
@@ -110,6 +119,7 @@ export const useDetails = () => {
         );
       }
     }
+    const buffOperatingRate = typeof buffRaw === "string" ? JSON.parse(buffRaw) : (buffRaw ?? null);
 
     return {
       totalDmg,
@@ -121,6 +131,7 @@ export const useDetails = () => {
       totalDoublePct: pct(totalDouble, totalTimes),
       combatTime,
       skills: skills.sort((a, b) => b.dmg - a.dmg),
+      buffOperatingRate,
     };
   };
 

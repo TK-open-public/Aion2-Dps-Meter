@@ -1,9 +1,8 @@
 import { useEffect, useState, useRef } from "react";
-import type { CheckStatus, Player } from "@/types";
+import type { CheckStatus, Player ,UpdateInfo, PanelType, DownloadState} from "@/types";
 import { DetailsPanel } from "./DetailsPanel";
 import { SettingsPanel } from "./SettingsPanel.tsx";
 import { UpdatePanel } from "./UpdatePanel";
-import type { UpdateInfo, PanelType, DownloadState } from "@/types";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { HistoryPanel } from "./HistoryPanel";
 

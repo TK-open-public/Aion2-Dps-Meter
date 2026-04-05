@@ -2,7 +2,7 @@ package com.tbread.data
 
 import com.tbread.data.repository.*
 import com.tbread.entity.*
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.*
 import org.slf4j.LoggerFactory
 import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.CopyOnWriteArrayList
@@ -36,10 +36,13 @@ object DataManager {
     private val battleLogRepository = BattleLogRepository()
     private val skillRepository = SkillRepository()
     private val mobHpRepository = MobHpRepository()
+    private val useBuffRepository = UseBuffRepository()
+    private val buffRepository = BuffRepository()
 
     fun load() {
         loadMobJson()
         loadSkillJson()
+        loadBuffJson()
     }
 
     private fun loadMobJson() {
@@ -55,6 +58,33 @@ object DataManager {
             ?.readText()!!
         Json.decodeFromString<List<Skill>>(skillJson).forEach {
             saveSkill(it)
+        }
+    }
+
+    private fun loadBuffJson() {
+        try {
+            val buffJson = object {}.javaClass.getResourceAsStream("/json/buff.json")
+                ?.bufferedReader()
+                ?.readText()!!
+
+            val json = Json { ignoreUnknownKeys = true }
+
+            json.decodeFromString<JsonObject>(buffJson).forEach { (code, element) ->
+                val obj = element.jsonObject
+                val buff = obj["effect"]?.jsonPrimitive?.contentOrNull?.let {
+                    obj["summary"]?.jsonPrimitive?.contentOrNull?.let { it1 ->
+                        Buff(
+                            code = code.toInt(),
+                            name = obj["name"]?.jsonPrimitive?.content ?: "",
+                            summary = it1,
+                            effect = it
+                        )
+                    }
+                }
+                buff?.let { saveBuff(it) }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -300,5 +330,24 @@ object DataManager {
             userRepository.executor(uid)
             userRepository.get(uid)!!.isExecutor = true
         }
+    }
+
+    /*
+    buff 영역
+     */
+    fun saveUseBuff(uid: Int, useBuff: UseBuff) {
+        useBuffRepository.save(uid, useBuff)
+    }
+
+    fun battleBuff(uid:Int,start:Long,end:Long): List<UseBuff> {
+        return useBuffRepository.findOverlapping(uid,start,end)
+    }
+
+    fun buff(buffCode:Int):Buff?{
+        return buffRepository.get(buffCode)
+    }
+
+    private fun saveBuff(buff: Buff){
+        buffRepository.save(buff)
     }
 }

@@ -58,6 +58,10 @@ interface SettingsState {
   setMeterWidth: (w: number) => void;
   rowHeight: number;
   setRowHeight: (h: number) => void;
+  detailWidth: number;
+  setDetailWidth: (w: number) => void;
+  isLoaded: boolean;
+
   detailHeight: number;
   setDetailHeight: (h: number) => void;
   setHotkey: (h: Hotkey) => void;
@@ -73,6 +77,9 @@ interface SettingsState {
   setTheme: (theme: ThemeColors) => void;
   setThemeColor: <K extends keyof ThemeColors>(key: K, value: ThemeColors[K]) => void;
   resetTheme: () => void;
+  windowX: number;
+  windowY: number;
+  setWindowPosition: (x: number, y: number) => void;
 }
 
 const jb = () => (window as any).javaBridge;
@@ -84,9 +91,13 @@ const defaultSettings = {
   rowHeight: 36,
   isDebugMode: false,
   detailHeight: 600,
+  detailWidth: 800,
+  windowX: 0,
+  windowY: 0,
+  isLoaded: false,
   displayMode: "dps_percent" as DisplayMode,
   nameDisplay: "all" as NameDisplay,
-  fontFamily: "Spoqa Han Sans Neo" as FontFamily,
+  fontFamily: "NEXON Lv2 Gothic" as FontFamily,
   headerPosition: "top" as HeaderPosition,
   isMinimal: false,
   theme: DEFAULT_THEME,
@@ -115,6 +126,8 @@ export const useSettingsStore = create<SettingsState>((set) => {
       meterWidth: Number(j.loadProps?.("meterWidth")) || defaultSettings.meterWidth,
       rowHeight: Number(j.loadProps?.("rowHeight")) || defaultSettings.rowHeight,
       detailHeight: Number(j.loadProps?.("detailHeight")) || defaultSettings.detailHeight,
+      detailWidth: Number(j.loadProps?.("detailWidth")) || defaultSettings.detailWidth,
+
       displayMode: j.loadProps?.("displayMode") ?? defaultSettings.displayMode,
       isDebugMode: j.isDebuggingMode?.() ?? false,
       nameDisplay: j.loadProps?.("nameDisplay") ?? defaultSettings.nameDisplay,
@@ -122,9 +135,13 @@ export const useSettingsStore = create<SettingsState>((set) => {
       isMinimal: savedIsMinimal,
       headerPosition: j.loadProps?.("headerPosition") ?? defaultSettings.headerPosition,
       theme: savedTheme,
+      windowX: Number(j.loadProps?.("windowX")) || defaultSettings.windowX,
+      windowY: Number(j.loadProps?.("windowY")) || defaultSettings.windowY,
+
+      isLoaded: true,
     });
     clearInterval(interval);
-  }, 300);
+  }, 100);
 
   return {
     hotkey: defaultSettings.hotkey,
@@ -133,13 +150,17 @@ export const useSettingsStore = create<SettingsState>((set) => {
     meterWidth: defaultSettings.meterWidth,
     rowHeight: defaultSettings.rowHeight,
     detailHeight: defaultSettings.detailHeight,
+    detailWidth: defaultSettings.detailWidth,
+
     displayMode: defaultSettings.displayMode,
     nameDisplay: defaultSettings.nameDisplay,
     fontFamily: defaultSettings.fontFamily,
     isDebugMode: defaultSettings.isDebugMode,
     headerPosition: defaultSettings.headerPosition,
     theme: defaultSettings.theme,
-
+    windowX: defaultSettings.windowX,
+    windowY: defaultSettings.windowY,
+    isLoaded: defaultSettings.isLoaded,
     setHotkey: (hotkey) => {
       set({ hotkey });
       jb()?.updateHotkey?.(hotkey.modifiers, hotkey.vkCode);
@@ -182,6 +203,11 @@ export const useSettingsStore = create<SettingsState>((set) => {
       set({ detailHeight });
       jb()?.saveProps?.("detailHeight", detailHeight);
     },
+    setDetailWidth: (detailWidth) => {
+      set({ detailWidth });
+      jb()?.saveProps?.("detailWidth", detailWidth);
+    },
+
     setHeaderPosition: (headerPosition) => {
       set({ headerPosition });
       jb()?.saveProps?.("headerPosition", headerPosition);
@@ -199,6 +225,11 @@ export const useSettingsStore = create<SettingsState>((set) => {
     resetTheme: () => {
       set({ theme: DEFAULT_THEME });
       jb()?.saveProps?.("theme", JSON.stringify(DEFAULT_THEME));
+    },
+    setWindowPosition: (windowX, windowY) => {
+      set({ windowX, windowY });
+      jb()?.saveProps?.("windowX", String(windowX));
+      jb()?.saveProps?.("windowY", String(windowY));
     },
   };
 });

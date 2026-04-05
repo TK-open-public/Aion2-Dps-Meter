@@ -7,11 +7,17 @@ declare global {
       moveWindow?: (x: number, y: number) => void;
       startUpdate: (msiUrl: string) => void;
       getDpsData?: () => void;
-      getBattleDetail?: (id: number) => Promise<any>;
+
       getVersion?: () => string;
       upload?: (idx: number) => Promise<any>;
+   
       getBattleList?: () => void;
+      getBattleDetail?: (id: number) => Promise<any>;
+   
       getBattleDetailFromList?: (idx: number, id: number) => Promise<any>;
+      getLiveBuffOperatingRate?: (id: number) => Promise<any>;
+
+      getBuffOperatingRate?: (idx: number, id: number) => Promise<any>;
       openBrowser?: (url: string) => void;
       exitApp?: () => void;
     };

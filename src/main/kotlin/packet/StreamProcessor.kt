@@ -1,7 +1,9 @@
 package com.tbread.packet
 
+import com.tbread.addon.PacketAddonManager
 import com.tbread.data.DataManager
 import com.tbread.entity.ParsedDamagePacket
+import com.tbread.entity.UseBuff
 import com.tbread.entity.enums.SpecialDamage
 import net.jpountz.lz4.LZ4Factory
 import org.slf4j.LoggerFactory
@@ -39,9 +41,9 @@ class StreamProcessor() {
                 return
             }
         }
-        parseJoinRequestPacket(packet,lengthInfo,extraFlag)
-        searchOwnNickname(packet, lengthInfo)
-        searchOtherNickname(packet, lengthInfo)
+        parseJoinRequestPacket(packet, lengthInfo, extraFlag)
+        searchOwnNickname(packet, lengthInfo,arrivedAt)
+        searchOtherNickname(packet, lengthInfo,arrivedAt)
         var flag = false
         flag = parseBattlePacket(packet, lengthInfo, extraFlag)
         if (flag) return
@@ -51,11 +53,19 @@ class StreamProcessor() {
         if (flag) return
         flag = parseDoTPacket(packet, extraFlag, epoch, arrivedAt)
         if (flag) return
-        flag = parseRemainHp(packet,lengthInfo,extraFlag)
+        flag = parseRemainHp(packet, lengthInfo, extraFlag)
+        if (flag) return
+        flag = parseBuffPacket(packet,lengthInfo,extraFlag,arrivedAt)
         if (flag) return
     }
 
-    private fun decompressPacket(packet: ByteArray, headerLength: Int, extraFlag: Boolean, epoch: Long, arrivedAt: Long) {
+    private fun decompressPacket(
+        packet: ByteArray,
+        headerLength: Int,
+        extraFlag: Boolean,
+        epoch: Long,
+        arrivedAt: Long
+    ) {
         try {
             var offset = headerLength + 2
             if (extraFlag) {
@@ -90,7 +100,7 @@ class StreamProcessor() {
         logger.trace("압축 패킷 해제 종료")
     }
 
-    private fun searchOwnNickname(packet: ByteArray, lengthInfo: VarIntOutput) {
+    private fun searchOwnNickname(packet: ByteArray, lengthInfo: VarIntOutput,arrivedAt: Long) {
         var offset = lengthInfo.length
         if (packet[offset] != 0x33.toByte()) return
         if (packet[offset + 1] != 0x36.toByte()) return
@@ -135,10 +145,10 @@ class StreamProcessor() {
             }
         }
         if (server != -1) DataManager.saveServer(userInfo.value, server)
-
+        PacketAddonManager.parse(packet,arrivedAt)
     }
 
-    private fun searchOtherNickname(packet: ByteArray, lengthInfo: VarIntOutput) {
+    private fun searchOtherNickname(packet: ByteArray, lengthInfo: VarIntOutput,arrivedAt: Long) {
         var offset = lengthInfo.length
         if (packet[offset] != 0x44.toByte()) return
         if (packet[offset + 1] != 0x36.toByte()) return
@@ -220,6 +230,7 @@ class StreamProcessor() {
 //                legionName = legionNameCandidate
 //                break
 //            }
+            PacketAddonManager.parse(packet,arrivedAt)
         }
 
         DataManager.saveNickname(userInfo.value, nickname)
@@ -300,9 +311,9 @@ class StreamProcessor() {
         if (pdp.getActorId() != pdp.getTargetId()) {
             pdp.setTimestamp(arrivedAt)
             DataManager.saveDamage(pdp, epoch)
-            val mobCode = DataManager.mobId(pdp.getTargetId())?:return true
-            val mob = DataManager.mob(mobCode)?: return true
-            if (mob.isDummy){
+            val mobCode = DataManager.mobId(pdp.getTargetId()) ?: return true
+            val mob = DataManager.mob(mobCode) ?: return true
+            if (mob.isDummy) {
                 DataManager.touchDummyBattle(pdp.getTargetId(), epoch)
             }
         }
@@ -422,6 +433,26 @@ class StreamProcessor() {
                 ((packet[offset + 3].toInt() and 0xFF) shl 24)
     }
 
+    private fun readUInt32leAsLong(packet: ByteArray, offset: Int = 0): Long {
+        require(offset + 4 <= packet.size) { "패킷 길이가 필요길이보다 짧음" }
+        return ((packet[offset].toLong() and 0xFF)) or
+                ((packet[offset + 1].toLong() and 0xFF) shl 8) or
+                ((packet[offset + 2].toLong() and 0xFF) shl 16) or
+                ((packet[offset + 3].toLong() and 0xFF) shl 24)
+    }
+
+    private fun readUInt64le(packet: ByteArray, offset: Int = 0): Long {
+        require(offset + 8 <= packet.size) { "패킷 길이가 필요길이보다 짧음" }
+        return ((packet[offset].toLong() and 0xFF)) or
+                ((packet[offset + 1].toLong() and 0xFF) shl 8) or
+                ((packet[offset + 2].toLong() and 0xFF) shl 16) or
+                ((packet[offset + 3].toLong() and 0xFF) shl 24) or
+                ((packet[offset + 4].toLong() and 0xFF) shl 32) or
+                ((packet[offset + 5].toLong() and 0xFF) shl 40) or
+                ((packet[offset + 6].toLong() and 0xFF) shl 48) or
+                ((packet[offset + 7].toLong() and 0xFF) shl 56)
+    }
+
     private fun parsingDamage(packet: ByteArray, extraFlag: Boolean, epoch: Long, arrivedAt: Long): Boolean {
         if (packet[0] == 0x20.toByte()) return false
         var offset = 0
@@ -469,7 +500,7 @@ class StreamProcessor() {
         val temp = offset
 
         var skillCode = parseUInt32le(packet, offset)
-        if (DataManager.skill(skillCode.toLong()) == null){
+        if (DataManager.skill(skillCode.toLong()) == null) {
             skillCode = (skillCode / 10) * 10
         }
         pdp.setSkillCode(skillCode)
@@ -620,11 +651,10 @@ class StreamProcessor() {
                 flags.add(SpecialDamage.UNKNOWN4)
             }
 
-            if ((flagByte and 0x80) != 0) {
-                flags.add(SpecialDamage.POWER_SHARD)
-            }
+//            if ((flagByte and 0x80) != 0) {
+//                flags.add(SpecialDamage.POWER_SHARD)
+//            }
         }
-
         return flags
     }
 
@@ -667,7 +697,7 @@ class StreamProcessor() {
         return true
     }
 
-    private fun parseJoinRequestPacket(packet: ByteArray,lengthInfo: VarIntOutput,extraFlag: Boolean){
+    private fun parseJoinRequestPacket(packet: ByteArray, lengthInfo: VarIntOutput, extraFlag: Boolean) {
         var offset = lengthInfo.length
         if (extraFlag) {
             offset++
@@ -675,23 +705,23 @@ class StreamProcessor() {
         if (packet.size < offset + 2) return
 
         if (packet[offset] != 0x07.toByte()) return
-        if (packet[offset+1] != 0x97.toByte()) return
+        if (packet[offset + 1] != 0x97.toByte()) return
 
-        val roomNum = parseUInt32le(packet,offset)
-        offset += 4
-
-        val unknown = parseUInt32le(packet,offset)
-        offset += 4
-        val unknown2 = parseUInt32le(packet,offset)
-        offset += 4
-        val unknown3 = parseUInt32le(packet,offset)
-        offset += 4
-        val unknown4 = parseUInt32le(packet,offset)
-        offset += 4
-        val unknown5 = parseUInt32le(packet,offset) // 여기 첫 2바이트 varint uid 값 가능성있음
+        val roomNum = parseUInt32le(packet, offset)
         offset += 4
 
-        val nicknameLengthInfo = readVarInt(packet,offset)
+        val unknown = parseUInt32le(packet, offset)
+        offset += 4
+        val unknown2 = parseUInt32le(packet, offset)
+        offset += 4
+        val unknown3 = parseUInt32le(packet, offset)
+        offset += 4
+        val unknown4 = parseUInt32le(packet, offset)
+        offset += 4
+        val unknown5 = parseUInt32le(packet, offset) // 여기 첫 2바이트 varint uid 값 가능성있음
+        offset += 4
+
+        val nicknameLengthInfo = readVarInt(packet, offset)
         offset += nicknameLengthInfo.length
         val np = packet.copyOfRange(offset, offset + nicknameLengthInfo.value)
         offset += nicknameLengthInfo.value
@@ -702,10 +732,10 @@ class StreamProcessor() {
             .toInt() and 0xffff
         offset += 6
 
-        val power = parseUInt32le(packet,offset)
+        val power = parseUInt32le(packet, offset)
     }
 
-    private fun parseRemainHp(packet:ByteArray,lengthInfo: VarIntOutput,extraFlag: Boolean):Boolean{
+    private fun parseRemainHp(packet: ByteArray, lengthInfo: VarIntOutput, extraFlag: Boolean): Boolean {
         var offset = lengthInfo.length
         if (extraFlag) {
             offset++
@@ -713,7 +743,7 @@ class StreamProcessor() {
         if (packet.size < offset + 2) return false
 
         if (packet[offset] != 0x00.toByte()) return false
-        if (packet[offset+1] != 0x8d.toByte()) return false
+        if (packet[offset + 1] != 0x8d.toByte()) return false
         offset += 2
 
         val mobIdInfo = readVarInt(packet, offset)
@@ -726,10 +756,56 @@ class StreamProcessor() {
         offset += readVarInt(packet, offset).length
         offset += readVarInt(packet, offset).length
 
-        val mobHp = parseUInt32le(packet,offset)
-        DataManager.mobHp(mobIdInfo.value,mobHp)
+        val mobHp = parseUInt32le(packet, offset)
+        DataManager.mobHp(mobIdInfo.value, mobHp)
         return true
 
+    }
+
+    private fun parseBuffPacket(packet: ByteArray, lengthInfo: VarIntOutput, extraFlag: Boolean,arrivedAt: Long):Boolean {
+        try {
+            var offset = lengthInfo.length
+            if (extraFlag) {
+                offset++
+            }
+            if (packet[offset] != 0x2a.toByte() && packet[offset] != 0x2b.toByte()) return false
+            if (packet[offset + 1] != 0x38.toByte()) return false
+            offset += 2
+
+            val targetInfo = readVarInt(packet, offset)
+            offset += targetInfo.length + 2
+
+            offset += readVarInt(packet, offset).length
+
+            val skillCode = parseUInt32le(packet, offset)
+            offset += 4
+
+            if (skillCode < 110000000 || skillCode > 190000000) {
+                if (skillCode >= 30000000 || skillCode < 20000000){
+                    return true
+                }
+            }
+            // 임시
+
+            val duration = readUInt32leAsLong(packet, offset)
+            offset += 8
+
+            val serverTime = readUInt64le(packet,offset)
+            offset += 8
+
+            val actorInfo = readVarInt(packet, offset)
+
+            val buff = UseBuff(skillCode, arrivedAt, arrivedAt + duration, duration, actorInfo.value)
+            if (duration == 4294967295L ){
+                return true
+            }
+            PacketAddonManager.loggingServerTime(arrivedAt, duration, serverTime)
+            DataManager.saveUseBuff(targetInfo.value, buff)
+//            println("대상자: ${targetInfo.value}, 사용자: ${actorInfo.value}, 버프코드: ${skillCode},버프이름: ${DataManager.buff(skillCode)?.name} 길이: $duration")
+            return true
+        } catch (_:Exception){
+            return false
+        }
     }
 
 }

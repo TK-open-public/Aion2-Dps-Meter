@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { Player } from "../types";
+import type { Player } from "@/types";
 import { parseCombatData } from "../utils/parser";
 // import { useDebugStore } from "../stores/debugStore";
 

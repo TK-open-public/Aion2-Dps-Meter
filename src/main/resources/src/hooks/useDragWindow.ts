@@ -1,7 +1,9 @@
+import { useSettingsStore } from "@/stores/useSettingsStore";
 import { useEffect, useRef } from "react";
 
 export const useDragWindow = (selector: string) => {
   const wasDraggingRef = useRef(false);
+  const setWindowPosition = useSettingsStore((s) => s.setWindowPosition);
 
   useEffect(() => {
     const el = document.querySelector<HTMLElement>(selector);
@@ -42,6 +44,10 @@ export const useDragWindow = (selector: string) => {
     };
 
     const handleMouseUp = () => {
+      if (isDragging && wasDraggingRef.current) {
+        setWindowPosition(window.screenX, window.screenY);
+      }
+
       isDragging = false;
       setTimeout(() => {
         wasDraggingRef.current = false;
@@ -57,7 +63,7 @@ export const useDragWindow = (selector: string) => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [selector]);
+  }, [selector, setWindowPosition]);
 
   return { wasDraggingRef };
 };

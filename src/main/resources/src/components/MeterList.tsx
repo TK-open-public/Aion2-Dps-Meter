@@ -1,13 +1,13 @@
 import { memo, useMemo, useRef } from "react";
-import type { Player } from "../types";
+import type { Player } from "@/types";
 import { MeterRow } from "./MeterRow";
 
 const MAX_CACHE = 32;
 
 interface Props {
   players: Player[];
-  selectedId?: string;
-  onSelect: (id: string) => void;
+  selectedId?: number;
+  onSelect: (id: number) => void;
   rowHeight: number;
 }
 
@@ -22,7 +22,7 @@ const getDisplayRows = (players: Player[]): Player[] => {
 };
 
 export const MeterList = memo(({ players, selectedId, onSelect, rowHeight }: Props) => {
-  const cachedPlayersRef = useRef<Map<string, Player>>(new Map());
+  const cachedPlayersRef = useRef<Map<number, Player>>(new Map());
   const prevRowsRef = useRef<Player[]>([]);
 
   const rows = useMemo(() => {

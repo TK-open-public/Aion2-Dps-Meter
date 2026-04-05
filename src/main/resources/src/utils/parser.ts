@@ -1,4 +1,4 @@
-import type { Player } from "../types";
+import type { Player } from "@/types";
 
 interface Contributor {
   id: number;
@@ -108,7 +108,7 @@ export function parseCombatData(raw: unknown): {
       : contributor.nickname || id;
 
     rows.push({
-      id,
+      id: Number(id) || 0,
       name,
       job: contributor.job ?? "",
       server: contributor.server,

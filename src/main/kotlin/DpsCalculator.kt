@@ -70,7 +70,7 @@ class DpsCalculator(private val streamResetCallback: (() -> Unit)? = null) {
             val mobCode = DataManager.mobId(currentTarget)
             val mob = DataManager.mob(mobCode!!)
             report.target = MobInfo(currentTarget, mob!!)
-            report.target!!.remainHp = DataManager.mobHp(currentTarget)?:0
+            report.target!!.remainHp = DataManager.mobHp(currentTarget) ?: 0
         }
         data?.forEach {
             val actor = DataManager.summonerId(it.getActorId()) ?: it.getActorId()
@@ -114,11 +114,12 @@ class DpsCalculator(private val streamResetCallback: (() -> Unit)? = null) {
         }
         data.packets?.forEach {
             val skill = DataManager.skill(it.getSkillCode1().toLong())
-            val skillName = skill?.name ?: it.getSkillCode1().toString()
+            val skillName = it.getSkillCode1().toString()
             val realActor = DataManager.summonerId(it.getActorId()) ?: it.getActorId()
             if (realActor == uid) {
                 if (!analyzedData.containsKey(skillName)) {
                     val analyzedSkill = AnalyzedSkill(it)
+                    analyzedSkill.name = skill?.name ?: it.getSkillCode1().toString()
                     analyzedData[skillName] = analyzedSkill
                 }
                 val analyzedSkill = analyzedData[skillName]!!
@@ -134,10 +135,39 @@ class DpsCalculator(private val streamResetCallback: (() -> Unit)? = null) {
                     if (it.getSpecials().contains(SpecialDamage.PARRY)) analyzedSkill.parryTimes++
                     if (it.getSpecials().contains(SpecialDamage.DOUBLE)) analyzedSkill.doubleTimes++
                     if (it.getSpecials().contains(SpecialDamage.PERFECT)) analyzedSkill.perfectTimes++
+                    if (it.getSpecials().contains(SpecialDamage.POWER_SHARD)) analyzedSkill.shardTimes++
                 }
             }
         }
         return analyzedData
+    }
+
+    fun getBuffOperatingRate(uid: Int, start: Long, end: Long): List<OperatingData> {
+        val totalDuration = end - start
+        if (totalDuration <= 0) return emptyList()
+
+        return DataManager.battleBuff(uid, start, end)
+            .groupBy { it.skillCode to it.actorId }
+            .map { (key, buffs) ->
+                val (skillCode, actorId) = key
+                val buff = DataManager.buff(skillCode)
+                val clamped = buffs
+                    .map { maxOf(it.buffStart, start) to minOf(it.buffEnd, end) }
+                    .sortedBy { it.first }
+
+                val merged = mutableListOf<Pair<Long, Long>>()
+                for (interval in clamped) {
+                    if (merged.isEmpty() || interval.first > merged.last().second) {
+                        merged.add(interval)
+                    } else {
+                        val last = merged.removeLast()
+                        merged.add(last.first to maxOf(last.second, interval.second))
+                    }
+                }
+
+                val rate = merged.sumOf { it.second - it.first }.toDouble() / totalDuration * 100.0
+                OperatingData(skillCode, buff, rate, actorId)
+            }
     }
 
     fun resetDataStorage() {

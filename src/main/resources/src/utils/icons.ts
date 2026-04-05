@@ -13,35 +13,25 @@ export const getJobIconSrc = (job: string | undefined) => {
   const result = jobIconModules[key];
   return result;
 };
-const normalizeSkillName = (name: string) => name.split("-")[0].trim();
 
-const nameToFilename = (name: string) =>
-  name
-    .replace(/[\\/:*?"<>|]/g, "_")
-    .replace(/\s+/g, "_")
-    .replace(/_+/g, "_")
-    .trim();
+const isSkillCode = (num: number) => num >= 11_000_000 && num <= 19_999_999;
+const isBuffCode = (num: number) => num >= 110_000_000 && num <= 190_999_999;
 
-const skillIconKeys = Object.keys(skillIconModules);
+export const getSkillIconSrc = (code: string | number | undefined) => {
+  if (code === undefined || code === null) return undefined;
 
-export const getSkillIconSrc = (name: string | undefined) => {
-  if (!name) return undefined;
+  const num = typeof code === "string" ? parseInt(code, 10) : code;
+  if (isNaN(num) || num <= 0) return undefined;  // ← 빈 문자열 "" 방어 추가
 
-  const normalized = normalizeSkillName(name);
-  const filename = nameToFilename(normalized);
+  let baseCode: number | undefined;
 
-  const exact = skillIconModules[`../assets/skill-icons/${filename}.png`];
-  if (exact) return exact;
-
-  const beforeColon = normalized.split(":")[0].trim();
-  if (beforeColon !== normalized) {
-    const fallback = skillIconModules[`../assets/skill-icons/${nameToFilename(beforeColon)}.png`];
-    if (fallback) return fallback;
+  if (isSkillCode(num)) {
+    baseCode = Math.floor(num / 10_000) * 10_000;
+  } else if (isBuffCode(num)) {
+    baseCode = Math.floor(num / 100_000) * 10_000;
   }
 
-  const partialFilename = nameToFilename(beforeColon || normalized);
-  const matched = skillIconKeys.find((key) => key.endsWith(`_${partialFilename}.png`));
-  if (matched) return skillIconModules[matched];
+  if (baseCode === undefined) return undefined;
 
-  return undefined;
+  return skillIconModules[`../assets/skill-icons/${baseCode}.png`];
 };

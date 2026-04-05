@@ -4,7 +4,7 @@ import { formatAmount } from "@/utils/format";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 
 interface Props {
-  id: string;
+  id: number;
   name: string;
   job?: string;
   dps: number;
@@ -12,7 +12,7 @@ interface Props {
   contribution: number;
   isUser: boolean;
   isSelected: boolean;
-  onSelect: (id: string) => void;
+  onSelect: (id: number) => void;
   topDps: number;
   rowHeight: number;
   server: number;

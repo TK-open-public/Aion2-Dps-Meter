@@ -44,5 +44,8 @@ bin/
 ### Mac OS ###
 .DS_Store
 
-### Private upload module ###
-/upload/
+### Private addon module ###
+/addon/
+
+### ProGuard ###
+/proguard-rules.pro

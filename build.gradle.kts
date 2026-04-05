@@ -52,8 +52,8 @@ dependencies {
 
     implementation("at.yawk.lz4:lz4-java:1.10.4")
 
-    if (file("upload").exists()) {
-        runtimeOnly(project(":upload"))
+    if (file("addon").exists()) {
+        runtimeOnly(project(":addon"))
     }
 }
 
@@ -63,6 +63,13 @@ compose.desktop {
         mainClass = "com.tbread.MainKt"
 
 
+
+        buildTypes.release.proguard {
+            configurationFiles.from("proguard-rules.pro")
+            isEnabled = true
+            obfuscate = true
+            version = "7.5.0"
+        }
 
         nativeDistributions {
             windows{
