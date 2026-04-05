@@ -214,6 +214,10 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
             engine.executeScript("onJoinRequestRemove($id)")
         }
 
+        fun pushExitPartyUI(){
+            engine.executeScript("onExitPartyUI()")
+        }
+
     }
 
     @Volatile
@@ -284,6 +288,7 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
                     when (event) {
                         is PacketEvent.JoinRequest -> bridge.pushJoinRequest(event.user)
                         is PacketEvent.JoinRequestRemove -> bridge.pushJoinRequestRemove(event.id)
+                        is PacketEvent.ExitPartyUI -> bridge.pushExitPartyUI()
                     }
                 }
             }

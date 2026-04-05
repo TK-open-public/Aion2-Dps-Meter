@@ -10,4 +10,5 @@ object PacketEventBus {
 sealed class PacketEvent {
     data class JoinRequest(val user: JoinRequestUser) : PacketEvent()
     data class JoinRequestRemove(val id: Int) : PacketEvent()
+    data object ExitPartyUI:PacketEvent()
 }

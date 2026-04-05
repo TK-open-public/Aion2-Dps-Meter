@@ -62,8 +62,14 @@ class StreamProcessor() {
         if (flag) return
         flag = parseBuffPacket(packet,lengthInfo,extraFlag,arrivedAt)
         if (flag) return
-        parseJoinRequestPacket(packet,lengthInfo,extraFlag)
-        parseCancelJoinRequest(packet,lengthInfo,extraFlag)
+        flag = parseJoinRequestPacket(packet,lengthInfo,extraFlag)
+        if (flag) return
+        flag = parseCancelJoinRequest(packet,lengthInfo,extraFlag)
+        if (flag) return
+        flag = parseInstanceStartPacket(packet,lengthInfo,extraFlag)
+        if (flag) return
+        flag = parseExitParty(packet,lengthInfo,extraFlag)
+        if (flag) return
 
     }
 
@@ -705,15 +711,15 @@ class StreamProcessor() {
         return true
     }
 
-    private fun parseJoinRequestPacket(packet: ByteArray, lengthInfo: VarIntOutput, extraFlag: Boolean) {
+    private fun parseJoinRequestPacket(packet: ByteArray, lengthInfo: VarIntOutput, extraFlag: Boolean):Boolean {
         var offset = lengthInfo.length
         if (extraFlag) {
             offset++
         }
-        if (packet.size < offset + 2) return
+        if (packet.size < offset + 2) return false
 
-        if (packet[offset] != 0x07.toByte()) return
-        if (packet[offset + 1] != 0x97.toByte()) return
+        if (packet[offset] != 0x07.toByte()) return false
+        if (packet[offset + 1] != 0x97.toByte()) return false
         offset += 2
 
         val roomNum = parseUInt32le(packet, offset)
@@ -745,21 +751,23 @@ class StreamProcessor() {
         val realClass = JobClass.convertFromCode(job)
         val request = JoinRequestUser(String(np,Charsets.UTF_8),power,realClass?.name,server,requester)
         PacketEventBus.events.tryEmit(PacketEvent.JoinRequest(request))
+        return true
     }
 
-    private fun parseCancelJoinRequest(packet: ByteArray,lengthInfo: VarIntOutput, extraFlag: Boolean) {
+    private fun parseCancelJoinRequest(packet: ByteArray,lengthInfo: VarIntOutput, extraFlag: Boolean):Boolean {
         var offset = lengthInfo.length
         if (extraFlag) {
             offset++
         }
-        if (packet.size < offset + 2) return
+        if (packet.size < offset + 2) return false
 
-        if (packet[offset] != 0x25.toByte()) return
-        if (packet[offset + 1] != 0x97.toByte()) return
+        if (packet[offset] != 0x25.toByte()) return false
+        if (packet[offset + 1] != 0x97.toByte()) return false
         offset += 2
 
         val requester = parseUInt32le(packet, offset)
         PacketEventBus.events.tryEmit(PacketEvent.JoinRequestRemove(requester))
+        return true
     }
 
     private fun parseRemainHp(packet: ByteArray, lengthInfo: VarIntOutput, extraFlag: Boolean): Boolean {
@@ -833,6 +841,34 @@ class StreamProcessor() {
         } catch (_:Exception){
             return false
         }
+    }
+
+    private fun parseInstanceStartPacket(packet:ByteArray,lengthInfo: VarIntOutput,extraFlag: Boolean):Boolean{
+        var offset = lengthInfo.length
+        if (extraFlag) {
+            offset++
+        }
+        if (packet.size < offset + 2) return false
+
+        if (packet[offset] != 0x18.toByte()) return false
+        if (packet[offset + 1] != 0x97.toByte()) return false
+
+        PacketEventBus.events.tryEmit(PacketEvent.ExitPartyUI)
+        return true
+    }
+
+    private fun parseExitParty(packet: ByteArray,lengthInfo: VarIntOutput,extraFlag: Boolean):Boolean{
+        var offset = lengthInfo.length
+        if (extraFlag) {
+            offset++
+        }
+        if (packet.size < offset + 2) return false
+
+        if (packet[offset] != 0x1D.toByte()) return false
+        if (packet[offset + 1] != 0x97.toByte()) return false
+
+        PacketEventBus.events.tryEmit(PacketEvent.ExitPartyUI)
+        return true
     }
 
 }
