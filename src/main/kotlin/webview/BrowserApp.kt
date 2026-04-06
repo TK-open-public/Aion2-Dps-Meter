@@ -91,11 +91,11 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
         }
 
         fun toggleVisibility() {
-            if (stage.isShowing) hideToTray(stage) else showFromTray(stage)
+            if (isVisible) hideToTray(stage) else showFromTray(stage)
         }
 
         fun showWindow() {
-            if (!stage.isShowing) showFromTray(stage)
+            if (!isVisible) showFromTray(stage)
         }
 
         fun getHideHotkey(): String {
@@ -232,6 +232,9 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
     @Volatile
     private var dpsData: DpsReport = dpsCalculator.getDps()
 
+    @Volatile
+    private var isVisible = true
+
     private val debugMode = false
 
     private val version = config.version
@@ -287,7 +290,7 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
             }
         }
         HotkeyHandler.registerVisibilityCallback {
-            if (stage.isShowing) hideToTray(stage) else showFromTray(stage)
+            if (isVisible) hideToTray(stage) else showFromTray(stage)
         }
         HotkeyHandler.start()
         
@@ -339,8 +342,8 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
                 }
 
                 val popup = PopupMenu()
-                val showItem = MenuItem("보이기")
-                showItem.addActionListener { showFromTray(stage) }
+                val showItem = MenuItem("보이기/숨기기")
+                showItem.addActionListener { if (isVisible) hideToTray(stage) else showFromTray(stage) }
                 val exitItem = MenuItem("종료")
                 exitItem.addActionListener {
                     tray.remove(trayIcon)
@@ -355,10 +358,13 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
                     isImageAutoSize = true
                     addMouseListener(object : MouseAdapter() {
                         override fun mouseClicked(e: MouseEvent) {
-                            if (e.button == MouseEvent.BUTTON1) showFromTray(stage)
+                            if (e.button == MouseEvent.BUTTON1) {
+                                if (isVisible) hideToTray(stage) else showFromTray(stage)
+                            }
                         }
                     })
                 }
+                tray.add(trayIcon)
             } catch (e: AWTException) {
                 logger.error("트레이 설정 실패", e)
             }
@@ -366,25 +372,15 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
     }
 
     private fun hideToTray(stage: Stage) {
-        Platform.runLater { stage.hide() }
-        EventQueue.invokeLater {
-            try {
-                val icon = trayIcon ?: return@invokeLater
-                SystemTray.getSystemTray().add(icon)
-                icon.displayMessage("Aion2 DPS Overlay", "미터기가 아직 실행 중 입니다.", TrayIcon.MessageType.INFO)
-            } catch (e: AWTException) {
-                logger.error("트레이 추가 실패", e)
-            }
-        }
+        isVisible = false
+        Platform.runLater { stage.opacity = 0.0 }
     }
 
     private fun showFromTray(stage: Stage) {
+        isVisible = true
         Platform.runLater {
-            stage.show()
+            stage.opacity = 1.0
             stage.toFront()
-        }
-        EventQueue.invokeLater {
-            SystemTray.getSystemTray().remove(trayIcon)
         }
     }
 
