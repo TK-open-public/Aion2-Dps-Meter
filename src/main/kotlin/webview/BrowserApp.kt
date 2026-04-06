@@ -327,17 +327,25 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
                 kotlinx.coroutines.delay(300)
                 if (!isVisible) continue
 
-                val focused = isAion2Focused()
+                val aionFocused = isAion2Focused()
                 if (!aionEverFocused) {
-                    if (focused) aionEverFocused = true
+                    if (aionFocused) aionEverFocused = true
                     else continue
                 }
 
+                val shouldShow = aionFocused || isSelfFocused()
                 Platform.runLater {
-                    stage.opacity = if (focused) 1.0 else 0.0
+                    stage.opacity = if (shouldShow) 1.0 else 0.0
                 }
             }
         }
+    }
+
+    private fun isSelfFocused(): Boolean {
+        val hwnd = User32.INSTANCE.GetForegroundWindow() ?: return false
+        val pidRef = com.sun.jna.ptr.IntByReference()
+        User32.INSTANCE.GetWindowThreadProcessId(hwnd, pidRef)
+        return pidRef.value.toLong() == ProcessHandle.current().pid()
     }
 
     private fun isAion2Focused(): Boolean {
