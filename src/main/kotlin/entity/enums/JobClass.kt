@@ -49,28 +49,28 @@ enum class JobClass(val className: String, val basicSkillCode: Int) {
                     return RANGER
                 }
 
-                34, 36 -> {
-                    return CHANTER
+                33,34,35, 36 -> {
+                    return CHANTER // 33,35 예상치
                 }
 
-                20 -> {
-                    return ASSASSIN
+                17,18,19, 20 -> {
+                    return ASSASSIN // 17,19 예상치
                 }
 
-                29, 30, 32 -> {
-                    return CLERIC
+                29, 30,31, 32 -> {
+                    return CLERIC // 31 예상치
                 }
 
-                22, 23, 24 -> {
-                    return ELEMENTALIST
+                21,22, 23, 24 -> {
+                    return ELEMENTALIST //21 예상치
                 }
 
                 25, 26, 27, 28 -> {
                     return SORCERER
                 }
 
-                6, 7, 8 -> {
-                    return GLADIATOR
+                5, 6, 7, 8 -> {
+                    return GLADIATOR // 5는 예상치
                 }
 
                 9, 10, 11, 12 -> {
