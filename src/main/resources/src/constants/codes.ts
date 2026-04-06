@@ -37,10 +37,20 @@ export const SKILL_DATA: SkillInfo[] = [
     code: 12120000,
     name: "도발",
   },
+  // 살성 (13)
   {
-    code: 12350000,
-    name: "비호의 일격",
+    code: 13310000,
+    name: "환영 분신",
   },
+  {
+    code: 13390000,
+    name: "신속의 계약",
+  },
+  {
+    code: 13300000,
+    name: "트리니엘의 비수",
+  },
+
   // 궁성 (14)
   {
     code: 14310000,
@@ -51,22 +61,35 @@ export const SKILL_DATA: SkillInfo[] = [
     name: "축복의 활",
   },
   {
-    code: 14090000,
-    name: "표적 화살",
+    code: 14380000,
+    name: "지원 사격",
   },
+
   // 마도성 (15)
   {
     code: 15320000,
     name: "지연 폭발",
   },
   {
-    code: 15110000,
-    name: "겨울의 속박",
+    code: 15400000,
+    name: "원소 강화",
+  },
+  {
+    code: 15390000,
+    name: "불의 장벽",
   },
   // 정령성 (16)
   {
     code: 16370000,
     name: "불길의 축복",
+  },
+  {
+    code: 16250000,
+    name: "고대의 정령",
+  },
+  {
+    code: 16190000,
+    name: "정령의 가호",
   },
   {
     code: 16150000,
@@ -76,14 +99,7 @@ export const SKILL_DATA: SkillInfo[] = [
     code: 16220000,
     name: "저주의 구름",
   },
-  {
-    code: 16300000,
-    name: "원소 융합",
-  },
-  {
-    code: 16070000,
-    name: "영혼의 절규",
-  },
+
   // 치유성 (17)
   {
     code: 17410000,
@@ -102,10 +118,6 @@ export const SKILL_DATA: SkillInfo[] = [
     name: "대지의 은총",
   },
   {
-    code: 17090000,
-    name: "재생의 빛",
-  },
-  {
     code: 17160000,
     name: "치유의 기운",
   },
@@ -114,12 +126,8 @@ export const SKILL_DATA: SkillInfo[] = [
     name: "유스티엘의 권능",
   },
   {
-    code: 17080000,
-    name: "약화의 낙인",
-  },
-  {
-    code: 17070000,
-    name: "고통의 연쇄",
+    code: 17290000,
+    name: "면죄",
   },
 
   // 호법성 (18)
@@ -144,16 +152,8 @@ export const SKILL_DATA: SkillInfo[] = [
     name: "결계의 주문",
   },
   {
-    code: 18240000,
-    name: "차단의 권능",
-  },
-  {
     code: 18780000,
     name: "대지의 약속",
-  },
-  {
-    code: 18080000,
-    name: "파동격",
   },
 ];
 

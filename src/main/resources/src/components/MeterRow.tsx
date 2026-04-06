@@ -16,7 +16,7 @@ interface Props {
   topDps: number;
   rowHeight: number;
   server: number;
-  power: number;
+  // power: number;
 }
 
 const makeGradient = (from: string, to: string) => `linear-gradient(to right, ${from}, ${to})`;
@@ -34,12 +34,12 @@ export const MeterRow = memo(
     topDps,
     amount,
     rowHeight,
-    power,
+    // power,
   }: Props) => {
     const displayMode = useSettingsStore((s) => s.displayMode);
     const nameDisplay = useSettingsStore((s) => s.nameDisplay);
     const theme = useSettingsStore((s) => s.theme);
-    const showPower = useSettingsStore((s) => s.showPower);
+    // const showPower = useSettingsStore((s) => s.showPower);
 
     const gradients = {
       user: makeGradient(...theme.userBar),
@@ -205,7 +205,7 @@ export const MeterRow = memo(
               style={{ color: getNameColor(server), fontSize }}>
               {displayName}
             </span>
-            {showPower && power > 0 && (
+            {/* {showPower && power > 0 && (
               <div
                 className={`bg-black/30 px-2     text-shadow-meter flex items-center rounded-xl `}>
                 <span
@@ -214,7 +214,7 @@ export const MeterRow = memo(
                     fontSize: `${parseInt(fontSize) - 2}px`,
                   }}>{`${(power / 1000).toFixed(1)}k`}</span>
               </div>
-            )}
+            )} */}
           </div>
           <div className="flex items-center gap-2 font-bold text-shadow-meter">{renderStats()}</div>
         </div>

@@ -83,8 +83,8 @@ interface SettingsState {
   setWindowPosition: (x: number, y: number) => void;
   visibleSkillCodes: number[];
   setVisibleSkillCodes: (codes: number[]) => void;
-  showPower: boolean;
-  setShowPower: (v: boolean) => void;
+  // showPower: boolean;
+  // setShowPower: (v: boolean) => void;
 }
 
 const jb = () => (window as any).javaBridge;
@@ -151,7 +151,7 @@ export const useSettingsStore = create<SettingsState>((set) => {
       visibleSkillCodes: savedSkillCodes,
       windowX: Number(j.loadProps?.("windowX")) || defaultSettings.windowX,
       windowY: Number(j.loadProps?.("windowY")) || defaultSettings.windowY,
-      showPower: j.loadProps?.("showPower") === "false" ? false : true,
+      // showPower: j.loadProps?.("showPower") === "false" ? false : true,
       isLoaded: true,
     });
     clearInterval(interval);
@@ -174,7 +174,7 @@ export const useSettingsStore = create<SettingsState>((set) => {
     theme: defaultSettings.theme,
     windowX: defaultSettings.windowX,
     windowY: defaultSettings.windowY,
-    showPower: defaultSettings.showPower,
+    // showPower: defaultSettings.showPower,
     isLoaded: defaultSettings.isLoaded,
 
     setHotkey: (hotkey) => {
@@ -250,9 +250,9 @@ export const useSettingsStore = create<SettingsState>((set) => {
       set({ visibleSkillCodes });
       jb()?.saveProps?.("visibleSkillCodes", JSON.stringify(visibleSkillCodes));
     },
-    setShowPower: (showPower) => {
-      set({ showPower });
-      jb()?.saveProps?.("showPower", String(showPower));
-    },
+    // setShowPower: (showPower) => {
+    //   set({ showPower });
+    //   jb()?.saveProps?.("showPower", String(showPower));
+    // },
   };
 });

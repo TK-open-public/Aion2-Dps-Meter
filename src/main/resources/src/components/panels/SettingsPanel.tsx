@@ -92,8 +92,8 @@ export const SettingsPanel = ({
     setThemeColor,
     setTheme,
     resetTheme,
-    showPower,
-    setShowPower,
+    // showPower,
+    // setShowPower,
   } = useSettingsStore();
 
   const { pending, start, stop, reset } = useHotkeyCapture(hotkey);
@@ -280,7 +280,7 @@ export const SettingsPanel = ({
           <span className="text-xs opacity-40 px-2 shrink-0">미터기 설정</span>
           <div className="flex-1 h-px bg-white/10" />
         </div>
-        <SettingsRow
+        {/* <SettingsRow
           title="전투력 표시"
           description="이름 옆에 전투력을 표시합니다">
           <Switch
@@ -288,7 +288,7 @@ export const SettingsPanel = ({
             onCheckedChange={(v) => setShowPower(v)}
             className="data-[state=checked]:bg-purple-500"
           />
-        </SettingsRow>
+        </SettingsRow> */}
         <SettingsItem>
           <SettingsRow
             title="표시 형식"
@@ -354,7 +354,6 @@ export const SettingsPanel = ({
           </SettingsRow>
         </SettingsItem>
 
-        {/* ── 테마 설정 ── */}
         <div className="my-3 flex items-center gap-2">
           <div className="flex-1 h-px bg-white/10" />
           <span className="text-xs opacity-40 px-2 shrink-0">테마 설정</span>
