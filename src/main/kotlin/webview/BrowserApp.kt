@@ -1,6 +1,9 @@
 package com.tbread.webview
 
+import com.sun.jna.platform.win32.Kernel32
+import com.sun.jna.platform.win32.Psapi
 import com.sun.jna.platform.win32.User32
+import com.sun.jna.platform.win32.WinNT
 import com.tbread.DpsCalculator
 import com.tbread.addon.UploadManager
 import com.tbread.config.HotkeyHandler
@@ -233,7 +236,10 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
     private var dpsData: DpsReport = dpsCalculator.getDps()
 
     @Volatile
-    private var isVisible = true
+    private var isVisible = true  // false = 사용자가 직접 숨긴 상태
+
+    @Volatile
+    private var aionEverFocused = false  // Aion2.exe가 한 번이라도 포커싱된 적 있는지
 
     private val debugMode = false
 
@@ -315,6 +321,41 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
             cycleCount = Timeline.INDEFINITE
             play()
         }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            while (true) {
+                kotlinx.coroutines.delay(300)
+                if (!isVisible) continue
+
+                val focused = isAion2Focused()
+                if (!aionEverFocused) {
+                    if (focused) aionEverFocused = true
+                    else continue
+                }
+
+                Platform.runLater {
+                    stage.opacity = if (focused) 1.0 else 0.0
+                }
+            }
+        }
+    }
+
+    private fun isAion2Focused(): Boolean {
+        val hwnd = User32.INSTANCE.GetForegroundWindow() ?: return false
+        val pidRef = com.sun.jna.ptr.IntByReference()
+        User32.INSTANCE.GetWindowThreadProcessId(hwnd, pidRef)
+        val foregroundPid = pidRef.value.toLong()
+
+        val hProcess = Kernel32.INSTANCE.OpenProcess(WinNT.PROCESS_QUERY_LIMITED_INFORMATION, false, foregroundPid.toInt())
+            ?: return false
+        return try {
+            val buf = com.sun.jna.Memory(2048)
+            Psapi.INSTANCE.GetModuleFileNameEx(hProcess, null, buf, 1024)
+            val exePath = buf.getWideString(0)
+            exePath.endsWith("Aion2.exe", ignoreCase = true)
+        } finally {
+            Kernel32.INSTANCE.CloseHandle(hProcess)
+        }
     }
 
     private fun applyOverlayWindowStyle(title: String) {
@@ -378,6 +419,7 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
 
     private fun showFromTray(stage: Stage) {
         isVisible = true
+        aionEverFocused = false  // 포커스 추적 초기화 → Aion2 첫 포커싱 전까지 다시 보임
         Platform.runLater {
             stage.opacity = 1.0
             stage.toFront()
