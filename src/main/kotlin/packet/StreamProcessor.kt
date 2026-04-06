@@ -5,6 +5,7 @@ import com.tbread.data.DataManager
 import com.tbread.entity.JoinRequestUser
 import com.tbread.entity.ParsedDamagePacket
 import com.tbread.entity.UseBuff
+import com.tbread.entity.User
 import com.tbread.entity.enums.JobClass
 import com.tbread.entity.enums.SpecialDamage
 import net.jpountz.lz4.LZ4Factory
@@ -70,7 +71,7 @@ class StreamProcessor() {
         if (flag) return
         flag = parseRefuseJoinRequest(packet, lengthInfo, extraFlag)
         if (flag) return
-        addonTest(packet,lengthInfo,extraFlag)
+        addonTest(packet, lengthInfo, extraFlag)
 
     }
 
@@ -158,7 +159,7 @@ class StreamProcessor() {
                 job = packet[offset].toInt() and 0xff
             }
         }
-        DataManager.saveNickname(userInfo.value, nickname, true,server)
+        DataManager.saveNickname(userInfo.value, nickname, true, server)
         PacketAddonManager.parse(packet, arrivedAt)
     }
 
@@ -247,7 +248,7 @@ class StreamProcessor() {
             PacketAddonManager.parse(packet, arrivedAt)
         }
 
-        DataManager.saveNickname(userInfo.value, nickname,false,server)
+        DataManager.saveNickname(userInfo.value, nickname, false, server)
 
     }
 
@@ -763,8 +764,14 @@ class StreamProcessor() {
                 arrivedAt
             )
         )
-        println("닉네임: ${String(np,Charsets.UTF_8)} 전투력: $power 직업:${realClass?.className} 코드:$job 서버:$server")
+        println("닉네임: ${String(np, Charsets.UTF_8)} 전투력: $power 직업:${realClass?.className} 코드:$job 서버:$server")
         PacketEventBus.events.tryEmit(PacketEvent.JoinRequest(request))
+        val user = DataManager.findUserByNicknameAndServer(String(np, Charsets.UTF_8), server)
+        if (user == null) {
+            DataManager.saveUser(User(-1, String(np, Charsets.UTF_8), server, power = power))
+            return true
+        }
+        user.power = power
         return true
     }
 
