@@ -106,14 +106,14 @@ export const JoinRequestPanel = ({
               className={` rounded-full`}
               onMouseDown={(e) => e.stopPropagation()}
               onClick={() => setSkillSettingsOpen((v) => !v)}>
-              <Settings className="size-5" />
+              <Settings className="size-4.5" />
             </Button>
             <Button
               size="icon"
               variant="ghost"
               className={` rounded-full`}
               onClick={() => setOpen(false)}>
-              <X className="size-5" />
+              <X className="size-4.5" />
             </Button>
           </div>
         </div>
