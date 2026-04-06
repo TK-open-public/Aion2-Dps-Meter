@@ -24,6 +24,7 @@ export interface Player {
   damageContribution: number;
   isUser: boolean;
   server: number;
+  power: number;
 }
 export interface CombatRaw {
   combatants: Record<string, any>;

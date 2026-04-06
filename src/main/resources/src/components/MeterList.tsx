@@ -116,6 +116,7 @@ export const MeterList = memo(({ players, selectedId, onSelect, rowHeight }: Pro
                 isSelected={selectedId === current.id}
                 onSelect={onSelect}
                 topDps={topDps}
+                power={current.power}
               />
             </div>
           );

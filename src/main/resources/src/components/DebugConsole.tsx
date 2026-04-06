@@ -14,10 +14,23 @@ const tryParseJson = (msg: string): { prefix: string; json: object | null } => {
 
 const JsonToggle = ({ data }: { data: object }) => {
   const [open, setOpen] = useState(false);
+  const incOpen = useDebugStore((s) => s.incOpen);
+  const decOpen = useDebugStore((s) => s.decOpen);
+  const handleToggle = () => {
+    setOpen((prev) => {
+      const next = !prev;
+
+      if (next)
+        incOpen(); 
+      else decOpen();
+
+      return next;
+    });
+  };
   return (
     <span>
       <button
-        onClick={() => setOpen((p) => !p)}
+        onClick={() => handleToggle()}
         style={{
           background: "rgba(255,255,255,0.1)",
           border: "1px solid rgba(255,255,255,0.2)",
@@ -55,7 +68,14 @@ const JsonToggle = ({ data }: { data: object }) => {
                   </span>
                 );
               }
-              return <span key={i} style={{ color: "#e2e8f0" }}>{line}{"\n"}</span>;
+              return (
+                <span
+                  key={i}
+                  style={{ color: "#e2e8f0" }}>
+                  {line}
+                  {"\n"}
+                </span>
+              );
             })}
         </pre>
       )}

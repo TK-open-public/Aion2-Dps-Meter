@@ -6,6 +6,7 @@ interface Contributor {
   job: string;
   isExecutor?: boolean;
   server: number;
+  power: number;
 }
 interface InformationValue {
   amount: number;
@@ -116,6 +117,7 @@ export function parseCombatData(raw: unknown): {
       amount,
       damageContribution,
       isUser: contributor.isExecutor === true,
+      power: contributor.power ?? 0,
     });
   }
 

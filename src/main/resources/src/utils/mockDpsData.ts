@@ -713,10 +713,10 @@ const MOCK_BUFF_DATA = {
 };
 const MOCK_DATA = {
   contributors: [
-    { id: 1, nickname: "나", server: 1001, job: "검성", isExecutor: true },
-    { id: 2, nickname: "딜러A딜러A딜러A딜러A", server: 2002, job: "마도성" },
-    { id: 3, nickname: "딜러B", server: 2001, job: "정령성" },
-    { id: 4, nickname: "딜러C", server: 1003, job: "호법성" },
+    { id: 1, nickname: "나", server: 1001, power: 234123, job: "검성", isExecutor: true },
+    { id: 2, nickname: "딜러A딜러A딜러A딜러A", power: 564123, server: 2002, job: "마도성" },
+    { id: 3, nickname: "딜러B", server: 2001, power: 113456, job: "정령성" },
+    { id: 4, nickname: "딜러C", server: 1003, power: 442123, job: "호법성" },
     { id: 5, nickname: "서폿A", server: 1004, job: "치유성" },
     { id: 6, nickname: "서폿B", server: 1005, job: "수호성" },
     { id: 7, nickname: "서2폿B", server: 1005, job: "수호성" },
@@ -725,7 +725,7 @@ const MOCK_DATA = {
   battleStart: Date.now() - 93000,
   battleEnd: Date.now(),
   information: {
-    "1": { amount: 4185000, dps: 125924, contribution: 35.5 },
+    "1": { amount: 4185000, dps: 995642, contribution: 35.5 },
     "2": { amount: 4185000, dps: 995642, contribution: 35.5 },
     "3": { amount: 2790000, dps: 72423, contribution: 20.1 },
     "4": { amount: 1395000, dps: 18954, contribution: 4.2 },
