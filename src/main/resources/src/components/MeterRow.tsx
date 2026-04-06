@@ -78,17 +78,17 @@ export const MeterRow = memo(
           return (
             <>
               <span
-                className="text-end whitespace-nowrap leading-none"
+                className="text-end whitespace-nowrap "
                 style={{ color: amountColor, fontSize }}>
                 {formatAmount(amount)}
               </span>
               <span
-                className="text-end whitespace-nowrap leading-none"
+                className="text-end whitespace-nowrap "
                 style={{ color: dpsColor, fontSize }}>
                 {dps.toLocaleString()}/초
               </span>
               <span
-                className="text-end whitespace-nowrap leading-none"
+                className="text-end whitespace-nowrap "
                 style={{ color: percentColor, fontSize }}>
                 {contribution.toFixed(1)}%
               </span>
@@ -98,12 +98,12 @@ export const MeterRow = memo(
           return (
             <>
               <span
-                className="text-end whitespace-nowrap leading-none"
+                className="text-end whitespace-nowrap "
                 style={{ color: amountColor, fontSize }}>
                 {formatAmount(amount)}
               </span>
               <span
-                className="text-end whitespace-nowrap leading-none"
+                className="text-end whitespace-nowrap "
                 style={{ color: percentColor, fontSize }}>
                 {contribution.toFixed(1)}%
               </span>
@@ -113,17 +113,17 @@ export const MeterRow = memo(
           return (
             <>
               <span
-                className="text-end whitespace-nowrap leading-none"
+                className="text-end whitespace-nowrap "
                 style={{ color: amountColor, fontSize }}>
                 {amount.toLocaleString()}
               </span>
               <span
-                className="text-end whitespace-nowrap leading-none"
+                className="text-end whitespace-nowrap "
                 style={{ color: dpsColor, fontSize }}>
                 {dps.toLocaleString()}/초
               </span>
               <span
-                className="text-end whitespace-nowrap leading-none"
+                className="text-end whitespace-nowrap "
                 style={{ color: percentColor, fontSize }}>
                 {contribution.toFixed(1)}%
               </span>
@@ -133,12 +133,12 @@ export const MeterRow = memo(
           return (
             <>
               <span
-                className="text-end whitespace-nowrap leading-none"
+                className="text-end whitespace-nowrap "
                 style={{ color: amountColor, fontSize }}>
                 {amount.toLocaleString()}
               </span>
               <span
-                className="text-end whitespace-nowrap leading-none"
+                className="text-end whitespace-nowrap "
                 style={{ color: percentColor, fontSize }}>
                 {contribution.toFixed(1)}%
               </span>
@@ -149,12 +149,12 @@ export const MeterRow = memo(
           return (
             <>
               <span
-                className="text-end whitespace-nowrap leading-none"
+                className="text-end whitespace-nowrap "
                 style={{ color: dpsColor, fontSize }}>
                 {dps.toLocaleString()}/초
               </span>
               <span
-                className="text-end whitespace-nowrap leading-none"
+                className="text-end whitespace-nowrap "
                 style={{ color: percentColor, fontSize }}>
                 {contribution.toFixed(1)}%
               </span>
@@ -201,14 +201,15 @@ export const MeterRow = memo(
           </div>
           <div className="flex gap-1.5 flex-1 items-center">
             <span
-              className="font-bold text-shadow-meter truncate leading-none"
+              className="font-bold text-shadow-meter truncate "
               style={{ color: getNameColor(server), fontSize }}>
               {displayName}
             </span>
             {showPower && power > 0 && (
-              <div className={`bg-black/30 px-2 py-1   text-shadow-meter flex items-center rounded-xl `}>
+              <div
+                className={`bg-black/30 px-2     text-shadow-meter flex items-center rounded-xl `}>
                 <span
-                  className="text-[#10f1e2] font-semibold  leading-none  "
+                  className="text-[#10f1e2] font-semibold  py-1 leading-none"
                   style={{
                     fontSize: `${parseInt(fontSize) - 2}px`,
                   }}>{`${(power / 1000).toFixed(1)}k`}</span>
