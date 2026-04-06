@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { useJoinRequestStore } from "@/stores/useJoinRequestStore";
-import { Settings, X } from "lucide-react";
+import {
+  Settings,
+  // X
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getServerLabel } from "@/utils/parser";
 import { getJobIconSrc } from "@/utils/icons";
@@ -59,7 +62,11 @@ export const JoinRequestPanel = ({
   maxWidth: number;
   isMinimal: boolean;
 }) => {
-  const { requests, isOpen, setOpen } = useJoinRequestStore();
+  const {
+    requests,
+    isOpen,
+    // setOpen
+  } = useJoinRequestStore();
   const visibleSkillCodes = useSettingsStore((s) => s.visibleSkillCodes);
   const [skillSettingsOpen, setSkillSettingsOpen] = useState(false);
   const [rendered, setRendered] = useState(false);
@@ -109,13 +116,13 @@ export const JoinRequestPanel = ({
               onClick={() => setSkillSettingsOpen((v) => !v)}>
               <Settings className={`scale-125`} />
             </Button>
-            <Button
+            {/* <Button
               size="icon"
               variant="ghost"
               className={`${headerClass} rounded-full`}
               onClick={() => setOpen(false)}>
               <X className={`scale-125`} />
-            </Button>
+            </Button> */}
           </div>
         </div>
         <JoinRequestSkillSettings
