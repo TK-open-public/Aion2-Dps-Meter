@@ -1,4 +1,5 @@
 import { create } from "zustand";
+// import { useDebugStore } from "../stores/debugStore";
 
 export interface JoinRequestUser {
   nickname: string;
@@ -28,6 +29,8 @@ export const useJoinRequestStore = create<JoinRequestStore>((set, get) => ({
   isOpen: false,
 
   addRequest: (data) => {
+    // const addLog = useDebugStore.getState().addLog;
+    // addLog(JSON.stringify(data));
     const { removeRequest } = get();
 
     if (timerMap.has(data.requester)) {

@@ -61,19 +61,9 @@ export const JoinRequestPanel = ({
 }) => {
   const { requests, isOpen, setOpen } = useJoinRequestStore();
   const visibleSkillCodes = useSettingsStore((s) => s.visibleSkillCodes);
-  const [skillSettingsOpen, setSkillSettingsOpen] = useState(false); 
+  const [skillSettingsOpen, setSkillSettingsOpen] = useState(false);
   const [rendered, setRendered] = useState(false);
   const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    if (isOpen) {
-      setRendered(true);
-      setTimeout(() => setVisible(true), 10);
-    } else {
-      setVisible(false);
-      setTimeout(() => setRendered(false), 200); 
-    }
-  }, [isOpen]);
-  if (!rendered) return null;
 
   const rootClass = cn(
     "group/join text-[rgba(215,215,215)] transition-all duration-200 ease-in-out relative rounded-lg font-bold",
@@ -84,14 +74,26 @@ export const JoinRequestPanel = ({
   );
 
   const headerClass = cn(
-    " duration-150 transition",
+    "transition-opacity duration-150",
     isMinimal &&
       !skillSettingsOpen &&
       "opacity-0 group-hover/join:opacity-100 group-hover/app:opacity-100",
   );
+
+  useEffect(() => {
+    if (isOpen) {
+      setRendered(true);
+      setTimeout(() => setVisible(true), 10);
+    } else {
+      setVisible(false);
+      setTimeout(() => setRendered(false), 200);
+    }
+  }, [isOpen]);
+
+  if (!rendered) return null;
   return (
     <div
-      style={{ maxWidth }}
+      style={{ maxWidth, width: maxWidth }}
       className={rootClass}>
       <div>
         <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10 rounded-t-lg">
@@ -124,7 +126,7 @@ export const JoinRequestPanel = ({
 
       <div>
         {requests.length === 0 ? (
-          <div className="flex items-center justify-center py-6 ">
+          <div className="flex items-center justify-center py-6 w-full">
             <span className="text-sm">파티 신청이 없습니다</span>
           </div>
         ) : (
