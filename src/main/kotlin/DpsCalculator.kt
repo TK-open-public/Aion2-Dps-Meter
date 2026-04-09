@@ -16,6 +16,22 @@ class DpsCalculator(private val streamResetCallback: (() -> Unit)? = null) {
     private var recentData = DpsReport()
     private var recentDataSaved = false
 
+    private var lastProcessedCount = 0
+    private val cachedInfo = HashMap<Int, DpsInformation>()
+    private val cachedContributors = mutableSetOf<User>()
+    private var cachedBattleEnd = 0L
+    private var cachedBattleStart = 0L
+    private var isCachedBattleStartFake = false
+
+    private fun resetCache() {
+        lastProcessedCount = 0
+        cachedInfo.clear()
+        cachedContributors.clear()
+        cachedBattleEnd = 0L
+        cachedBattleStart = 0L
+        isCachedBattleStartFake = false
+    }
+
     private fun battleData(): CopyOnWriteArrayList<ParsedDamagePacket>? {
         return DataManager.battleData(currentTarget)
     }
@@ -34,7 +50,6 @@ class DpsCalculator(private val streamResetCallback: (() -> Unit)? = null) {
         )
     }
 
-
     fun getDps(): DpsReport {
         val storageTarget = DataManager.currentTarget()
         val data = DataManager.battleData(storageTarget)
@@ -45,6 +60,9 @@ class DpsCalculator(private val streamResetCallback: (() -> Unit)? = null) {
         ) {
             DataManager.saveBattleLog(recentData)
             recentDataSaved = true
+        }
+        if (storageTarget != currentTarget) {
+            resetCache()
         }
         currentTarget = storageTarget
         recentTargetWasDummy = prevTargetDummy
@@ -60,44 +78,57 @@ class DpsCalculator(private val streamResetCallback: (() -> Unit)? = null) {
             }
             return recentData
         }
-        val report =
-            DpsReport(
-                battleStart = DataManager.currentBattleStart(),
-                battleEnd = DataManager.currentBattleEnd(),
-                packets = data
-            )
+
+        val currentCount = data?.size ?: 0
+        if (currentCount > lastProcessedCount) {
+            for (i in lastProcessedCount until currentCount) {
+                val packet = data!![i]
+                val actor = DataManager.summonerId(packet.getActorId()) ?: packet.getActorId()
+                var user = DataManager.user(actor)
+                if (user == null) {
+                    user = User(actor, nickname = actor.toString())
+                    DataManager.saveUser(user.id, user)
+                }
+                cachedContributors.remove(user)
+                cachedContributors.add(user)
+                if (user.job == null) {
+                    user.job = JobClass.convertFromSkill(packet.getSkillCode1())
+                }
+                cachedInfo.getOrPut(user.id) { DpsInformation() }.addDamage(packet.getDamage().toDouble())
+                val ts = packet.getTimeStamp()
+                if (cachedBattleStart == 0L) { cachedBattleStart = ts; isCachedBattleStartFake = true }
+                if (isCachedBattleStartFake && cachedBattleStart > ts) cachedBattleStart = ts
+                if (ts > cachedBattleEnd) cachedBattleEnd = ts
+            }
+            lastProcessedCount = currentCount
+        }
+
+        val dmStart = DataManager.currentBattleStart()
+        val dmEnd = DataManager.currentBattleEnd()
+        val report = DpsReport(
+            contributors = cachedContributors.toMutableSet(),
+            battleStart = if (dmStart != 0L) dmStart else cachedBattleStart,
+            battleEnd = maxOf(dmEnd, cachedBattleEnd),
+            packets = data
+        )
+
         if (currentTarget > 0) {
             val mobCode = DataManager.mobId(currentTarget)
             val mob = DataManager.mob(mobCode!!)
             report.target = MobInfo(currentTarget, mob!!)
             report.target!!.remainHp = DataManager.mobHp(currentTarget) ?: 0
         }
-        data?.forEach {
-            val actor = DataManager.summonerId(it.getActorId()) ?: it.getActorId()
-            var user = DataManager.user(actor)
-            if (user == null) {
-                user = User(actor, nickname = actor.toString())
-                DataManager.saveUser(user.id, user)
-            }
-            report.contributors.remove(user)
-            report.contributors.add(user)
-            if (user.job == null) {
-                user.job = JobClass.convertFromSkill(it.getSkillCode1())
-            }
-            report.information.getOrPut(user.id) { DpsInformation() }.addDamage(it.getDamage().toDouble())
-            report.compareBattleTime(it.getTimeStamp())
-        }
-        report.information.forEach { (_, info) ->
-            val totalDamage = report.information.values.sumOf { it.amount }
-            if (report.battleEnd - report.battleStart != 0L) {
-                info.dps = info.amount / (report.battleEnd - report.battleStart) * 1000
-            }
-            if (totalDamage != 0.0) {
-                info.contribution = info.amount / totalDamage * 100
-            }
+
+        val totalDamage = cachedInfo.values.sumOf { it.amount }
+        val duration = report.battleEnd - report.battleStart
+        cachedInfo.forEach { (uid, cached) ->
+            report.information[uid] = DpsInformation(
+                amount = cached.amount,
+                dps = if (duration > 0) cached.amount / duration * 1000 else 0.0,
+                contribution = if (totalDamage > 0) cached.amount / totalDamage * 100 else 0.0
+            )
         }
 
-        // 허수아비 전투 시 executor가 참가하지 않았으면 표기 안 함 (executor 미확인 시 그대로 표기)
         if (DataManager.isCurrentTargetDummy()) {
             val executorId = DataManager.executorId()
             if (executorId != 0 && !report.contributors.any { it.isExecutor }) {
@@ -182,6 +213,7 @@ class DpsCalculator(private val streamResetCallback: (() -> Unit)? = null) {
         currentTarget = -1
         recentData = DpsReport()
         recentDataSaved = false
+        resetCache()
         logger.info("대상 데미지 누적 데이터 초기화 완료")
     }
 
@@ -191,7 +223,7 @@ class DpsCalculator(private val streamResetCallback: (() -> Unit)? = null) {
         currentTarget = -1
         recentData = DpsReport()
         recentDataSaved = false
+        resetCache()
         logger.info("전체 강제 초기화 완료")
     }
-
 }
