@@ -13,32 +13,37 @@ class StreamAssembler(private val processor: StreamProcessor) {
 
     suspend fun processChunk(chunk: ByteArray, arrivedAt: Long) {
         buffer.append(chunk)
-        while (true) {
-            val fullPacket = buffer.getRange(0)
-            if (fullPacket.isEmpty()) return
 
-            val lengthInfo = processor.readVarInt(fullPacket)
+        while (buffer.size > 0) {
+
+            val header = buffer.peek(8)
+            if (header.isEmpty()) return
+
+            val lengthInfo = processor.readVarInt(header)
             if (lengthInfo.value == 0) {
                 buffer.discardBytes(1)
                 continue
             }
-            if (lengthInfo.value == -1){
-                logger.error("패킷 길이 Varint 체크에서 오류발생 {}", processor.toHex(fullPacket))
-                buffer.flush()
-                break
-            }
-            val realLength = lengthInfo.value + lengthInfo.length - 4
-            if (realLength <= 0) {
-                logger.error("패킷 길이 체크에서 오류발생 {}", processor.toHex(fullPacket))
+            if (lengthInfo.value == -1) {
+                logger.error("패킷 길이 Varint 체크에서 오류발생 {}", processor.toHex(header))
                 buffer.flush()
                 break
             }
 
-            if (fullPacket.size < realLength) break
-            processor.onPacketReceived(fullPacket.copyOfRange(0, realLength), arrivedAt)
+            val realLength = lengthInfo.value + lengthInfo.length - 4
+            if (realLength <= 0) {
+                logger.error("패킷 길이 체크에서 오류발생 {}", processor.toHex(header))
+                buffer.flush()
+                break
+            }
+
+            // 아직 패킷 전체가 도착하지 않음 — 더 기다리기
+            if (buffer.size < realLength) break
+
+            // 정확히 패킷 크기만큼만 복사 (이전: 전체 버퍼 복사 후 슬라이스)
+            val packet = buffer.slice(0, realLength)
+            processor.onPacketReceived(packet, arrivedAt)
             buffer.discardBytes(realLength)
         }
     }
-
-
 }
