@@ -26,7 +26,7 @@ class StreamProcessor() {
     fun onPacketReceived(packet: ByteArray, arrivedAt: Long) {
         if (packet.size == 3) return
 
-        DataManager.saveRawPacket(packet, arrivedAt)
+//        DataManager.saveRawPacket(packet, arrivedAt)
 
         val epoch = DataManager.currentEpoch()
 
