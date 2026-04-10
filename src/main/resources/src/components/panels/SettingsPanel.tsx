@@ -82,6 +82,8 @@ export const SettingsPanel = ({
     setNameDisplay,
     fontFamily,
     setFontFamily,
+    meterOpacity,
+    setMeterOpacity,
     rowHeight,
     setRowHeight,
     isMinimal,
@@ -111,6 +113,7 @@ export const SettingsPanel = ({
     headerPosition,
     nameDisplay,
     fontFamily,
+    meterOpacity,
     rowHeight,
     isMinimal,
     theme: { ...theme },
@@ -121,10 +124,11 @@ export const SettingsPanel = ({
   }, []);
 
   const handleChange = (
-    partial: Partial<{ displayMode: DisplayMode; nameDisplay: NameDisplay; rowHeight: number }>,
+    partial: Partial<{ displayMode: DisplayMode; nameDisplay: NameDisplay; meterOpacity: number; rowHeight: number; }>,
   ) => {
     if (partial.displayMode !== undefined) setDisplayMode(partial.displayMode);
     if (partial.nameDisplay !== undefined) setNameDisplay(partial.nameDisplay);
+    if (partial.meterOpacity !== undefined) setMeterOpacity(partial.meterOpacity);
     if (partial.rowHeight !== undefined) setRowHeight(partial.rowHeight);
   };
 
@@ -138,6 +142,7 @@ export const SettingsPanel = ({
     setDisplayMode(snapshot.displayMode);
     setNameDisplay(snapshot.nameDisplay);
     setFontFamily(snapshot.fontFamily);
+    setMeterOpacity(snapshot.meterOpacity);
     setRowHeight(snapshot.rowHeight);
     setIsMinimal(snapshot.isMinimal);
     setHotkey(snapshot.hotkey);
@@ -243,11 +248,13 @@ export const SettingsPanel = ({
             </Select>
           </SettingsRow>
         </SettingsItem>
+
         <div className="my-3 flex items-center gap-2">
           <div className="flex-1 h-px bg-white/10" />
           <span className="text-xs opacity-40 px-2 shrink-0">단축키 설정</span>
           <div className="flex-1 h-px bg-white/10" />
         </div>
+
         <SettingsItem>
           <SettingsRow
             title="새로고침"
@@ -275,6 +282,7 @@ export const SettingsPanel = ({
             />
           </SettingsRow>
         </SettingsItem>
+
         <div className="my-3 flex items-center gap-2">
           <div className="flex-1 h-px bg-white/10" />
           <span className="text-xs opacity-40 px-2 shrink-0">미터기 설정</span>
@@ -347,9 +355,27 @@ export const SettingsPanel = ({
                 step={1}
                 className="cursor-pointer"
                 value={[rowHeight]}
-                onValueChange={(value) => handleChange({ rowHeight: value[0] })}
+                onValueChange={(v) => handleChange({ rowHeight: v[0] })}
               />
               <span className="text-xs opacity-60 w-12 text-right tabular-nums">{rowHeight}px</span>
+            </div>
+          </SettingsRow>
+
+          <SettingsRow
+            title="투명도 설정"
+            description="미터기 투명도 값을 저장합니다"
+            align="center"
+            rightClassName="w-44">
+            <div className="flex h-8 items-center gap-3">
+              <Slider
+                min={10}
+                max={100}
+                step={1}
+                className="cursor-pointer"
+                value={[meterOpacity]}
+                onValueChange={(v) => handleChange({ meterOpacity: v[0] })}
+              />
+              <span className="text-xs opacity-60 w-12 text-right tabular-nums">{meterOpacity}%</span>
             </div>
           </SettingsRow>
         </SettingsItem>
@@ -360,6 +386,7 @@ export const SettingsPanel = ({
           <span className="text-xs opacity-40 px-2 shrink-0">테마 설정</span>
           <div className="flex-1 h-px bg-white/10" />
         </div>
+
         <SettingsItem title="유저 이름 색상">
           <div className="flex flex-col gap-2.5">
             <ColorSwatch
@@ -379,6 +406,7 @@ export const SettingsPanel = ({
             /> */}
           </div>
         </SettingsItem>
+
         <SettingsItem title="미터 바 색상">
           <div className="flex flex-col gap-2.5">
             <GradientRow

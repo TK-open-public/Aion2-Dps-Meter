@@ -48,6 +48,9 @@ export const DEFAULT_THEME: ThemeColors = {
   bossRightValue: "#e63333",
 };
 
+const MIN_METER_OPACITY = 10;
+const MAX_METER_OPACITY = 100;
+
 interface SettingsState {
   hotkey: Hotkey;
   displayMode: DisplayMode;
@@ -58,6 +61,8 @@ interface SettingsState {
   setFontFamily: (v: FontFamily) => void;
   meterWidth: number;
   setMeterWidth: (w: number) => void;
+  meterOpacity: number;
+  setMeterOpacity: (value: number) => void;
   rowHeight: number;
   setRowHeight: (h: number) => void;
   detailWidth: number;
@@ -93,6 +98,7 @@ const defaultSettings = {
   hotkey: { modifiers: 2, vkCode: 0x52 },
   hideHotkey: { modifiers: 2, vkCode: 0x48 },
   meterWidth: 400,
+  meterOpacity: MAX_METER_OPACITY,
   rowHeight: 36,
   isDebugMode: false,
   detailHeight: 600,
@@ -111,6 +117,23 @@ const defaultSettings = {
 };
 
 export const useSettingsStore = create<SettingsState>((set) => {
+  const readOptionalNumber = (value: unknown) => {
+    if (value === null || value === undefined || value === "") return null;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+
+  const readPositiveNumber = (value: unknown, fallback: number) => {
+    const parsed = readOptionalNumber(value);
+    return parsed !== null && parsed > 0 ? parsed : fallback;
+  };
+
+  const readClampedNumber = (value: unknown, fallback: number, min: number, max: number) => {
+    const parsed = readOptionalNumber(value);
+    if (parsed === null) return fallback;
+    return Math.min(max, Math.max(min, parsed));
+  };
+
   const interval = setInterval(() => {
     const j = jb();
     if (!j || typeof j.loadProps !== "function") return;
@@ -137,10 +160,12 @@ export const useSettingsStore = create<SettingsState>((set) => {
     set({
       hotkey: parsedHotkey ?? defaultSettings.hotkey,
       hideHotkey: parsedHideHotkey ?? defaultSettings.hideHotkey,
-      meterWidth: Number(j.loadProps?.("meterWidth")) || defaultSettings.meterWidth,
-      rowHeight: Number(j.loadProps?.("rowHeight")) || defaultSettings.rowHeight,
-      detailHeight: Number(j.loadProps?.("detailHeight")) || defaultSettings.detailHeight,
-      detailWidth: Number(j.loadProps?.("detailWidth")) || defaultSettings.detailWidth,
+      meterWidth: readPositiveNumber(j.loadProps?.("meterWidth"), defaultSettings.meterWidth),
+      meterOpacity: readClampedNumber(j.loadProps?.("meterOpacity"), defaultSettings.meterOpacity,
+        MIN_METER_OPACITY, MAX_METER_OPACITY,),
+      rowHeight: readPositiveNumber(j.loadProps?.("rowHeight"), defaultSettings.rowHeight),
+      detailHeight: readPositiveNumber(j.loadProps?.("detailHeight"), defaultSettings.detailHeight),
+      detailWidth: readPositiveNumber(j.loadProps?.("detailWidth"), defaultSettings.detailWidth),
       displayMode: j.loadProps?.("displayMode") ?? defaultSettings.displayMode,
       isDebugMode: j.isDebuggingMode?.() ?? false,
       nameDisplay: j.loadProps?.("nameDisplay") ?? defaultSettings.nameDisplay,
@@ -162,6 +187,7 @@ export const useSettingsStore = create<SettingsState>((set) => {
     hideHotkey: defaultSettings.hideHotkey,
     isMinimal: defaultSettings.isMinimal,
     meterWidth: defaultSettings.meterWidth,
+    meterOpacity: defaultSettings.meterOpacity,
     rowHeight: defaultSettings.rowHeight,
     detailHeight: defaultSettings.detailHeight,
     detailWidth: defaultSettings.detailWidth,
@@ -210,6 +236,11 @@ export const useSettingsStore = create<SettingsState>((set) => {
     setMeterWidth: (meterWidth) => {
       set({ meterWidth });
       jb()?.saveProps?.("meterWidth", meterWidth);
+    },
+    setMeterOpacity: (meterOpacity) => {
+      const next = Math.min(MAX_METER_OPACITY, Math.max(MIN_METER_OPACITY, meterOpacity));
+      set({ meterOpacity: next });
+      jb()?.saveProps?.("meterOpacity", String(next));
     },
     setRowHeight: (rowHeight) => {
       set({ rowHeight });

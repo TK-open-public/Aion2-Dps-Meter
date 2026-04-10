@@ -1,6 +1,7 @@
 import { memo } from "react";
 import bossIcon from "@/assets/bossIcon.png";
 import { useSettingsStore } from "@/stores/useSettingsStore";
+
 interface Props {
   targetName: string;
   rowHeight: number;
@@ -9,11 +10,13 @@ interface Props {
 
 export const TargetInfo = memo(({ targetName, rowHeight, remainHp }: Props) => {
   const theme = useSettingsStore((s) => s.theme);
+  const meterOpacity = useSettingsStore((s) => s.meterOpacity);
   const displayName = targetName || "타겟 인식 실패";
   const isFailed = !targetName;
 
   const iconSize = Math.round(rowHeight * 0.7);
   const fontSize = `${Math.max(10, Math.round(rowHeight * 0.4))}px`;
+  const meterGaugeOpacity = meterOpacity / 100;
 
   return (
     <div
@@ -23,7 +26,7 @@ export const TargetInfo = memo(({ targetName, rowHeight, remainHp }: Props) => {
         className="absolute inset-0 origin-left"
         style={{
           background: `linear-gradient(to right, ${theme.bossBar[0]}, ${theme.bossBar[1]})`,
-          opacity: isFailed ? 0.2 : 0.8,
+          opacity: (isFailed ? 0.2 : 0.8) * meterGaugeOpacity,
         }}
       />
       <div className="relative h-full flex items-center gap-3">

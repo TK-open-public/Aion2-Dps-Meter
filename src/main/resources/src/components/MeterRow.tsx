@@ -40,6 +40,7 @@ export const MeterRow = memo(
     const nameDisplay = useSettingsStore((s) => s.nameDisplay);
     const theme = useSettingsStore((s) => s.theme);
     const showPower = useSettingsStore((s) => s.showPower);
+    const meterOpacity = useSettingsStore((s) => s.meterOpacity);
 
     const gradients = {
       user: makeGradient(...theme.userBar),
@@ -60,6 +61,7 @@ export const MeterRow = memo(
     const fontSize = `${Math.max(10, Math.floor(rowHeight * 0.4))}px`;
 
     const ratio = Math.max(0, Math.min(1, dps / topDps));
+    const gaugeOpacity = meterOpacity / 100;
     const iconSrc = getJobIconSrc(job);
     const fillGradient = isUser
       ? gradients.user
@@ -183,6 +185,7 @@ export const MeterRow = memo(
           className="absolute inset-0 origin-left transition-transform duration-150 ease-out"
           style={{
             background: fillGradient,
+            opacity: gaugeOpacity,
             transform: `scaleX(${ratio})`,
           }}
         />
