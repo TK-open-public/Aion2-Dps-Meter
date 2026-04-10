@@ -11,8 +11,49 @@ plugins {
 group = "com.tbread"
 version = "1.5.0"
 
+val frontendDir = layout.projectDirectory.dir("src/main/resources")
+val frontendBuildInputs = fileTree(frontendDir) {
+    include("src/**")
+    include("package.json")
+    include("package-lock.json")
+    include("index.html")
+    include("vite.config.ts")
+    include("tsconfig*.json")
+    include("eslint.config.js")
+    include("components.json")
+}
+val npmCommand = if (System.getProperty("os.name").startsWith("Windows", ignoreCase = true)) "npm.cmd" else "npm"
+
+val npmInstall by tasks.registering(Exec::class) {
+    workingDir = frontendDir.asFile
+    commandLine(npmCommand, "ci")
+    inputs.file(frontendDir.file("package.json"))
+    inputs.file(frontendDir.file("package-lock.json"))
+    outputs.dir(frontendDir.dir("node_modules"))
+}
+
+val buildFrontend by tasks.registering(Exec::class) {
+    dependsOn(npmInstall)
+    workingDir = frontendDir.asFile
+    commandLine(npmCommand, "run", "build")
+    inputs.files(frontendBuildInputs)
+    outputs.dir(frontendDir.dir("dist"))
+}
+
 tasks.processResources {
+    dependsOn(buildFrontend)
     outputs.upToDateWhen { false }
+    exclude("node_modules/**")
+    exclude("src/**")
+    exclude(".gitignore")
+    exclude("README.md")
+    exclude("package.json")
+    exclude("package-lock.json")
+    exclude("tsconfig*.json")
+    exclude("vite.config.ts")
+    exclude("eslint.config.js")
+    exclude("components.json")
+    exclude("index.html")
     filesMatching("version.properties") {
         expand("version" to project.version)
     }

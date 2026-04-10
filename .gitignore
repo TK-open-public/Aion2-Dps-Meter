@@ -49,3 +49,6 @@ bin/
 
 ### ProGuard ###
 /proguard-rules.pro
+
+### Frontend build output ###
+/src/main/resources/dist/
