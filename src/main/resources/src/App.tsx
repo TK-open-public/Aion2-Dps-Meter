@@ -154,7 +154,7 @@ export default function App() {
     };
   }, []);
   const meterClass = cn(
-    "rounded-lg transition-all duration-300 text-[rgba(215,215,215)] py-2 px-3",
+    "rounded-lg transition-color duration-300 text-[rgba(215,215,215)] py-2 px-3",
     isMinimal
       ? "bg-transparent group-hover/app:bg-[rgba(12,22,40,0.4)]"
       : "bg-[rgba(12,22,40,0.4)]",
