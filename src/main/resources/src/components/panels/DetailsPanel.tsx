@@ -63,7 +63,7 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime, historyIdx 
       style={{ width: detailWidth }}
       className=" relative text-white font-bold rounded-lg py-4 px-7">
       <div className="flex items-center pb-3 border-b border-white/10">
-        <span>{player.name} 상세내역</span>
+        <span>{player.name} 详细信息</span>
         <Button
           className="ml-auto"
           variant="ghost"
@@ -72,23 +72,25 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime, historyIdx 
         </Button>
       </div>
       <div className="grid grid-cols-4 gap-2 py-3">
-        {[
-          { label: "누적 피해량", value: details.totalDmg.toLocaleString() },
-          { label: "피해량 기여도", value: `${details.contributionPct.toFixed(1)}%` },
-          { label: "치명타 비율", value: `${details.totalCritPct}%` },
-          { label: "완벽 비율", value: `${details.totalPerfectPct}%` },
-          { label: "강타 비율", value: `${details.totalDoublePct}%` },
-          { label: "백어택 비율", value: `${details.totalBackPct}%` },
-          { label: "보스 막기비율", value: `${details.totalParryPct}%` },
-          { label: "전투시간", value: combatTime },
-        ].map(({ label, value }) => (
-          <div
-            key={label}
-            className="bg-white/5 rounded-md px-3 py-3">
-            <p className="text-xs text-white/50 mb-1">{label}</p>
-            <p className="text-sm font-bold">{value}</p>
-          </div>
-        ))}
+        {
+          [
+            { label: "累计伤害量", value: details.totalDmg.toLocaleString() },
+            { label: "伤害量贡献度", value: `${details.contributionPct.toFixed(1)}%` },
+            { label: "暴击率", value: `${details.totalCritPct}%` },
+            { label: "完美率", value: `${details.totalPerfectPct}%` },
+            { label: "强击率", value: `${details.totalDoublePct}%` },
+            { label: "背击率", value: `${details.totalBackPct}%` },
+            { label: "BOSS格挡率", value: `${details.totalParryPct}%` },
+            { label: "战斗时间", value: combatTime },
+          ].map(({ label, value }) => (
+            <div
+              key={label}
+              className="bg-white/5 rounded-md px-3 py-3">
+              <p className="text-xs text-white/50 mb-1">{label}</p>
+              <p className="text-sm font-bold">{value}</p>
+            </div>
+          ))
+        }
       </div>
       <div
         ref={scrollRef}
@@ -109,9 +111,11 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime, historyIdx 
               className="px-4 py-2.5 bg-black/20 cursor-pointer text-sm"
               disabled={buffCount === 0}>
               <div className="flex w-full items-center justify-between pr-2">
-                <span>버프 가동률</span>
+                <span>Buff覆盖率</span>
                 <span className="text-xs opacity-60">
-                  {Object.keys(details.buffOperatingRate).length}개{" "}
+                  {Object.keys(details.buffOperatingRate).length}个{
+                  " "
+                  }
                 </span>
               </div>
             </AccordionTrigger>
@@ -129,7 +133,7 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime, historyIdx 
             value="skills"
             className="border-none">
             <AccordionTrigger className="px-4 py-2.5 bg-black/20 cursor-pointer text-sm">
-              <span>스킬 피해량</span>
+              <span>技能伤害量</span>
             </AccordionTrigger>
             <AccordionContent key={buffColumns}>
               <div className="px-2.5 pt-2">

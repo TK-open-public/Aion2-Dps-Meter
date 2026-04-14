@@ -1,5 +1,6 @@
 package com.tbread.data
 
+import com.tbread.config.ServerConfig
 import com.tbread.data.repository.*
 import com.tbread.entity.*
 import kotlinx.serialization.json.*
@@ -47,16 +48,26 @@ object DataManager {
     }
 
     private fun loadMobJson() {
-        val mobJson = object {}.javaClass.getResourceAsStream("/json/mobs.json")
+        val mobJson = object {}.javaClass.getResourceAsStream(ServerConfig.getMobJsonPath())
             ?.bufferedReader()
-            ?.readText()!!
+            ?.readText() ?: run {
+                logger.warn("Failed to load mob data for ${ServerConfig.getServerType()}, using default")
+                object {}.javaClass.getResourceAsStream("/json/mobs.json")
+                    ?.bufferedReader()
+                    ?.readText()!!
+            }
         Json.decodeFromString<List<Mob>>(mobJson).forEach { saveMob(it) }
     }
 
     private fun loadSkillJson() {
-        val skillJson = object {}.javaClass.getResourceAsStream("/json/skills.json")
+        val skillJson = object {}.javaClass.getResourceAsStream(ServerConfig.getSkillJsonPath())
             ?.bufferedReader()
-            ?.readText()!!
+            ?.readText() ?: run {
+                logger.warn("Failed to load skill data for ${ServerConfig.getServerType()}, using default")
+                object {}.javaClass.getResourceAsStream("/json/skills.json")
+                    ?.bufferedReader()
+                    ?.readText()!!
+            }
         Json.decodeFromString<List<Skill>>(skillJson).forEach {
             saveSkill(it)
         }
@@ -64,9 +75,14 @@ object DataManager {
 
     private fun loadBuffJson() {
         try {
-            val buffJson = object {}.javaClass.getResourceAsStream("/json/buff.json")
+            val buffJson = object {}.javaClass.getResourceAsStream(ServerConfig.getBuffJsonPath())
                 ?.bufferedReader()
-                ?.readText()!!
+                ?.readText() ?: run {
+                    logger.warn("Failed to load buff data for ${ServerConfig.getServerType()}, using default")
+                    object {}.javaClass.getResourceAsStream("/json/buff.json")
+                        ?.bufferedReader()
+                        ?.readText()!!
+                }
 
             val json = Json { ignoreUnknownKeys = true }
 
