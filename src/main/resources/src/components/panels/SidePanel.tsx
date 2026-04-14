@@ -5,6 +5,7 @@ import { SettingsPanel } from "./SettingsPanel.tsx";
 import { UpdatePanel } from "./UpdatePanel";
 import { useSettingsStore } from "@/stores/useSettingsStore";
 import { HistoryPanel } from "./HistoryPanel";
+import { ServerSettings } from "./ServerSettings";
 
 interface SidePanelProps {
   type: PanelType;
@@ -126,6 +127,11 @@ export const SidePanel = ({
           onClose={onClose}
           onSelectHistory={onSelectHistory}
           formatBattleTime={formatBattleTime}
+        />
+      )}
+      {currentType === "server" && (
+        <ServerSettings
+          onClose={onClose}
         />
       )}
     </div>

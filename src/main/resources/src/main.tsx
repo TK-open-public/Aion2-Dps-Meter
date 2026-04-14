@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "@/styles/globals.css";
 import { FontApplier } from "@/components/FontApplier";
+import "./i18n";
 // import { injectMockDpsData } from "./utils/mockDpsData";
 // injectMockDpsData();
 

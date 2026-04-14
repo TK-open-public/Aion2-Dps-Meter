@@ -8,6 +8,7 @@ import {
   ClipboardClock,
   Bug,
   UserRoundPlus,
+  Globe,
 } from "lucide-react";
 // import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useJoinRequestStore } from "@/stores/useJoinRequestStore";
@@ -110,6 +111,14 @@ export const Header = ({
         {/* </TooltipTrigger>
             <TooltipContent>전투 기록</TooltipContent>
           </Tooltip> */}
+
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setSettings("server")}
+          className="rounded-full">
+          <Globe className="size-4.5" />
+        </Button>
 
         {isDebugMode && (
           // <Tooltip>

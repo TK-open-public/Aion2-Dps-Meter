@@ -4,6 +4,7 @@ import { useHotkeyCapture } from "@/hooks/useHotkeyCapture";
 import { formatHotkey } from "@/utils/hotKey";
 import { Button } from "@/components/ui/button";
 import { X, RotateCcw } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type {
   DisplayMode,
   FontFamily,
@@ -35,25 +36,25 @@ interface Props {
 }
 
 const DISPLAY_MODES: { value: DisplayMode; label: string; description: string }[] = [
-  { value: "dps_percent", label: "DPS / 기여도", description: "45,000/초 (35.5%)" },
+  { value: "dps_percent", label: "DPS / 贡献度", description: "45,000/秒 (35.5%)" },
   {
     value: "amount_dps_percent",
-    label: "누적(축약) / DPS / 기여도",
-    description: "1.2M 45,000/초 (35.5%)",
+    label: "累计(缩略) / DPS / 贡献度",
+    description: "1.2M 45,000/秒 (35.5%)",
   },
-  { value: "amount_percent", label: "누적(축약) / 기여도", description: "1.2M (35.5%)" },
+  { value: "amount_percent", label: "累计(缩略) / 贡献度", description: "1.2M (35.5%)" },
   {
     value: "amount_full_dps_percent",
-    label: "누적(전체) / DPS / 기여도",
-    description: "1,234,567 45,000/초 (35.5%)",
+    label: "累计(全部) / DPS / 贡献度",
+    description: "1,234,567 45,000/秒 (35.5%)",
   },
-  { value: "amount_full_percent", label: "누적(전체) / 기여도", description: "1,234,567 (35.5%)" },
+  { value: "amount_full_percent", label: "累计(全部) / 贡献度", description: "1,234,567 (35.5%)" },
 ];
 
 const NAME_DISPLAY_MODES: { value: NameDisplay; label: string }[] = [
-  { value: "all", label: "모두 표기" },
-  { value: "me_only", label: "나만 표기" },
-  { value: "hidden", label: "모두 숨김" },
+  { value: "all", label: "全部显示" },
+  { value: "me_only", label: "只显示我" },
+  { value: "hidden", label: "全部隐藏" },
 ];
 
 const FONT_FAMILIES: { value: FontFamily; label: string }[] = [
@@ -71,6 +72,7 @@ export const SettingsPanel = ({
   updateInfo,
   onCheckUpdate,
 }: Props) => {
+  const { t } = useTranslation();
   const {
     hotkey,
     setHotkey,
@@ -161,7 +163,7 @@ export const SettingsPanel = ({
   return (
     <div className="font-bold relative rounded-lg py-3 px-7 w-100">
       <div className="flex items-center pb-3 border-b border-white/10">
-        <span>설정</span>
+        <span>设置</span>
         <Button
           variant="ghost"
           className="ml-auto"
@@ -173,7 +175,7 @@ export const SettingsPanel = ({
       <div className="max-h-170 py-2 -mr-4 pr-4 overflow-y-auto">
         <SettingsItem>
           <SettingsRow
-            title="버전 정보"
+            title="版本信息"
             description={currentVersion ? `v${currentVersion}` : "-"}
             rightClassName="flex items-center">
             <Button
@@ -185,15 +187,15 @@ export const SettingsPanel = ({
                   ? " py-3 transition-all text-green-400 border border-green-400/30 hover:bg-green-400/10"
                   : " py-3 transition-all opacity-60 hover:opacity-100"
               }>
-              {updateInfo ? `v${updateInfo.latestVersion} 업데이트` : "업데이트 확인"}
+              {updateInfo ? `v${updateInfo.latestVersion} 更新` : "检查更新"}
             </Button>
           </SettingsRow>
         </SettingsItem>
 
         <SettingsItem>
           <SettingsRow
-            title="폰트"
-            description="표시 글꼴을 선택합니다"
+            title="字体"
+            description="选择显示字体"
             align="center"
             rightClassName="w-44">
             <Select
@@ -218,8 +220,8 @@ export const SettingsPanel = ({
 
         <SettingsItem>
           <SettingsRow
-            title="버튼 위치"
-            description="헤더 버튼의 위치를 설정합니다">
+            title="按钮位置"
+            description="设置头部按钮的位置">
             <Select
               value={headerPosition}
               onValueChange={(v) => setHeaderPosition(v as HeaderPosition)}>
@@ -230,12 +232,12 @@ export const SettingsPanel = ({
                 <SelectItem
                   value="top"
                   className="px-4 py-2">
-                  상단
+                  顶部
                 </SelectItem>
                 <SelectItem
                   value="bottom"
                   className="px-4 py-2">
-                  하단
+                  底部
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -244,12 +246,12 @@ export const SettingsPanel = ({
 
         <div className="my-3 flex items-center gap-2">
           <div className="flex-1 h-px bg-white/10" />
-          <span className="text-xs opacity-40 px-2 shrink-0">단축키 설정</span>
+          <span className="text-xs opacity-40 px-2 shrink-0">快捷键设置</span>
           <div className="flex-1 h-px bg-white/10" />
         </div>
         <SettingsItem>
           <SettingsRow
-            title="새로고침"
+            title="刷新"
             align="center"
             rightClassName="w-44">
             <SettingsControlInput
@@ -262,7 +264,7 @@ export const SettingsPanel = ({
           </SettingsRow>
 
           <SettingsRow
-            title="최소화"
+            title="最小化"
             align="center"
             rightClassName="w-44">
             <SettingsControlInput
@@ -277,11 +279,11 @@ export const SettingsPanel = ({
 
         <div className="my-3 flex items-center gap-2">
           <div className="flex-1 h-px bg-white/10" />
-          <span className="text-xs opacity-40 px-2 shrink-0">컴팩트 모드</span>
+          <span className="text-xs opacity-40 px-2 shrink-0">紧凑模式</span>
           <div className="flex-1 h-px bg-white/10" />
         </div>
         <SettingsItem>
-          <SettingsRow title="컴팩트 모드">
+          <SettingsRow title="紧凑模式">
             <Switch
               checked={isMinimal}
               onCheckedChange={(v) => setIsMinimal(v)}
@@ -289,7 +291,7 @@ export const SettingsPanel = ({
             />
           </SettingsRow>
 
-          <SettingsRow title="컴팩트 모드 시 전투 시간 표시">
+          <SettingsRow title="紧凑模式时显示战斗时间">
             <Switch
               checked={showCombatTimerInMinimal}
               onCheckedChange={(v) => setShowCombatTimerInMinimal(v)}
@@ -297,7 +299,7 @@ export const SettingsPanel = ({
             />
           </SettingsRow>
 
-          <SettingsRow title="컴팩트 모드 시 보스 표시">
+          <SettingsRow title="紧凑模式时显示BOSS">
             <Switch
               checked={showTargetInfoInMinimal}
               onCheckedChange={(v) => setShowTargetInfoInMinimal(v)}
@@ -308,12 +310,12 @@ export const SettingsPanel = ({
 
         <div className="my-3 flex items-center gap-2">
           <div className="flex-1 h-px bg-white/10" />
-          <span className="text-xs opacity-40 px-2 shrink-0">미터기 설정</span>
+          <span className="text-xs opacity-40 px-2 shrink-0">Meter设置</span>
           <div className="flex-1 h-px bg-white/10" />
         </div>
         {/* <SettingsRow
-          title="전투력 표시"
-          description="이름 옆에 전투력을 표시합니다">
+          title="战斗力显示"
+          description="在名称旁边显示战斗力">
           <Switch
             checked={showPower}
             onCheckedChange={(v) => setShowPower(v)}
@@ -322,7 +324,7 @@ export const SettingsPanel = ({
         </SettingsRow> */}
         <SettingsItem>
           <SettingsRow
-            title="표시 형식"
+            title="显示格式"
             align="center"
             rightClassName="w-44">
             <Select
@@ -345,7 +347,7 @@ export const SettingsPanel = ({
           </SettingsRow>
 
           <SettingsRow
-            title="아이디 표기"
+            title="ID显示"
             align="center"
             rightClassName="w-44">
             <Select
@@ -368,7 +370,7 @@ export const SettingsPanel = ({
           </SettingsRow>
 
           <SettingsRow
-            title="행 높이"
+            title="行高"
             align="center"
             rightClassName="w-44">
             <div className="flex h-8 items-center gap-3 ">
@@ -387,57 +389,57 @@ export const SettingsPanel = ({
 
         <div className="my-3 flex items-center gap-2">
           <div className="flex-1 h-px bg-white/10" />
-          <span className="text-xs opacity-40 px-2 shrink-0">테마 설정</span>
+          <span className="text-xs opacity-40 px-2 shrink-0">主题设置</span>
           <div className="flex-1 h-px bg-white/10" />
         </div>
-        <SettingsItem title="유저 이름 색상">
+        <SettingsItem title="用户名称颜色">
           <div className="flex flex-col gap-2.5">
             <ColorSwatch
-              label="천족"
+              label="天族"
               value={theme.serverAColor}
               onChange={(v) => setThemeColor("serverAColor", v)}
             />
             <ColorSwatch
-              label="마족"
+              label="魔族"
               value={theme.serverBColor}
               onChange={(v) => setThemeColor("serverBColor", v)}
             />
             {/* <ColorSwatch
-              label="기타"
+              label="其他"
               value={theme.serverDefaultColor}
               onChange={(v) => setThemeColor("serverDefaultColor", v)}
             /> */}
           </div>
         </SettingsItem>
-        <SettingsItem title="미터 바 색상">
+        <SettingsItem title="Meter条颜色">
           <div className="flex flex-col gap-2.5">
             <GradientRow
-              label="내 캐릭터"
+              label="我的角色"
               value={theme.userBar}
               onChange={(v) => setThemeColor("userBar", v)}
             />
             <GradientRow
-              label="일반"
+              label="普通"
               value={theme.normalBar}
               onChange={(v) => setThemeColor("normalBar", v)}
             />
             <GradientRow
-              label="경고 (기여도 5% 미만)"
+              label="警告（贡献度5%以下）"
               value={theme.warningBar}
               onChange={(v) => setThemeColor("warningBar", v)}
             />
             <GradientRow
-              label="에러 (기여도 3% 미만)"
+              label="错误（贡献度3%以下）"
               value={theme.errorBar}
               onChange={(v) => setThemeColor("errorBar", v)}
             />
           </div>
         </SettingsItem>
 
-        <SettingsItem title="미터 텍스트 색상">
+        <SettingsItem title="Meter文本颜色">
           <div className="flex flex-col gap-2.5">
             <ColorSwatch
-              label="누적"
+              label="累计"
               value={theme.meterStatAmount}
               onChange={(v) => setThemeColor("meterStatAmount", v)}
             />
@@ -447,24 +449,24 @@ export const SettingsPanel = ({
               onChange={(v) => setThemeColor("meterStatDps", v)}
             />
             <ColorSwatch
-              label="퍼센트"
+              label="百分比"
               value={theme.meterStatPercent}
               onChange={(v) => setThemeColor("meterStatPercent", v)}
             />
           </div>
         </SettingsItem>
 
-        <SettingsItem title="보스 / 전투 기록">
+        <SettingsItem title="BOSS / 战斗记录">
           <div className="flex flex-col gap-2.5">
             <GradientRow
-              label="타겟 / 전투 기록"
+              label="目标 / 战斗记录"
               value={theme.bossBar}
               onChange={(v) => setThemeColor("bossBar", v)}
             />
           </div>
           <div className="flex flex-col gap-2.5">
             <ColorSwatch
-              label="남은 체력 / 경과 시간"
+              label="剩余血量 / 经过时间"
               value={theme.bossRightValue}
               onChange={(v) => setThemeColor("bossRightValue", v)}
             />
@@ -478,7 +480,7 @@ export const SettingsPanel = ({
             onClick={resetTheme}
             className="w-full opacity-50 hover:opacity-100  hover:bg-transition transition-opacity flex items-center gap-2 text-xs">
             <RotateCcw className="w-3 h-3" />
-            테마 초기화
+            主题重置
           </Button>
         </SettingsItem>
       </div>
@@ -488,12 +490,12 @@ export const SettingsPanel = ({
           onClick={handleCancel}
           size="lg"
           className="p-4 w-20 opacity-60 hover:opacity-100 transition-opacity">
-          취소
+          取消
         </Button>
         <Button
           onClick={handleSave}
           className="bg-purple-600 hover:bg-purple-700 transition-colors p-4 w-20">
-          저장
+          保存
         </Button>
       </div>
     </div>

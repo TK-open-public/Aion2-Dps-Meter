@@ -72,7 +72,7 @@ export interface Hotkey {
   modifiers: number;
   vkCode: number;
 }
-export type PanelType = "details" | "settings" | "update" | "history" | null;
+export type PanelType = "details" | "settings" | "update" | "history" | "server" | null;
 export interface UpdateInfo {
   currentVersion: string;
   msiUrl: string;

@@ -8,6 +8,7 @@ import com.tbread.DpsCalculator
 import com.tbread.addon.UploadManager
 import com.tbread.config.HotkeyHandler
 import com.tbread.config.PropertyHandler
+import com.tbread.config.ServerConfig
 import com.tbread.config.VersionConfig
 import com.tbread.data.DataManager
 import com.tbread.entity.DpsReport
@@ -228,6 +229,16 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
 
         fun pushRefuseJoinRequest(){
             engine.executeScript("onRefuseJoinRequest()")
+        }
+
+        fun setServerType(type: String) {
+            try {
+                val serverType = ServerConfig.ServerType.valueOf(type)
+                ServerConfig.setServerType(serverType)
+                logger.info("Server type set to: $serverType")
+            } catch (e: Exception) {
+                logger.error("Failed to set server type: $type", e)
+            }
         }
 
     }
