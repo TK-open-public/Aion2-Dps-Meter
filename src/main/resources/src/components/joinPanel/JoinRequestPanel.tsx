@@ -68,8 +68,8 @@ export const JoinRequestPanel = ({
     "group/join text-[rgba(215,215,215)] transition-all duration-200 ease-in-out relative rounded-lg font-bold",
     visible ? "opacity-100 translate-y-2" : "opacity-0 -translate-y-2",
     isMinimal
-      ? "bg-transparent group-hover/join:bg-[rgba(12,22,40,0.4)] group-hover/app:bg-[rgba(12,22,40,0.4)]"
-      : "bg-[rgba(12,22,40,0.4)]",
+      ? "group-hover/join:bg-(--meter-bg) group-hover/app:bg-(--meter-bg)"
+      : "bg-(--meter-bg)",
   );
   const headerClass = cn(
     "transition duration-150",
@@ -96,7 +96,7 @@ export const JoinRequestPanel = ({
       <div>
         <div
           className={`${headerClass} flex items-center  px-3 py-1.5 border-b border-white/10 rounded-t-lg`}>
-          <span className={` flex-1 text-sm`}>파티 신청</span>
+          <span className={`pl-2 flex-1 text-sm`}>파티 신청</span>
           <div className="flex items-center gap-2 h-8">
             <span className={` text-xs w-8 text-center`}>{requests.length}건</span>
 

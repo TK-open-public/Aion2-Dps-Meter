@@ -57,11 +57,12 @@ const NAME_DISPLAY_MODES: { value: NameDisplay; label: string }[] = [
 ];
 
 const FONT_FAMILIES: { value: FontFamily; label: string }[] = [
+  { value: "Malgun Gothic", label: "맑은 고딕 (윈도우 기본 폰트)" },
+  { value: "NEXON Lv2 Gothic", label: "NEXON Lv2 Gothic" },
   { value: "Spoqa Han Sans Neo", label: "Spoqa Han Sans Neo" },
   { value: "Freesentation", label: "Freesentation" },
   { value: "Tmoney Round Wind", label: "Tmoney Round Wind" },
   { value: "Pretendard", label: "Pretendard" },
-  { value: "NEXON Lv2 Gothic", label: "NEXON Lv2 Gothic" },
 ];
 
 export const SettingsPanel = ({
@@ -96,6 +97,11 @@ export const SettingsPanel = ({
     setShowCombatTimerInMinimal,
     showTargetInfoInMinimal,
     setShowTargetInfoInMinimal,
+    meterOpacity,
+    setMeterOpacity,
+    panelOpacity,
+    setPanelOpacity,
+
     // showPower,
     // setShowPower,
   } = useSettingsStore();
@@ -119,6 +125,8 @@ export const SettingsPanel = ({
     isMinimal,
     showCombatTimerInMinimal,
     showTargetInfoInMinimal,
+    meterOpacity,
+    panelOpacity,
 
     theme: { ...theme },
   }));
@@ -154,6 +162,8 @@ export const SettingsPanel = ({
     resetHide(snapshot.hideHotkey);
     setHeaderPosition(snapshot.headerPosition);
     setTheme(snapshot.theme as ThemeColors);
+    setMeterOpacity(snapshot.meterOpacity);
+    setPanelOpacity(snapshot.panelOpacity);
 
     onClose();
   };
@@ -390,6 +400,45 @@ export const SettingsPanel = ({
           <span className="text-xs opacity-40 px-2 shrink-0">테마 설정</span>
           <div className="flex-1 h-px bg-white/10" />
         </div>
+        <SettingsItem title="투명도 조정">
+          <SettingsRow
+            title="미터 배경 투명도"
+            align="center"
+            rightClassName="w-44">
+            <div className="flex h-8 items-center gap-3">
+              <Slider
+                min={0}
+                max={1}
+                step={0.05}
+                className="cursor-pointer"
+                value={[meterOpacity]}
+                onValueChange={(value) => setMeterOpacity(value[0])}
+              />
+              <span className="text-xs opacity-60 w-12 text-right tabular-nums">
+                {Math.round(meterOpacity * 100)}%
+              </span>
+            </div>
+          </SettingsRow>
+        </SettingsItem>
+
+        <SettingsRow
+          title="패널 배경 투명도"
+          align="center"
+          rightClassName="w-44">
+          <div className="flex h-8 items-center gap-3">
+            <Slider
+              min={0}
+              max={1}
+              step={0.05}
+              className="cursor-pointer"
+              value={[panelOpacity]}
+              onValueChange={(value) => setPanelOpacity(value[0])}
+            />
+            <span className="text-xs opacity-60 w-12 text-right tabular-nums">
+              {Math.round(panelOpacity * 100)}%
+            </span>
+          </div>
+        </SettingsRow>
         <SettingsItem title="유저 이름 색상">
           <div className="flex flex-col gap-2.5">
             <ColorSwatch

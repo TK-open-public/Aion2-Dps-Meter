@@ -12,6 +12,7 @@ export type DisplayMode =
 export type NameDisplay = "all" | "me_only" | "hidden";
 export type HeaderPosition = "top" | "bottom";
 export type FontFamily =
+  | "Malgun Gothic"
   | "Spoqa Han Sans Neo"
   | "Freesentation"
   | "Tmoney Round Wind"
@@ -90,6 +91,10 @@ interface SettingsState {
   setVisibleSkillCodes: (codes: number[]) => void;
   // showPower: boolean;
   // setShowPower: (v: boolean) => void;
+  meterOpacity: number;
+  setMeterOpacity: (v: number) => void;
+  panelOpacity: number;
+  setPanelOpacity: (v: number) => void;
 }
 
 const jb = () => (window as any).javaBridge;
@@ -115,7 +120,9 @@ const defaultSettings = {
 
   theme: DEFAULT_THEME,
   visibleSkillCodes: DEFAULT_VISIBLE_SKILL_CODES,
-  showPower: true,
+  // showPower: true,
+  meterOpacity: 0.4,
+  panelOpacity: 0.8,
 };
 
 export const useSettingsStore = create<SettingsState>((set) => {
@@ -162,6 +169,9 @@ export const useSettingsStore = create<SettingsState>((set) => {
       windowX: Number(j.loadProps?.("windowX")) || defaultSettings.windowX,
       windowY: Number(j.loadProps?.("windowY")) || defaultSettings.windowY,
       // showPower: j.loadProps?.("showPower") === "false" ? false : true,
+      meterOpacity: Number(j.loadProps?.("meterOpacity")) || defaultSettings.meterOpacity,
+      panelOpacity: Number(j.loadProps?.("panelOpacity")) || defaultSettings.panelOpacity,
+
       isLoaded: true,
     });
     clearInterval(interval);
@@ -188,6 +198,9 @@ export const useSettingsStore = create<SettingsState>((set) => {
     windowX: defaultSettings.windowX,
     windowY: defaultSettings.windowY,
     // showPower: defaultSettings.showPower,
+    meterOpacity: defaultSettings.meterOpacity,
+    panelOpacity: defaultSettings.panelOpacity,
+
     isLoaded: defaultSettings.isLoaded,
 
     setHotkey: (hotkey) => {
@@ -271,6 +284,15 @@ export const useSettingsStore = create<SettingsState>((set) => {
       set({ visibleSkillCodes });
       jb()?.saveProps?.("visibleSkillCodes", JSON.stringify(visibleSkillCodes));
     },
+    setMeterOpacity: (meterOpacity) => {
+      set({ meterOpacity });
+      jb()?.saveProps?.("meterOpacity", String(meterOpacity));
+    },
+    setPanelOpacity: (panelOpacity) => {
+      set({ panelOpacity });
+      jb()?.saveProps?.("panelOpacity", String(panelOpacity));
+    },
+
     // setShowPower: (showPower) => {
     //   set({ showPower });
     //   jb()?.saveProps?.("showPower", String(showPower));

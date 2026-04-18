@@ -109,9 +109,9 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime, historyIdx 
               className="px-4 py-2.5 bg-black/20 cursor-pointer text-sm"
               disabled={buffCount === 0}>
               <div className="flex w-full items-center justify-between pr-2">
-                <span>버프 가동률</span>
+                <span className="font-semibold">버프 가동률</span>
                 <span className="text-xs opacity-60">
-                  {Object.keys(details.buffOperatingRate).length}개{" "}
+                  {Object.keys(details.buffOperatingRate).length}개
                 </span>
               </div>
             </AccordionTrigger>
@@ -129,7 +129,7 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime, historyIdx 
             value="skills"
             className="border-none">
             <AccordionTrigger className="px-4 py-2.5 bg-black/20 cursor-pointer text-sm">
-              <span>스킬 피해량</span>
+              <span className="font-semibold">스킬 피해량</span>
             </AccordionTrigger>
             <AccordionContent key={buffColumns}>
               <div className="px-2.5 pt-2">

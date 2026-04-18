@@ -54,6 +54,8 @@ export default function App() {
   const isMinimal = useSettingsStore((s) => s.isMinimal);
   const showCombatTimerInMinimal = useSettingsStore((s) => s.showCombatTimerInMinimal);
   const showTargetInfoInMinimal = useSettingsStore((s) => s.showTargetInfoInMinimal);
+  const meterOpacity = useSettingsStore((s) => s.meterOpacity);
+  const panelOpacity = useSettingsStore((s) => s.panelOpacity);
 
   const [selectedHistoryIdx, setSelectedHistoryIdx] = useState<number | undefined>(undefined);
 
@@ -155,9 +157,7 @@ export default function App() {
   }, []);
   const meterClass = cn(
     "rounded-lg transition-color duration-300 text-[rgba(215,215,215)] py-2 px-3",
-    isMinimal
-      ? "bg-transparent group-hover/app:bg-[rgba(12,22,40,0.4)]"
-      : "bg-[rgba(12,22,40,0.4)]",
+    isMinimal ? "bg-transparent group-hover/app:bg-(--meter-bg)" : "bg-(--meter-bg)",
   );
 
   const headerClass = cn(
@@ -179,7 +179,13 @@ export default function App() {
   return (
     // <TooltipProvider>
     <div
-      style={{ width: "fit-content" }}
+      style={
+        {
+          width: "fit-content",
+          "--meter-bg": `rgba(12,22,40,${meterOpacity})`,
+          "--panel-bg": `rgba(12,22,40,${panelOpacity})`,
+        } as React.CSSProperties
+      }
       className={rootClass}>
       <div
         className={meterClass}

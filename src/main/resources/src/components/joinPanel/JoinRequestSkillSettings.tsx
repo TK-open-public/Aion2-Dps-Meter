@@ -50,7 +50,7 @@ export const JoinRequestSkillSettings = ({
 
   const panelClass = cn(
     "min-w-0 fixed w-100 top-0 left-full ml-2 h-auto z-50",
-    "bg-[rgba(12,22,40,0.8)] text-white rounded-lg",
+    "bg-(--panel-bg) text-white rounded-lg",
     "transition-all duration-200 ease-in-out",
     visible ? "visible opacity-100 translate-x-2" : "invisible opacity-0 translate-x-0",
   );
@@ -70,7 +70,7 @@ export const JoinRequestSkillSettings = ({
           </Button>
         </div>
 
-        <div className="px-5 pb-3 space-y-4 max-h-96 overflow-y-auto">
+        <div className="px-5 pb-3 space-y-4 max-h-114 overflow-y-auto">
           {GROUPED_BY_JOB.map(({ job, skills }) => {
             if (skills.length === 0) return null;
             const allChecked = skills.every((c) => visibleSkillCodes.includes(c));
