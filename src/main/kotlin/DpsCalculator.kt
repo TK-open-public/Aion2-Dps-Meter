@@ -161,7 +161,6 @@ class DpsCalculator(private val streamResetCallback: (() -> Unit)? = null) {
                     analyzedData[skillName] = analyzedSkill
                 }
                 val analyzedSkill = analyzedData[skillName]!!
-                analyzedSkill.img = skill?.img
                 if (it.isDoT()) {
                     analyzedSkill.dotTimes++
                     analyzedSkill.dotDamageAmount += it.getDamage()
