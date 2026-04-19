@@ -751,7 +751,7 @@
   },
   {
     "code": 2090131,
-    "name": "평타 (레벨 스케일링 테스트)",
+    "name": "기본공격 (레벨 스케일링 테스트)",
     "boss": false
   },
   {
@@ -906,7 +906,7 @@
   },
   {
     "code": 2090188,
-    "name": "Air",
+    "name": "d�\f�",
     "boss": false
   },
   {
@@ -7810,6 +7810,11 @@
     "boss": false
   },
   {
+    "code": 2300162,
+    "name": "두르바티의 독액",
+    "boss": true
+  },
+  {
     "code": 2300171,
     "name": "완성체 베르크",
     "boss": true
@@ -7988,7 +7993,7 @@
     "code": 2300229,
     "name": "훈련용 허수아비",
     "boss": false,
-    "isDummy":true
+    "isDummy": true
   },
   {
     "code": 2300301,
@@ -8278,6 +8283,11 @@
   {
     "code": 2300517,
     "name": "부패한 두르바티 (표본)",
+    "boss": true
+  },
+  {
+    "code": 2300519,
+    "name": "두르바티의 독액",
     "boss": true
   },
   {
@@ -8599,7 +8609,7 @@
     "code": 2300919,
     "name": "훈련용 허수아비",
     "boss": false,
-    "isDummy":true
+    "isDummy": true
   },
   {
     "code": 2300920,
@@ -8707,6 +8717,96 @@
     "boss": false
   },
   {
+    "code": 2301201,
+    "name": "오염된 수라 마도사",
+    "boss": false
+  },
+  {
+    "code": 2301202,
+    "name": "오염된 수라 병사",
+    "boss": false
+  },
+  {
+    "code": 2301203,
+    "name": "변질된 독혈",
+    "boss": false
+  },
+  {
+    "code": 2301204,
+    "name": "변질된 수라 대장",
+    "boss": false
+  },
+  {
+    "code": 2301205,
+    "name": "오염된 슬라임",
+    "boss": false
+  },
+  {
+    "code": 2301206,
+    "name": "오염된 쥐",
+    "boss": false
+  },
+  {
+    "code": 2301207,
+    "name": "검은 피 블라트",
+    "boss": true
+  },
+  {
+    "code": 2301208,
+    "name": "중합체 바고트",
+    "boss": true
+  },
+  {
+    "code": 2301209,
+    "name": "포식하는 뉴트라",
+    "boss": true
+  },
+  {
+    "code": 2301210,
+    "name": "독성 가스",
+    "boss": false
+  },
+  {
+    "code": 2301211,
+    "name": "독성 가스",
+    "boss": false
+  },
+  {
+    "code": 2301212,
+    "name": "오폐수",
+    "boss": false
+  },
+  {
+    "code": 2301213,
+    "name": "오폐수",
+    "boss": false
+  },
+  {
+    "code": 2301214,
+    "name": "오염된 독주머니",
+    "boss": false
+  },
+  {
+    "code": 2301215,
+    "name": "변질된 독주머니",
+    "boss": false
+  },
+  {
+    "code": 2301216,
+    "name": "감시 장치",
+    "boss": true
+  },
+  {
+    "code": 2301217,
+    "name": "변질된 수라 대장",
+    "boss": false
+  },
+  {
+    "code": 2301218,
+    "name": "역류하는 오염 정화기",
+    "boss": false
+  },
+  {
     "code": 2301301,
     "name": "고뇌하는 바카르마",
     "boss": true
@@ -8804,6 +8904,71 @@
   {
     "code": 2301323,
     "name": "아공간의 스웜",
+    "boss": false
+  },
+  {
+    "code": 2301401,
+    "name": "글래스베인",
+    "boss": true
+  },
+  {
+    "code": 2301402,
+    "name": "나사라크",
+    "boss": true
+  },
+  {
+    "code": 2301403,
+    "name": "나트하라",
+    "boss": true
+  },
+  {
+    "code": 2301404,
+    "name": "환영의 수호성 영혼",
+    "boss": false
+  },
+  {
+    "code": 2301405,
+    "name": "환영의 궁성 영혼",
+    "boss": false
+  },
+  {
+    "code": 2301406,
+    "name": "회랑의 집행자",
+    "boss": false
+  },
+  {
+    "code": 2301407,
+    "name": "잊혀진 수라 기사",
+    "boss": false
+  },
+  {
+    "code": 2301408,
+    "name": "잊혀진 수라 사제",
+    "boss": false
+  },
+  {
+    "code": 2301409,
+    "name": "잊혀진 수라 전사",
+    "boss": false
+  },
+  {
+    "code": 2301410,
+    "name": "환영 유령",
+    "boss": false
+  },
+  {
+    "code": 2301411,
+    "name": "분열된 환영 유령",
+    "boss": false
+  },
+  {
+    "code": 2301412,
+    "name": "회랑의 감시자",
+    "boss": false
+  },
+  {
+    "code": 2301413,
+    "name": "환영 장막",
     "boss": false
   },
   {
@@ -9115,7 +9280,7 @@
     "code": 2310229,
     "name": "훈련용 허수아비",
     "boss": false,
-    "isDummy":true
+    "isDummy": true
   },
   {
     "code": 2310301,
@@ -9393,6 +9558,11 @@
     "boss": true
   },
   {
+    "code": 2310519,
+    "name": "두르바티의 독액",
+    "boss": true
+  },
+  {
     "code": 2310601,
     "name": "아티엘",
     "boss": true
@@ -9656,7 +9826,7 @@
     "code": 2310919,
     "name": "훈련용 허수아비",
     "boss": false,
-    "isDummy":true
+    "isDummy": true
   },
   {
     "code": 2310920,
@@ -9771,6 +9941,81 @@
   {
     "code": 2311323,
     "name": "아공간의 스웜",
+    "boss": false
+  },
+  {
+    "code": 2311401,
+    "name": "글래스베인",
+    "boss": true
+  },
+  {
+    "code": 2311402,
+    "name": "나사라크",
+    "boss": true
+  },
+  {
+    "code": 2311403,
+    "name": "나트하라",
+    "boss": true
+  },
+  {
+    "code": 2311404,
+    "name": "환영의 수호성 영혼",
+    "boss": false
+  },
+  {
+    "code": 2311405,
+    "name": "환영의 궁성 영혼",
+    "boss": false
+  },
+  {
+    "code": 2311406,
+    "name": "회랑의 집행자",
+    "boss": false
+  },
+  {
+    "code": 2311407,
+    "name": "잊혀진 수라 기사",
+    "boss": false
+  },
+  {
+    "code": 2311408,
+    "name": "잊혀진 수라 사제",
+    "boss": false
+  },
+  {
+    "code": 2311409,
+    "name": "잊혀진 수라 전사",
+    "boss": false
+  },
+  {
+    "code": 2311410,
+    "name": "환영 유령",
+    "boss": false
+  },
+  {
+    "code": 2311411,
+    "name": "분열된 환영 유령",
+    "boss": false
+  },
+  {
+    "code": 2311412,
+    "name": "회랑의 감시자",
+    "boss": false
+  },
+  {
+    "code": 2311413,
+    "name": "환영의 템페르 사제",
+    "boss": false
+  },
+  {
+    "code": 2311414,
+    "name": "환영 장막",
+    "boss": false
+  },
+  {
+    "code": 2311418,
+    "name": "혼령 폭탄",
     "boss": false
   },
   {
@@ -10007,7 +10252,7 @@
     "code": 2320229,
     "name": "훈련용 허수아비",
     "boss": false,
-    "isDummy":true
+    "isDummy": true
   },
   {
     "code": 2320301,
@@ -10305,6 +10550,11 @@
     "boss": false
   },
   {
+    "code": 2320519,
+    "name": "두르바티의 독액",
+    "boss": false
+  },
+  {
     "code": 2320601,
     "name": "아티엘",
     "boss": true
@@ -10578,7 +10828,7 @@
     "code": 2320919,
     "name": "훈련용 허수아비",
     "boss": false,
-    "isDummy":true
+    "isDummy": true
   },
   {
     "code": 2320920,
@@ -10696,6 +10946,81 @@
     "boss": false
   },
   {
+    "code": 2321401,
+    "name": "글래스베인",
+    "boss": true
+  },
+  {
+    "code": 2321402,
+    "name": "나사라크",
+    "boss": true
+  },
+  {
+    "code": 2321403,
+    "name": "나트하라",
+    "boss": true
+  },
+  {
+    "code": 2321404,
+    "name": "환영의 수호성 영혼",
+    "boss": false
+  },
+  {
+    "code": 2321405,
+    "name": "환영의 궁성 영혼",
+    "boss": false
+  },
+  {
+    "code": 2321406,
+    "name": "회랑의 집행자",
+    "boss": false
+  },
+  {
+    "code": 2321407,
+    "name": "잊혀진 수라 기사",
+    "boss": false
+  },
+  {
+    "code": 2321408,
+    "name": "잊혀진 수라 사제",
+    "boss": false
+  },
+  {
+    "code": 2321409,
+    "name": "잊혀진 수라 전사",
+    "boss": false
+  },
+  {
+    "code": 2321410,
+    "name": "환영 유령",
+    "boss": false
+  },
+  {
+    "code": 2321411,
+    "name": "분열된 환영 유령",
+    "boss": false
+  },
+  {
+    "code": 2321412,
+    "name": "회랑의 감시자",
+    "boss": false
+  },
+  {
+    "code": 2321413,
+    "name": "환영의 템페르 사제",
+    "boss": false
+  },
+  {
+    "code": 2321414,
+    "name": "환영 장막",
+    "boss": false
+  },
+  {
+    "code": 2321418,
+    "name": "혼령 폭탄",
+    "boss": false
+  },
+  {
     "code": 2321500,
     "name": "드라토나",
     "boss": false
@@ -10788,6 +11113,11 @@
   {
     "code": 2321518,
     "name": "어린 수생 드리톤",
+    "boss": false
+  },
+  {
+    "code": 2321519,
+    "name": "두르바티의 독액",
     "boss": false
   },
   {
@@ -10886,6 +11216,11 @@
     "boss": false
   },
   {
+    "code": 2322519,
+    "name": "두르바티의 독액",
+    "boss": false
+  },
+  {
     "code": 2323500,
     "name": "드라토나",
     "boss": false
@@ -10978,6 +11313,11 @@
   {
     "code": 2323518,
     "name": "어린 수생 드리톤",
+    "boss": false
+  },
+  {
+    "code": 2323519,
+    "name": "두르바티의 독액",
     "boss": false
   },
   {
@@ -11076,6 +11416,11 @@
     "boss": false
   },
   {
+    "code": 2324519,
+    "name": "두르바티의 독액",
+    "boss": false
+  },
+  {
     "code": 2325500,
     "name": "드라토나",
     "boss": false
@@ -11168,6 +11513,11 @@
   {
     "code": 2325518,
     "name": "어린 수생 드리톤",
+    "boss": false
+  },
+  {
+    "code": 2325519,
+    "name": "두르바티의 독액",
     "boss": false
   },
   {
@@ -11266,6 +11616,11 @@
     "boss": false
   },
   {
+    "code": 2326519,
+    "name": "두르바티의 독액",
+    "boss": false
+  },
+  {
     "code": 2327500,
     "name": "드라토나",
     "boss": false
@@ -11358,6 +11713,11 @@
   {
     "code": 2327518,
     "name": "어린 수생 드리톤",
+    "boss": false
+  },
+  {
+    "code": 2327519,
+    "name": "두르바티의 독액",
     "boss": false
   },
   {
@@ -11456,6 +11816,11 @@
     "boss": false
   },
   {
+    "code": 2328519,
+    "name": "두르바티의 독액",
+    "boss": false
+  },
+  {
     "code": 2329500,
     "name": "드라토나",
     "boss": false
@@ -11548,6 +11913,11 @@
   {
     "code": 2329518,
     "name": "어린 수생 드리톤",
+    "boss": false
+  },
+  {
+    "code": 2329519,
+    "name": "두르바티의 독액",
     "boss": false
   },
   {
@@ -12502,6 +12872,11 @@
   },
   {
     "code": 2340515,
+    "name": "팡",
+    "boss": false
+  },
+  {
+    "code": 2340516,
     "name": "팡",
     "boss": false
   },
@@ -16848,7 +17223,7 @@
   {
     "code": 2400032,
     "name": "훈련용 허수아비",
-    "boss": true,
+    "boss": false,
     "isDummy": true
   },
   {
@@ -17745,7 +18120,7 @@
     "code": 2400392,
     "name": "훈련용 허수아비",
     "boss": false,
-    "isDummy":true
+    "isDummy": true
   },
   {
     "code": 2400401,
@@ -20441,13 +20816,13 @@
     "code": 2500075,
     "name": "훈련용 허수아비",
     "boss": false,
-    "isDummy":true
+    "isDummy": true
   },
   {
     "code": 2500076,
     "name": "훈련용 허수아비",
     "boss": false,
-    "isDummy":true
+    "isDummy": true
   },
   {
     "code": 2500077,
@@ -21476,7 +21851,7 @@
   },
   {
     "code": 2600008,
-    "name": "어비스 수라 전사",
+    "name": "어비스 타락한 전사",
     "boss": false
   },
   {
@@ -21566,7 +21941,7 @@
   },
   {
     "code": 2600028,
-    "name": "우거진 유황 어그린트",
+    "name": "앙상한 유황 어그린트",
     "boss": false
   },
   {
@@ -21671,7 +22046,7 @@
   },
   {
     "code": 2600050,
-    "name": "어비스 순수한 정령",
+    "name": "어비스 제르피",
     "boss": false
   },
   {
@@ -21866,12 +22241,12 @@
   },
   {
     "code": 2600091,
-    "name": "테미논 하늘길 수호자",
+    "name": "서부 진영 하늘길 수호자",
     "boss": false
   },
   {
     "code": 2600092,
-    "name": "프리뭄 하늘길 수호자",
+    "name": "동부 진영 하늘길 수호자",
     "boss": false
   },
   {
@@ -21883,6 +22258,11 @@
     "code": 2600094,
     "name": "수호신장 나흐마",
     "boss": true
+  },
+  {
+    "code": 2600095,
+    "name": "영혼 깃든 갑주",
+    "boss": false
   },
   {
     "code": 2600101,
@@ -22138,6 +22518,11 @@
     "code": 2600156,
     "name": "분노한 수호신장 나흐마",
     "boss": true
+  },
+  {
+    "code": 2600157,
+    "name": "죽음을 거부한 기사",
+    "boss": false
   },
   {
     "code": 2600201,
@@ -22958,6 +23343,556 @@
     "code": 2600387,
     "name": "수호신장 프라사다",
     "boss": true
+  },
+  {
+    "code": 2600401,
+    "name": "어비스 스웜",
+    "boss": false
+  },
+  {
+    "code": 2600402,
+    "name": "어비스 뉴트",
+    "boss": false
+  },
+  {
+    "code": 2600403,
+    "name": "어비스 은빛칼날 로탄",
+    "boss": false
+  },
+  {
+    "code": 2600404,
+    "name": "어비스 수색대 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2600405,
+    "name": "어비스 드라칸 정찰병",
+    "boss": false
+  },
+  {
+    "code": 2600406,
+    "name": "어비스 크랄 궁수",
+    "boss": false
+  },
+  {
+    "code": 2600407,
+    "name": "어비스 드라칸 수색병",
+    "boss": false
+  },
+  {
+    "code": 2600408,
+    "name": "어비스 타락한 전사",
+    "boss": false
+  },
+  {
+    "code": 2600409,
+    "name": "어비스 불사의 경비병",
+    "boss": false
+  },
+  {
+    "code": 2600411,
+    "name": "어비스 스웜",
+    "boss": false
+  },
+  {
+    "code": 2600412,
+    "name": "어비스 뉴트",
+    "boss": false
+  },
+  {
+    "code": 2600413,
+    "name": "어비스 은빛칼날 로탄",
+    "boss": false
+  },
+  {
+    "code": 2600414,
+    "name": "어비스 수색대 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2600415,
+    "name": "어비스 드라칸 정찰병",
+    "boss": false
+  },
+  {
+    "code": 2600416,
+    "name": "어비스 크랄 궁수",
+    "boss": false
+  },
+  {
+    "code": 2600417,
+    "name": "어비스 드라칸 수색병",
+    "boss": false
+  },
+  {
+    "code": 2600418,
+    "name": "어비스 타락한 전사",
+    "boss": false
+  },
+  {
+    "code": 2600419,
+    "name": "어비스 불사의 경비병",
+    "boss": false
+  },
+  {
+    "code": 2600421,
+    "name": "어비스 스웜",
+    "boss": false
+  },
+  {
+    "code": 2600422,
+    "name": "어비스 스웜 군체",
+    "boss": false
+  },
+  {
+    "code": 2600423,
+    "name": "어비스 유황 슬라임",
+    "boss": false
+  },
+  {
+    "code": 2600424,
+    "name": "어비스 유황 스카마",
+    "boss": false
+  },
+  {
+    "code": 2600425,
+    "name": "어비스 유황 식인충",
+    "boss": false
+  },
+  {
+    "code": 2600426,
+    "name": "어비스 늪지 타르곤",
+    "boss": false
+  },
+  {
+    "code": 2600427,
+    "name": "유황 어그린트",
+    "boss": false
+  },
+  {
+    "code": 2600428,
+    "name": "앙상한 유황 어그린트",
+    "boss": false
+  },
+  {
+    "code": 2600429,
+    "name": "어비스 변이 뉴트",
+    "boss": false
+  },
+  {
+    "code": 2600430,
+    "name": "어비스 드라나 변이체",
+    "boss": false
+  },
+  {
+    "code": 2600431,
+    "name": "어비스 드라코뉴트 저격병",
+    "boss": false
+  },
+  {
+    "code": 2600432,
+    "name": "어비스 거대 변이체",
+    "boss": false
+  },
+  {
+    "code": 2600433,
+    "name": "어비스 드라코뉴트 분대장",
+    "boss": false
+  },
+  {
+    "code": 2600436,
+    "name": "어비스 나가란트 투사",
+    "boss": false
+  },
+  {
+    "code": 2600437,
+    "name": "어비스 나가 암흑 법사",
+    "boss": false
+  },
+  {
+    "code": 2600438,
+    "name": "심연의 고대 전사",
+    "boss": false
+  },
+  {
+    "code": 2600439,
+    "name": "심연의 고대 파괴자",
+    "boss": false
+  },
+  {
+    "code": 2600440,
+    "name": "심연의 변이된 고대 파괴자",
+    "boss": false
+  },
+  {
+    "code": 2600441,
+    "name": "어비스 나가란트 투사",
+    "boss": false
+  },
+  {
+    "code": 2600442,
+    "name": "어비스 나가 암흑 법사",
+    "boss": false
+  },
+  {
+    "code": 2600443,
+    "name": "어비스 드라칸 척살부대원",
+    "boss": false
+  },
+  {
+    "code": 2600444,
+    "name": "어비스 드라칸 척살부대장",
+    "boss": false
+  },
+  {
+    "code": 2600445,
+    "name": "어비스 드라나 변이 벌레",
+    "boss": false
+  },
+  {
+    "code": 2600446,
+    "name": "어비스 오드 변이 벌레",
+    "boss": false
+  },
+  {
+    "code": 2600447,
+    "name": "어비스 어린 레피스마",
+    "boss": false
+  },
+  {
+    "code": 2600448,
+    "name": "어비스 레피스마",
+    "boss": false
+  },
+  {
+    "code": 2600449,
+    "name": "어비스 고약한 네펜데스",
+    "boss": false
+  },
+  {
+    "code": 2600450,
+    "name": "어비스 제르피",
+    "boss": false
+  },
+  {
+    "code": 2600451,
+    "name": "어비스 푸른 칼크겔름",
+    "boss": false
+  },
+  {
+    "code": 2600452,
+    "name": "길들인 자이프",
+    "boss": false
+  },
+  {
+    "code": 2600453,
+    "name": "바르그 전사",
+    "boss": false
+  },
+  {
+    "code": 2600454,
+    "name": "분노한 숲의 수호자",
+    "boss": false
+  },
+  {
+    "code": 2600455,
+    "name": "바르그 광전사",
+    "boss": false
+  },
+  {
+    "code": 2600456,
+    "name": "어비스 진화한 영혼석",
+    "boss": false
+  },
+  {
+    "code": 2600457,
+    "name": "어비스 드라나 변이체",
+    "boss": false
+  },
+  {
+    "code": 2600458,
+    "name": "어비스 드라나 변이체",
+    "boss": false
+  },
+  {
+    "code": 2600459,
+    "name": "어비스 드라칸 정찰병",
+    "boss": false
+  },
+  {
+    "code": 2600460,
+    "name": "어비스 드라칸 수색병",
+    "boss": false
+  },
+  {
+    "code": 2600461,
+    "name": "어비스 영원의 코라돈",
+    "boss": false
+  },
+  {
+    "code": 2600462,
+    "name": "어비스 드라칸 투사",
+    "boss": false
+  },
+  {
+    "code": 2600463,
+    "name": "영혼 없는 데바 검성",
+    "boss": false
+  },
+  {
+    "code": 2600464,
+    "name": "심연의 고대 원혼",
+    "boss": false
+  },
+  {
+    "code": 2600465,
+    "name": "영혼 없는 데바 정예병",
+    "boss": false
+  },
+  {
+    "code": 2600466,
+    "name": "정령왕의 호위 전사",
+    "boss": false
+  },
+  {
+    "code": 2600468,
+    "name": "정령왕 아그로",
+    "boss": true
+  },
+  {
+    "code": 2600469,
+    "name": "어비스 타락한 정령",
+    "boss": false
+  },
+  {
+    "code": 2600470,
+    "name": "어비스 칼크겔름",
+    "boss": false
+  },
+  {
+    "code": 2600471,
+    "name": "어비스 어그린트",
+    "boss": false
+  },
+  {
+    "code": 2600472,
+    "name": "어비스 영원의 전투병",
+    "boss": false
+  },
+  {
+    "code": 2600473,
+    "name": "심연의 고대 원혼",
+    "boss": false
+  },
+  {
+    "code": 2600474,
+    "name": "파편 수호자 방패병",
+    "boss": false
+  },
+  {
+    "code": 2600475,
+    "name": "파편 수호자 정예 검병",
+    "boss": false
+  },
+  {
+    "code": 2600476,
+    "name": "심연의 고대 원혼",
+    "boss": false
+  },
+  {
+    "code": 2600477,
+    "name": "파편 수호자 정예 방패병",
+    "boss": false
+  },
+  {
+    "code": 2600478,
+    "name": "분노한 수호신장 나흐마",
+    "boss": true
+  },
+  {
+    "code": 2600479,
+    "name": "분노한 수호신장 나흐마",
+    "boss": true
+  },
+  {
+    "code": 2600480,
+    "name": "분노한 수호신장 나흐마",
+    "boss": true
+  },
+  {
+    "code": 2600481,
+    "name": "어비스 은빛칼날 로탄",
+    "boss": false
+  },
+  {
+    "code": 2600482,
+    "name": "어비스 수색대 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2600483,
+    "name": "어비스 수색대 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2600484,
+    "name": "어비스 드라칸 정찰병",
+    "boss": false
+  },
+  {
+    "code": 2600485,
+    "name": "어비스 크랄 궁수",
+    "boss": false
+  },
+  {
+    "code": 2600486,
+    "name": "어비스 타락한 전사",
+    "boss": false
+  },
+  {
+    "code": 2600487,
+    "name": "어비스 타락한 전사",
+    "boss": false
+  },
+  {
+    "code": 2600488,
+    "name": "어비스 불사의 경비병",
+    "boss": false
+  },
+  {
+    "code": 2600489,
+    "name": "어비스 불사의 경비병",
+    "boss": false
+  },
+  {
+    "code": 2600491,
+    "name": "어비스 은빛칼날 로탄",
+    "boss": false
+  },
+  {
+    "code": 2600492,
+    "name": "어비스 수색대 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2600493,
+    "name": "어비스 수색대 칼니프",
+    "boss": false
+  },
+  {
+    "code": 2600494,
+    "name": "어비스 드라칸 정찰병",
+    "boss": false
+  },
+  {
+    "code": 2600495,
+    "name": "어비스 크랄 궁수",
+    "boss": false
+  },
+  {
+    "code": 2600496,
+    "name": "어비스 타락한 전사",
+    "boss": false
+  },
+  {
+    "code": 2600497,
+    "name": "어비스 타락한 전사",
+    "boss": false
+  },
+  {
+    "code": 2600498,
+    "name": "어비스 불사의 경비병",
+    "boss": false
+  },
+  {
+    "code": 2600499,
+    "name": "어비스 불사의 경비병",
+    "boss": false
+  },
+  {
+    "code": 2600501,
+    "name": "어비스 스웜 군체",
+    "boss": false
+  },
+  {
+    "code": 2600502,
+    "name": "어비스 늪지 타르곤",
+    "boss": false
+  },
+  {
+    "code": 2600503,
+    "name": "앙상한 유황 어그린트",
+    "boss": false
+  },
+  {
+    "code": 2600504,
+    "name": "어비스 변이 뉴트",
+    "boss": false
+  },
+  {
+    "code": 2600505,
+    "name": "어비스 드라나 변이체",
+    "boss": false
+  },
+  {
+    "code": 2600506,
+    "name": "어비스 드라코뉴트 저격병",
+    "boss": false
+  },
+  {
+    "code": 2600507,
+    "name": "심연의 고대 파괴자",
+    "boss": false
+  },
+  {
+    "code": 2600508,
+    "name": "심연의 고대 파괴자",
+    "boss": false
+  },
+  {
+    "code": 2600511,
+    "name": "어비스 고약한 네펜데스",
+    "boss": false
+  },
+  {
+    "code": 2600512,
+    "name": "어비스 제르피",
+    "boss": false
+  },
+  {
+    "code": 2600513,
+    "name": "어비스 푸른 칼크겔름",
+    "boss": false
+  },
+  {
+    "code": 2600514,
+    "name": "바르그 전사",
+    "boss": false
+  },
+  {
+    "code": 2600515,
+    "name": "바르그 광전사",
+    "boss": false
+  },
+  {
+    "code": 2600516,
+    "name": "차원핵",
+    "boss": true
+  },
+  {
+    "code": 2600517,
+    "name": "차원핵",
+    "boss": true
+  },
+  {
+    "code": 2600518,
+    "name": "차원핵",
+    "boss": true
+  },
+  {
+    "code": 2600519,
+    "name": "고대 원혼 기사",
+    "boss": false
   },
   {
     "code": 2680000,
@@ -28855,6 +29790,256 @@
     "boss": false
   },
   {
+    "code": 2702372,
+    "name": "깃털포화 두두리",
+    "boss": true
+  },
+  {
+    "code": 2702373,
+    "name": "눈 뜬 맹조 도도리",
+    "boss": true
+  },
+  {
+    "code": 2702374,
+    "name": "절망의 경비대장",
+    "boss": false
+  },
+  {
+    "code": 2702375,
+    "name": "절망의 상급 드라칸",
+    "boss": false
+  },
+  {
+    "code": 2702376,
+    "name": "절망의 드라칸 지휘관",
+    "boss": false
+  },
+  {
+    "code": 2702377,
+    "name": "절망의 용족 전사",
+    "boss": false
+  },
+  {
+    "code": 2702378,
+    "name": "절망의 용족 궁병",
+    "boss": false
+  },
+  {
+    "code": 2702379,
+    "name": "절망의 심연 스웜",
+    "boss": false
+  },
+  {
+    "code": 2702380,
+    "name": "절망의 드라칸 무장병",
+    "boss": false
+  },
+  {
+    "code": 2702381,
+    "name": "절망의 드라칸 마력사",
+    "boss": false
+  },
+  {
+    "code": 2702382,
+    "name": "절망의 정예 투사",
+    "boss": false
+  },
+  {
+    "code": 2702383,
+    "name": "절망의 정예 감시자",
+    "boss": false
+  },
+  {
+    "code": 2702384,
+    "name": "깃털포화 두두리",
+    "boss": true
+  },
+  {
+    "code": 2702385,
+    "name": "눈 뜬 맹조 도도리",
+    "boss": true
+  },
+  {
+    "code": 2702386,
+    "name": "파멸의 경비대장",
+    "boss": false
+  },
+  {
+    "code": 2702387,
+    "name": "파멸의 상급 드라칸",
+    "boss": false
+  },
+  {
+    "code": 2702388,
+    "name": "파멸의 드라칸 지휘관",
+    "boss": false
+  },
+  {
+    "code": 2702389,
+    "name": "파멸의 용족 전사",
+    "boss": false
+  },
+  {
+    "code": 2702390,
+    "name": "파멸의 용족 궁병",
+    "boss": false
+  },
+  {
+    "code": 2702391,
+    "name": "파멸의 심연 스웜",
+    "boss": false
+  },
+  {
+    "code": 2702392,
+    "name": "파멸의 드라칸 무장병",
+    "boss": false
+  },
+  {
+    "code": 2702393,
+    "name": "파멸의 드라칸 마력사",
+    "boss": false
+  },
+  {
+    "code": 2702394,
+    "name": "파멸의 정예 투사",
+    "boss": false
+  },
+  {
+    "code": 2702395,
+    "name": "파멸의 정예 감시자",
+    "boss": false
+  },
+  {
+    "code": 2702396,
+    "name": "분열체 아포노스",
+    "boss": true
+  },
+  {
+    "code": 2702397,
+    "name": "절망의 수호병",
+    "boss": false
+  },
+  {
+    "code": 2702398,
+    "name": "절망의 감시병",
+    "boss": false
+  },
+  {
+    "code": 2702399,
+    "name": "절망의 데바 순찰자",
+    "boss": false
+  },
+  {
+    "code": 2702400,
+    "name": "절망의 정예 방패병",
+    "boss": false
+  },
+  {
+    "code": 2702401,
+    "name": "절망의 정예 돌격병",
+    "boss": false
+  },
+  {
+    "code": 2702402,
+    "name": "절망의 흑마법사",
+    "boss": false
+  },
+  {
+    "code": 2702403,
+    "name": "고문서 수호 장치",
+    "boss": false
+  },
+  {
+    "code": 2702404,
+    "name": "고문서 수호 장치",
+    "boss": false
+  },
+  {
+    "code": 2702405,
+    "name": "절망의 감시병",
+    "boss": false
+  },
+  {
+    "code": 2702406,
+    "name": "절망의 데바 순찰자",
+    "boss": false
+  },
+  {
+    "code": 2702407,
+    "name": "절망의 정예 돌격병",
+    "boss": false
+  },
+  {
+    "code": 2702408,
+    "name": "절망의 흑마법사",
+    "boss": false
+  },
+  {
+    "code": 2702409,
+    "name": "분열체 아포노스",
+    "boss": true
+  },
+  {
+    "code": 2702410,
+    "name": "파멸의 수호병",
+    "boss": false
+  },
+  {
+    "code": 2702411,
+    "name": "파멸의 감시병",
+    "boss": false
+  },
+  {
+    "code": 2702412,
+    "name": "파멸의 데바 순찰자",
+    "boss": false
+  },
+  {
+    "code": 2702413,
+    "name": "파멸의 정예 방패병",
+    "boss": false
+  },
+  {
+    "code": 2702414,
+    "name": "파멸의 정예 돌격병",
+    "boss": false
+  },
+  {
+    "code": 2702415,
+    "name": "파멸의 흑마법사",
+    "boss": false
+  },
+  {
+    "code": 2702416,
+    "name": "고문서 수호 장치",
+    "boss": false
+  },
+  {
+    "code": 2702417,
+    "name": "고문서 수호 장치",
+    "boss": false
+  },
+  {
+    "code": 2702418,
+    "name": "파멸의 감시병",
+    "boss": false
+  },
+  {
+    "code": 2702419,
+    "name": "파멸의 데바 순찰자",
+    "boss": false
+  },
+  {
+    "code": 2702420,
+    "name": "파멸의 정예 돌격병",
+    "boss": false
+  },
+  {
+    "code": 2702421,
+    "name": "파멸의 흑마법사",
+    "boss": false
+  },
+  {
     "code": 2920015,
     "name": "결박의 덫",
     "boss": false
@@ -28866,11 +30051,6 @@
   },
   {
     "code": 2920017,
-    "name": "결박의 덫",
-    "boss": false
-  },
-  {
-    "code": 2920018,
     "name": "결박의 덫",
     "boss": false
   },
@@ -29125,6 +30305,11 @@
     "boss": false
   },
   {
+    "code": 2920663,
+    "name": "바크론의 가시속박",
+    "boss": false
+  },
+  {
     "code": 2920710,
     "name": "카이시넬의 심복",
     "boss": false
@@ -29137,6 +30322,11 @@
   {
     "code": 2920906,
     "name": "바위",
+    "boss": false
+  },
+  {
+    "code": 2920908,
+    "name": "유압 프레스",
     "boss": false
   },
   {
@@ -29153,6 +30343,16 @@
     "code": 2920939,
     "name": "드라토나 덩치",
     "boss": false
+  },
+  {
+    "code": 2920972,
+    "name": "시한 폭탄",
+    "boss": false
+  },
+  {
+    "code": 2920973,
+    "name": "뉴트",
+    "boss": true
   },
   {
     "code": 2921008,
@@ -29177,6 +30377,36 @@
   {
     "code": 2921044,
     "name": "배신",
+    "boss": false
+  },
+  {
+    "code": 2921069,
+    "name": "중합체 바고트",
+    "boss": false
+  },
+  {
+    "code": 2921072,
+    "name": "시한 폭탄",
+    "boss": false
+  },
+  {
+    "code": 2921097,
+    "name": "중합체 바고트",
+    "boss": false
+  },
+  {
+    "code": 2921098,
+    "name": "중합체 바고트",
+    "boss": false
+  },
+  {
+    "code": 2921167,
+    "name": "환영의 템페르 사제",
+    "boss": false
+  },
+  {
+    "code": 2921168,
+    "name": "환영의 템페르 사제",
     "boss": false
   },
   {
@@ -29381,52 +30611,52 @@
   },
   {
     "code": 2980050,
-    "name": "아울트로스",
+    "name": "뿌리의 괴조 아울트로스",
     "boss": true
   },
   {
     "code": 2980051,
-    "name": "아울트로스",
+    "name": "뿌리의 괴조 아울트로스",
     "boss": true
   },
   {
     "code": 2980052,
-    "name": "아울트로스",
+    "name": "뿌리의 괴조 아울트로스",
     "boss": true
   },
   {
     "code": 2980053,
-    "name": "아울트로스",
+    "name": "뿌리의 괴조 아울트로스",
     "boss": true
   },
   {
     "code": 2980054,
-    "name": "아울트로스",
+    "name": "뿌리의 괴조 아울트로스",
     "boss": true
   },
   {
     "code": 2980055,
-    "name": "아울트로스",
+    "name": "뿌리의 괴조 아울트로스",
     "boss": true
   },
   {
     "code": 2980056,
-    "name": "아울트로스",
+    "name": "뿌리의 괴조 아울트로스",
     "boss": true
   },
   {
     "code": 2980057,
-    "name": "아울트로스",
+    "name": "뿌리의 괴조 아울트로스",
     "boss": true
   },
   {
     "code": 2980058,
-    "name": "아울트로스",
+    "name": "뿌리의 괴조 아울트로스",
     "boss": true
   },
   {
     "code": 2980059,
-    "name": "아울트로스",
+    "name": "뿌리의 괴조 아울트로스",
     "boss": true
   },
   {
@@ -30131,52 +31361,52 @@
   },
   {
     "code": 2980200,
-    "name": "폭주한 폭군 타신",
+    "name": "폭군 타신",
     "boss": true
   },
   {
     "code": 2980201,
-    "name": "폭주한 폭군 타신",
+    "name": "폭군 타신",
     "boss": true
   },
   {
     "code": 2980202,
-    "name": "폭주한 폭군 타신",
+    "name": "폭군 타신",
     "boss": true
   },
   {
     "code": 2980203,
-    "name": "폭주한 폭군 타신",
+    "name": "폭군 타신",
     "boss": true
   },
   {
     "code": 2980204,
-    "name": "폭주한 폭군 타신",
+    "name": "폭군 타신",
     "boss": true
   },
   {
     "code": 2980205,
-    "name": "폭주한 폭군 타신",
+    "name": "폭군 타신",
     "boss": true
   },
   {
     "code": 2980206,
-    "name": "폭주한 폭군 타신",
+    "name": "폭군 타신",
     "boss": true
   },
   {
     "code": 2980207,
-    "name": "폭주한 폭군 타신",
+    "name": "폭군 타신",
     "boss": true
   },
   {
     "code": 2980208,
-    "name": "폭주한 폭군 타신",
+    "name": "폭군 타신",
     "boss": true
   },
   {
     "code": 2980209,
-    "name": "폭주한 폭군 타신",
+    "name": "폭군 타신",
     "boss": true
   },
   {
@@ -30425,63 +31655,8 @@
     "boss": true
   },
   {
-    "code": 2301205,
-    "name": "오염된 슬라임",
-    "boss": false
-  },
-  {
-    "code": 2301215,
-    "name": "변질된 독주머니",
-    "boss": false
-  },
-  {
-    "code": 2301207,
-    "name": "검은 피 블라트",
-    "boss": true
-  },
-  {
-    "code": 2301208,
-    "name": "중합체 바고트",
-    "boss": true
-  },
-  {
-    "code": 2301209,
-    "name": "포식하는 뉴트라",
-    "boss": true
-  },
-  {
     "code": 2980259,
     "name": "망령 지젤",
-    "boss": true
-  },
-  {
-    "code": 2311402,
-    "name": "나사라크",
-    "boss": true
-  },
-  {
-    "code": 2311401,
-    "name": "글래스베인",
-    "boss": true
-  },
-  {
-    "code": 2311403,
-    "name": "나트하라",
-    "boss": true
-  },
-  {
-    "code": 2321402,
-    "name": "나사라크",
-    "boss": true
-  },
-  {
-    "code": 2321401,
-    "name": "글래스베인",
-    "boss": true
-  },
-  {
-    "code": 2321403,
-    "name": "나트하라",
     "boss": true
   }
 ]
