@@ -1,4 +1,4 @@
-import type { Player, Skill, Details } from "@/types";
+import type { Player, Skill, Details, BuffEntry } from "@/types";
 // import { useDebugStore } from "../stores/debugStore";
 
 export const useDetails = () => {
@@ -125,10 +125,19 @@ export const useDetails = () => {
         );
       }
     }
-    const buffOperatingRate = typeof buffRaw === "string" ? JSON.parse(buffRaw) : (buffRaw ?? null);
-    const debuffOperatingRate =
-      typeof debuffRaw === "string" ? JSON.parse(debuffRaw) : (debuffRaw ?? []);
+    const safeParseArray = (raw: unknown): BuffEntry[] => {
+      if (!raw) return [];
+      try {
+        const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+        if (!parsed || typeof parsed !== "object") return [];
+        return Array.isArray(parsed) ? parsed : Object.values(parsed);
+      } catch {
+        return [];
+      }
+    };
 
+    const buffOperatingRate = safeParseArray(buffRaw);
+    const debuffOperatingRate = safeParseArray(debuffRaw);
     return {
       totalDmg,
       contributionPct: row.damageContribution,
