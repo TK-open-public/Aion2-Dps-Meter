@@ -384,15 +384,14 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
     }
 
     private fun applyOverlayWindowStyle(title: String) {
-        val gwlExStyle = -20
-        val wsExToolWindow = 0x00000080
-        val wsExAppWindow = 0x00040000
-        val wsExNoActivate = 0x08000000
+        val GWL_EXSTYLE = -20
+        val WS_EX_TOOLWINDOW = 0x00000080
+        val WS_EX_APPWINDOW = 0x00040000
         val user32 = User32.INSTANCE
         val hwnd = user32.FindWindow(null, title) ?: return
-        val exStyle = user32.GetWindowLong(hwnd, gwlExStyle)
-        user32.SetWindowLong(hwnd, gwlExStyle,
-            (exStyle or wsExToolWindow or wsExNoActivate) and wsExAppWindow.inv()
+        val exStyle = user32.GetWindowLong(hwnd, GWL_EXSTYLE)
+        user32.SetWindowLong(hwnd, GWL_EXSTYLE,
+            (exStyle or WS_EX_TOOLWINDOW) and WS_EX_APPWINDOW.inv()
         )
     }
 
