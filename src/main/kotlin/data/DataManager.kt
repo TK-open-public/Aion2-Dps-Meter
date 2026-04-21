@@ -40,11 +40,16 @@ object DataManager {
     private val useBuffRepository = UseBuffRepository()
     private val buffRepository = BuffRepository()
 
+    private val buffBlacklist = mutableSetOf<Int>()
+
+    fun isBuffBlacklisted(code: Int): Boolean = code in buffBlacklist
+
     fun load() {
         loadMobJson()
         loadSkillJson()
         loadBuffJson()
         loadCustomBuffJson()
+        loadBuffBlacklistJson()
     }
 
     private fun loadMobJson() {
@@ -85,6 +90,18 @@ object DataManager {
                 }
                 buff?.let { saveBuff(it) }
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun loadBuffBlacklistJson() {
+        try {
+            val json = object {}.javaClass.getResourceAsStream("/json/buff_blacklist.json")
+                ?.bufferedReader()?.readText() ?: return
+            Json.decodeFromString<JsonObject>(json)["blacklist"]
+                ?.jsonArray
+                ?.forEach { buffBlacklist.add(it.jsonPrimitive.int) }
         } catch (e: Exception) {
             e.printStackTrace()
         }

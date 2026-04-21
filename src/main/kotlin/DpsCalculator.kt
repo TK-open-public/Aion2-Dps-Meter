@@ -184,6 +184,7 @@ class DpsCalculator(private val streamResetCallback: (() -> Unit)? = null) {
         if (totalDuration <= 0) return emptyList()
 
         return DataManager.battleBuff(uid, start, end)
+            .filter { !DataManager.isBuffBlacklisted(it.skillCode) }
             .groupBy { it.skillCode to it.actorId }
             .map { (key, buffs) ->
                 val (skillCode, actorId) = key
