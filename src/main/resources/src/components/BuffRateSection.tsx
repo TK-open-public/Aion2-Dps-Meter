@@ -8,6 +8,8 @@ interface Props {
   columns?: number;
   playerJob?: string;
   playerId: number;
+  groupByActor?: boolean;
+  playerNameMap?: Map<number, string>;
 }
 
 interface SectionGridProps {
@@ -74,7 +76,14 @@ const SectionGrid = ({ label, entries, gridClass }: SectionGridProps) => {
     </div>
   );
 };
-export const BuffRateSection = ({ buffOperatingRate, playerId, columns = 1, playerJob }: Props) => {
+export const BuffRateSection = ({
+  buffOperatingRate,
+  playerId,
+  columns = 1,
+  playerJob,
+  groupByActor,
+  playerNameMap,
+}: Props) => {
   const entries: BuffEntry[] = buffOperatingRate ?? [];
   if (entries.length === 0) return null;
   const myPrefix = playerJob ? (JOB_PREFIX_MAP[playerJob] ?? null) : null;
@@ -88,6 +97,33 @@ export const BuffRateSection = ({ buffOperatingRate, playerId, columns = 1, play
         : columns >= 2
           ? "grid-cols-2"
           : "grid-cols-1";
+  if (groupByActor) {
+    const actorMap = new Map<number, { name: string; entries: BuffEntry[] }>();
+    for (const entry of entries) {
+      if (!actorMap.has(entry.actorId)) {
+        actorMap.set(entry.actorId, {
+          name: playerNameMap?.get(entry.actorId) ?? entry.actorName ?? `플레이어 ${entry.actorId}`,
+          entries: [],
+        });
+      }
+      actorMap.get(entry.actorId)!.entries.push(entry);
+    }
+
+    return (
+      <div className="rounded-lg overflow-hidden">
+        <div className="px-4 pt-2 space-y-2">
+          {[...actorMap.values()].map((actor) => (
+            <SectionGrid
+              key={actor.name}
+              label={actor.name}
+              entries={actor.entries}
+              gridClass={gridClass}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-lg overflow-hidden">

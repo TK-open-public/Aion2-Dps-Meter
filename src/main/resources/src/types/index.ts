@@ -58,6 +58,7 @@ export interface Details {
   combatTime: string;
   buffOperatingRate: BuffEntry[];
   skills: Skill[];
+  debuffOperatingRate: BuffEntry[];
 }
 
 export interface Version {
@@ -95,4 +96,5 @@ export type BuffEntry = {
   effect: string;
   operatingRate: number;
   actorId: number;
+  actorName?: string;
 };

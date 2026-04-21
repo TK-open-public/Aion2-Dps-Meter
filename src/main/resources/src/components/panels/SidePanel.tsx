@@ -22,11 +22,13 @@ interface SidePanelProps {
   onRetryDownload: () => void;
   currentVersion?: string;
   onCheckUpdate?: () => void;
+  players: Player[];
 }
 
 export const SidePanel = ({
   type,
   player,
+  players,
   onClose,
   combatTime,
   updateInfo,
@@ -96,6 +98,7 @@ export const SidePanel = ({
         <DetailsPanel
           key={currentPlayer?.id}
           player={currentPlayer}
+          players={players}
           onClose={onClose}
           combatTime={combatTime}
           historyIdx={historyIdx}

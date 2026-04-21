@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { Player, Details } from "@/types";
 import { useDetails } from "@/hooks/useDetails";
 import { X } from "lucide-react";
@@ -20,11 +20,20 @@ interface Props {
   player: Player | null;
   onClose: () => void;
   onReady?: () => void;
+  players: Player[];
+
   combatTime: string;
   historyIdx?: number;
 }
 
-export const DetailsPanel = ({ player, onClose, onReady, combatTime, historyIdx }: Props) => {
+export const DetailsPanel = ({
+  player,
+  onClose,
+  players,
+  onReady,
+  combatTime,
+  historyIdx,
+}: Props) => {
   const { getDetails } = useDetails();
   const [details, setDetails] = useState<Details | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -33,6 +42,8 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime, historyIdx 
   const buffColumns = detailWidth >= 1200 ? 4 : detailWidth >= 900 ? 3 : detailWidth >= 700 ? 2 : 1;
   const isCompact = detailWidth < 700;
   const [openPanel, setOpenPanel] = useState<string>("skills");
+
+  const playerNameMap = useMemo(() => new Map(players.map((p) => [p.id, p.name])), [players]);
 
   useEffect(() => {
     if (!player) return;
@@ -56,7 +67,9 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime, historyIdx 
   const FIXED_AREA_HEIGHT = isCompact ? 220 : 264;
 
   if (!player || !details) return null;
-  const buffCount = Object.keys(details.buffOperatingRate ?? {}).length;
+
+  const buffCount = (details.buffOperatingRate ?? []).length;
+  const debuffCount = (details.debuffOperatingRate ?? []).length;
 
   return (
     <div
@@ -99,9 +112,9 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime, historyIdx 
           className="gap-2"
           collapsible
           value={openPanel}
-          onValueChange={(val) =>
-            setOpenPanel(val === "" ? (openPanel === "skills" ? "buff" : "skills") : val)
-          }>
+          onValueChange={(val) => {
+            if (val !== "") setOpenPanel(val);
+          }}>
           <AccordionItem
             value="buff"
             className="border-none ">
@@ -121,6 +134,29 @@ export const DetailsPanel = ({ player, onClose, onReady, combatTime, historyIdx 
                 columns={buffColumns}
                 playerJob={player.job}
                 playerId={player.id}
+              />
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem
+            value="debuff"
+            className="border-none">
+            <AccordionTrigger
+              className="px-4 py-2.5 bg-black/20 cursor-pointer text-sm"
+              disabled={debuffCount === 0}>
+              <div className="flex w-full items-center justify-between pr-2">
+                <span>디버프 가동률</span>
+                <span className="text-xs opacity-60">{debuffCount}개 </span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent key={buffColumns}>
+              <BuffRateSection
+                buffOperatingRate={details.debuffOperatingRate}
+                columns={buffColumns}
+                playerJob={player.job}
+                playerId={player.id}
+                groupByActor={true}
+                playerNameMap={playerNameMap}
               />
             </AccordionContent>
           </AccordionItem>
