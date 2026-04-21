@@ -140,6 +140,19 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
             return Json.encodeToString(dpsCalculator.getBuffOperatingRate(uid,report.battleStart,report.battleEnd))
         }
 
+        fun getLiveBossBuffOperatingRate(): String {
+            val report = dpsCalculator.getLiveReport()
+            val end = if (report.battleEnd == 0L) System.currentTimeMillis() else report.battleEnd
+            val targetId = report.target?.id ?: return ""
+            return Json.encodeToString(dpsCalculator.getBuffOperatingRate(targetId,report.battleStart,end))
+        }
+
+        fun getBossBuffOperatingRate(idx: Int): String {
+            val report = DataManager.battleLog(idx)?.report ?: return ""
+            val targetId = report.target?.id ?: return ""
+            return Json.encodeToString(dpsCalculator.getBuffOperatingRate(targetId,report.battleStart,report.battleEnd))
+        }
+
         fun upload(idx: Int): Boolean {
             val log = DataManager.battleLog(idx) ?: return false
             return UploadManager.upload(log)
@@ -371,15 +384,14 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
     }
 
     private fun applyOverlayWindowStyle(title: String) {
-        val gwlExStyle = -20
-        val wsExToolWindow = 0x00000080
-        val wsExAppWindow = 0x00040000
-        val wsExNoActivate = 0x08000000
+        val GWL_EXSTYLE = -20
+        val WS_EX_TOOLWINDOW = 0x00000080
+        val WS_EX_APPWINDOW = 0x00040000
         val user32 = User32.INSTANCE
         val hwnd = user32.FindWindow(null, title) ?: return
-        val exStyle = user32.GetWindowLong(hwnd, gwlExStyle)
-        user32.SetWindowLong(hwnd, gwlExStyle,
-            (exStyle or wsExToolWindow or wsExNoActivate) and wsExAppWindow.inv()
+        val exStyle = user32.GetWindowLong(hwnd, GWL_EXSTYLE)
+        user32.SetWindowLong(hwnd, GWL_EXSTYLE,
+            (exStyle or WS_EX_TOOLWINDOW) and WS_EX_APPWINDOW.inv()
         )
     }
 
