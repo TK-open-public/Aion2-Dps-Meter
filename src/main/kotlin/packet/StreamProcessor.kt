@@ -696,17 +696,19 @@ class StreamProcessor() {
 
         val battleInfo = readVarInt(packet, offset)
         if (battleInfo.length <= 0) return false
+        offset += battleInfo.length
+
+        offset += readVarInt(packet,offset).length
+        val toggleInfo = readVarInt(packet,offset)
 
 
         val mobCode = DataManager.mobId(battleInfo.value) ?: return true
         val mob = DataManager.mob(mobCode) ?: return true
-        if (mob.boss) {
-//            println("${battleInfo.value} 전투시작(종료), 몬스터명 ${
-//                DataManager.mobId(battleInfo.value)
-//                    ?.let { DataManager.mob(it)?.name }
-//            }")
-            if (mob.isDummy) return true
-            DataManager.toggleBattle(battleInfo.value)
+        if (!mob.boss || mob.isDummy) return true
+
+        when (toggleInfo.value) {
+            1 -> DataManager.startBattle(battleInfo.value)
+            0 -> DataManager.endBattle(battleInfo.value)
         }
         return true
     }

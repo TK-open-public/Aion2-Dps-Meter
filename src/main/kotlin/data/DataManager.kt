@@ -4,7 +4,6 @@ import com.tbread.data.repository.*
 import com.tbread.entity.*
 import kotlinx.serialization.json.*
 import org.slf4j.LoggerFactory
-import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.atomic.AtomicLong
@@ -145,7 +144,6 @@ object DataManager {
         userRepository.flush()
         rawPacketBuffer.clear()
         lastDummyHitTime = 0
-        recentlyEndedMobs.clear()
     }
 
     /*
@@ -220,23 +218,18 @@ object DataManager {
         }
     }
 
-    private val recentlyEndedMobs = ConcurrentHashMap<Int, Long>()
-    private val BATTLE_END_COOLDOWN_MS = 1000L
-
-    fun toggleBattle(mobId: Int) {
-        val pastTarget = currentTarget()
-        if (pastTarget == mobId) {
-            saveCurrentBattleEnd()
-            saveCurrentTarget(-1)
-            recentlyEndedMobs[mobId] = System.currentTimeMillis()
-            return
-        }
-        val recentEnd = recentlyEndedMobs[mobId]
-        if (recentEnd != null && System.currentTimeMillis() - recentEnd < BATTLE_END_COOLDOWN_MS) {
-            return
+    fun startBattle(mobId: Int) {
+        if (currentTarget() == mobId) {
+            flushPacket()
         }
         saveCurrentBattleStart()
         saveCurrentTarget(mobId)
+    }
+
+    fun endBattle(mobId: Int) {
+        if (currentTarget() != mobId) return
+        saveCurrentBattleEnd()
+        saveCurrentTarget(-1)
     }
 
     fun currentBattleStart(): Long {
