@@ -125,11 +125,13 @@ class DpsCalculator(private val streamResetCallback: (() -> Unit)? = null) {
 
         val totalDamage = cachedInfo.values.sumOf { it.amount }
         val duration = report.battleEnd - report.battleStart
+        val mobMaxHp = DataManager.mobMaxHp(currentTarget)?.toDouble() ?: 0.0
         cachedInfo.forEach { (uid, cached) ->
             report.information[uid] = DpsInformation(
                 amount = cached.amount,
                 dps = if (duration > 0) cached.amount / duration * 1000 else 0.0,
-                contribution = if (totalDamage > 0) cached.amount / totalDamage * 100 else 0.0
+                contribution = if (totalDamage > 0) cached.amount / totalDamage * 100 else 0.0,
+                entireContribution = if (mobMaxHp > 0) cached.amount / mobMaxHp * 100 else 0.0
             )
         }
 
