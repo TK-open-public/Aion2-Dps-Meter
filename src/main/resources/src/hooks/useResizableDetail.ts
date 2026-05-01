@@ -1,64 +1,20 @@
-import { useEffect, useRef } from "react";
 import { useSettingsStore } from "@/stores/useSettingsStore";
-
-const throttle = <T extends (...args: any[]) => void>(fn: T, ms: number): T => {
-  let last = 0;
-  return ((...args) => {
-    const now = Date.now();
-    if (now - last >= ms) { last = now; fn(...args); }
-  }) as T;
-};
-
-type Direction = "both";
+import { useResizableBase } from "./useResizableBase";
 
 export const useResizableDetail = () => {
-  const { detailHeight, setDetailHeight, detailWidth, setDetailWidth } = useSettingsStore();
-  const isResizing = useRef<Direction | null>(null);
-  const startY = useRef(0);
-  const startX = useRef(0);
-  const startHeight = useRef(0);
-  const startWidth = useRef(0);
+  const detailHeight = useSettingsStore((s) => s.detailHeight);
+  const detailWidth = useSettingsStore((s) => s.detailWidth);
 
-  const onMouseDownCorner = (e: React.MouseEvent) => {
-    e.preventDefault();
-    isResizing.current = "both";
-    startY.current = e.clientY;
-    startX.current = e.clientX;
-    startHeight.current = detailHeight;
-    startWidth.current = detailWidth;
-  };
-
-  useEffect(() => {
-    const throttledSet = throttle((h: number, w: number) => {
-      useSettingsStore.setState({ detailHeight: h, detailWidth: w });
-    }, 16);
-
-    const onMouseMove = (e: MouseEvent) => {
-      if (!isResizing.current) return;
-      if (isResizing.current === "both") {
-        const dy = e.clientY - startY.current;
-        const dx = e.clientX - startX.current;
-        const newH = Math.max(300, Math.min(1070, startHeight.current + dy));
-        const newW = Math.max(480, Math.min(1600, startWidth.current + dx));
-        throttledSet(newH, newW);
-      }
-    };
-
-    const onMouseUp = () => {
-      if (!isResizing.current) return;
-      const { detailHeight, detailWidth } = useSettingsStore.getState();
-      setDetailHeight(detailHeight);
-      setDetailWidth(detailWidth);
-      isResizing.current = null;
-    };
-
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseup", onMouseUp);
-    return () => {
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseup", onMouseUp);
-    };
-  }, []);
+  const { onMouseDown: onMouseDownCorner } = useResizableBase({
+    axes: [
+      { key: "detailHeight", dir: "y", min: 300, max: 1070 },
+      { key: "detailWidth", dir: "x", min: 480, max: 1600 },
+    ],
+    onSave: (s) => {
+      (window as any).javaBridge?.saveProps?.("detailHeight", String(s.detailHeight));
+      (window as any).javaBridge?.saveProps?.("detailWidth", String(s.detailWidth));
+    },
+  });
 
   return { detailHeight, detailWidth, onMouseDownCorner };
 };

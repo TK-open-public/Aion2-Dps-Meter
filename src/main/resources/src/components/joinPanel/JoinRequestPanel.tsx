@@ -10,6 +10,7 @@ import { JoinRequestSkillSettings } from "./JoinRequestSkillSettings";
 import { SkillBadges } from "./SkillBadges";
 import { cn } from "@/lib/utils";
 import { getClassColor } from "@/utils/classColor";
+import { useResizableJoinPanel } from "@/hooks/useResizableJoinPanel";
 
 const TOTAL_SEC = 20;
 
@@ -51,22 +52,18 @@ const TimerBar = ({ arrivedAt }: { arrivedAt: number }) => {
   );
 };
 
-export const JoinRequestPanel = ({
-  maxWidth,
-  isMinimal,
-}: {
-  maxWidth: number;
-  isMinimal: boolean;
-}) => {
+export const JoinRequestPanel = ({ isMinimal }: { isMinimal: boolean }) => {
   const { requests, isOpen, setOpen } = useJoinRequestStore();
   const visibleSkillCodes = useSettingsStore((s) => s.visibleSkillCodes);
   const [skillSettingsOpen, setSkillSettingsOpen] = useState(false);
   const [rendered, setRendered] = useState(false);
   const [visible, setVisible] = useState(false);
+  const { joinPanelHeight, joinPanelWidth, onMouseDownCorner } = useResizableJoinPanel();
 
   const rootClass = cn(
-    "group/join text-[rgba(215,215,215)] transition-all duration-200 ease-in-out relative rounded-lg font-bold",
-    visible ? "opacity-100 translate-y-2" : "opacity-0 -translate-y-2",
+    "group/join text-[rgba(215,215,215)] relative rounded-lg font-bold",
+    "transition-[opacity,transform] duration-200 ease-in-out",
+    visible ? "opacity-100 translate-y-2" : "opacity-0 translate-y-0",
     isMinimal
       ? "group-hover/join:bg-(--meter-bg) group-hover/app:bg-(--meter-bg)"
       : "bg-(--meter-bg)",
@@ -91,8 +88,9 @@ export const JoinRequestPanel = ({
   if (!rendered) return null;
   return (
     <div
-      style={{ maxWidth, width: maxWidth }}
-      className={rootClass}>
+      style={{ width: joinPanelWidth, height: joinPanelHeight }}
+      className={cn(rootClass, "flex flex-col")}
+      onMouseDown={(e) => e.stopPropagation()}>
       <div>
         <div
           className={`${headerClass} flex items-center  px-3 py-1.5 border-b border-white/10 rounded-t-lg`}>
@@ -123,16 +121,13 @@ export const JoinRequestPanel = ({
           onOpenChange={setSkillSettingsOpen}
         />
       </div>
-
-      <div>
+      <div className="flex-1 overflow-y-auto min-h-0">
         {requests.length === 0 ? (
-          <div className="flex items-center justify-center py-6 w-full">
+          <div className="flex items-center justify-center h-full">
             <span className="text-sm">파티 신청이 없습니다</span>
           </div>
         ) : (
-          <div
-            className="overflow-y-auto scrollbar-gutter:stable "
-            style={{ maxHeight: 320 }}>
+          <div className="py-1">
             {[...requests].reverse().map((r, i) => {
               const badges = Object.entries(r.skill ?? {})
                 .filter(([code]) => visibleSkillCodes.includes(Number(code)))
@@ -184,6 +179,34 @@ export const JoinRequestPanel = ({
             })}
           </div>
         )}
+      </div>
+      <div
+        onMouseDown={onMouseDownCorner}
+        className="resizeHandle absolute bottom-1 right-2 w-5 h-5 cursor-se-resize opacity-40 hover:opacity-100 transition-all duration-200">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 20 20"
+          fill="none">
+          <circle
+            cx="17"
+            cy="17"
+            r="2.5"
+            fill="rgba(255,255,255,0.9)"
+          />
+          <circle
+            cx="10"
+            cy="17"
+            r="2.5"
+            fill="rgba(255,255,255,0.5)"
+          />
+          <circle
+            cx="17"
+            cy="10"
+            r="2.5"
+            fill="rgba(255,255,255,0.5)"
+          />
+        </svg>
       </div>
     </div>
   );

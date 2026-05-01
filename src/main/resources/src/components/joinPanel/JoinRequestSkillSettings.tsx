@@ -16,6 +16,8 @@ export const JoinRequestSkillSettings = ({
   const [visible, setVisible] = useState(false);
   const { visibleSkillCodes, setVisibleSkillCodes } = useSettingsStore();
   const panelRef = useRef<HTMLDivElement>(null);
+  const joinPanelWidth = useSettingsStore((s) => s.joinPanelWidth);
+  const joinPanelHeight = useSettingsStore((s) => s.joinPanelHeight);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -59,7 +61,8 @@ export const JoinRequestSkillSettings = ({
     <div className="cursor-auto">
       <div
         ref={panelRef}
-        className={panelClass}>
+        className={panelClass}
+        style={{ width: joinPanelWidth }}>
         <div className="p-4 flex items-center justify-between">
           <span className="text-sm">표시할 스킬 선택</span>
           <Button
@@ -70,7 +73,9 @@ export const JoinRequestSkillSettings = ({
           </Button>
         </div>
 
-        <div className="px-5 pb-3 space-y-4 max-h-114 overflow-y-auto">
+        <div
+          className="px-5 pb-3 space-y-4  overflow-y-auto"
+          style={{ maxHeight: joinPanelHeight - 60 }}>
           {GROUPED_BY_JOB.map(({ job, skills }) => {
             if (skills.length === 0) return null;
             const allChecked = skills.every((c) => visibleSkillCodes.includes(c));

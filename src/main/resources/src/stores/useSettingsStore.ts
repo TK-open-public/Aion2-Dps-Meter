@@ -106,6 +106,10 @@ interface SettingsState {
   isClickThrough: boolean;
   isAutoHide: boolean;
   toggleAutoHide: () => void;
+  joinPanelWidth: number;
+  setJoinPanelWidth: (w: number) => void;
+  joinPanelHeight: number;
+  setJoinPanelHeight: (h: number) => void;
 }
 
 const jb = () => (window as any).javaBridge;
@@ -138,6 +142,8 @@ const defaultSettings = {
   clickThroughHotkey: { modifiers: 2, vkCode: 0x54 },
   isClickThrough: true,
   isAutoHide: true,
+  joinPanelWidth: 400,
+  joinPanelHeight: 480,
 };
 
 export const useSettingsStore = create<SettingsState>((set) => {
@@ -195,6 +201,9 @@ export const useSettingsStore = create<SettingsState>((set) => {
       clickThroughHotkey: parsedClickThroughHotkey ?? defaultSettings.clickThroughHotkey,
       isClickThrough: j.isClickThrough?.() ?? false,
       isAutoHide: j.isAutoHide?.() ?? false,
+      joinPanelWidth: Number(j.loadProps?.("joinPanelWidth")) || defaultSettings.joinPanelWidth,
+      joinPanelHeight: Number(j.loadProps?.("joinPanelHeight")) || defaultSettings.joinPanelHeight,
+
       isLoaded: true,
     });
     clearInterval(interval);
@@ -230,6 +239,8 @@ export const useSettingsStore = create<SettingsState>((set) => {
     isAutoHide: defaultSettings.isAutoHide,
     isLoaded: defaultSettings.isLoaded,
 
+    joinPanelWidth:defaultSettings.joinPanelWidth,
+    joinPanelHeight:defaultSettings.joinPanelHeight,
     // setHotkey: (hotkey) => {
     //   set({ hotkey });
     //   jb()?.updateHotkey?.(hotkey.modifiers, hotkey.vkCode);
@@ -340,5 +351,13 @@ export const useSettingsStore = create<SettingsState>((set) => {
     //   set({ showPower });
     //   jb()?.saveProps?.("showPower", String(showPower));
     // },
+    setJoinPanelWidth: (joinPanelHeight) => {
+      set({ joinPanelHeight });
+      jb()?.saveProps?.("joinPanelHeight", joinPanelHeight);
+    },
+    setJoinPanelHeight: (joinPanelWidth) => {
+      set({ joinPanelWidth });
+      jb()?.saveProps?.("joinPanelWidth", joinPanelWidth);
+    },
   };
 });
