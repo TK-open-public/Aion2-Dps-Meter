@@ -140,7 +140,7 @@ const defaultSettings = {
   meterListOpacity: 1,
   contributionMode: "contribution" as ContributionMode,
   clickThroughHotkey: { modifiers: 2, vkCode: 0x54 },
-  isClickThrough: true,
+  isClickThrough: false,
   isAutoHide: true,
   joinPanelWidth: 400,
   joinPanelHeight: 480,
