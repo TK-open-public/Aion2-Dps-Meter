@@ -23,8 +23,8 @@ const DOT_CLS: Record<DownloadState["status"], string> = {
 
 const HEADER_TITLE: Record<DownloadState["status"], string> = {
   idle: "업데이트 알림",
-  downloading: "업데이트 중...",
-  complete: "업데이트 완료",
+  downloading: "다운로드 중...",
+  complete: "다운로드 완료",
   error: "설치 실패",
 };
 
@@ -232,16 +232,14 @@ export const UpdatePanel = ({
 
       {/* 다운로드 완료 */}
       {status === "complete" && (
-        <div className="flex-1 py-10 flex flex-col items-center justify-center gap-1.25">
+        <div className="flex-1 py-10 px-6 flex flex-col items-center justify-center gap-1.25">
           <div
             className="w-9 h-9 rounded-full flex items-center justify-center mb-1
                           bg-green-400/10 border border-green-400/20 text-green-400 text-[15px]">
             ✓
           </div>
           <p className="text-sm text-slate-200">다운로드가 완료되었습니다</p>
-          <p className="text-sm text-white/45">
-            미터기를 종료하고 재설치한 뒤 다시 실행해주시기 바랍니다.
-          </p>
+          <p className="text-sm text-white/45">반드시 미터기를 종료한 뒤 설치 해주세요.</p>
         </div>
       )}
 
