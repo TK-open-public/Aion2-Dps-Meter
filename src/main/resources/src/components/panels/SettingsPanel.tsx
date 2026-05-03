@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useSettingsStore } from "@/stores/useSettingsStore";
+import { useShallow } from "zustand/react/shallow";
 import { useHotkeyCapture } from "@/hooks/useHotkeyCapture";
 import { formatHotkey } from "@/utils/hotKey";
 import { Button } from "@/components/ui/button";
@@ -105,52 +106,66 @@ export const SettingsPanel = ({
   registerHeaderClose,
 }: Props) => {
   const {
-    // hotkey,
-    // setHotkey,
     hideHotkey,
-    setHideHotkey,
     displayMode,
-    setDisplayMode,
     targetInfoDisplayMode,
-    setTargetInfoDisplayMode,
     nameDisplay,
-    setNameDisplay,
     fontFamily,
-    setFontFamily,
     rowHeight,
-    setRowHeight,
     isMinimal,
-    setIsMinimal,
     headerPosition,
-    setHeaderPosition,
     theme,
-    setThemeColor,
-    setTheme,
-    resetTheme,
     showCombatTimerInMinimal,
-    setShowCombatTimerInMinimal,
     showTargetInfoInMinimal,
-    setShowTargetInfoInMinimal,
     meterOpacity,
-    setMeterOpacity,
     meterListOpacity,
-    setMeterListOpacity,
     contributionMode,
-    setContributionMode,
-    // showPower,
-    // setShowPower,
     clickThroughHotkey,
-    setClickThroughHotkey,
     isClickThrough,
     isAutoHide,
-    toggleAutoHide,
-    resetJoinPanelPosition,
-    resetSidePanelPosition,
-  } = useSettingsStore();
+  } = useSettingsStore(
+    useShallow((s) => ({
+      hideHotkey: s.hideHotkey,
+      displayMode: s.displayMode,
+      targetInfoDisplayMode: s.targetInfoDisplayMode,
+      nameDisplay: s.nameDisplay,
+      fontFamily: s.fontFamily,
+      rowHeight: s.rowHeight,
+      isMinimal: s.isMinimal,
+      headerPosition: s.headerPosition,
+      theme: s.theme,
+      showCombatTimerInMinimal: s.showCombatTimerInMinimal,
+      showTargetInfoInMinimal: s.showTargetInfoInMinimal,
+      meterOpacity: s.meterOpacity,
+      meterListOpacity: s.meterListOpacity,
+      contributionMode: s.contributionMode,
+      clickThroughHotkey: s.clickThroughHotkey,
+      isClickThrough: s.isClickThrough,
+      isAutoHide: s.isAutoHide,
+    })),
+  );
 
-  // const { pending,
-  //   //  start, stop,
-  //    reset } = useHotkeyCapture(hotkey);
+  const setHideHotkey = useSettingsStore((s) => s.setHideHotkey);
+  const setDisplayMode = useSettingsStore((s) => s.setDisplayMode);
+  const setTargetInfoDisplayMode = useSettingsStore((s) => s.setTargetInfoDisplayMode);
+  const setNameDisplay = useSettingsStore((s) => s.setNameDisplay);
+  const setFontFamily = useSettingsStore((s) => s.setFontFamily);
+  const setRowHeight = useSettingsStore((s) => s.setRowHeight);
+  const setIsMinimal = useSettingsStore((s) => s.setIsMinimal);
+  const setHeaderPosition = useSettingsStore((s) => s.setHeaderPosition);
+  const setThemeColor = useSettingsStore((s) => s.setThemeColor);
+  const setTheme = useSettingsStore((s) => s.setTheme);
+  const resetTheme = useSettingsStore((s) => s.resetTheme);
+  const setShowCombatTimerInMinimal = useSettingsStore((s) => s.setShowCombatTimerInMinimal);
+  const setShowTargetInfoInMinimal = useSettingsStore((s) => s.setShowTargetInfoInMinimal);
+  const setMeterOpacity = useSettingsStore((s) => s.setMeterOpacity);
+  const setMeterListOpacity = useSettingsStore((s) => s.setMeterListOpacity);
+  const setContributionMode = useSettingsStore((s) => s.setContributionMode);
+  const setClickThroughHotkey = useSettingsStore((s) => s.setClickThroughHotkey);
+  const toggleAutoHide = useSettingsStore((s) => s.toggleAutoHide);
+  const resetJoinPanelPosition = useSettingsStore((s) => s.resetJoinPanelPosition);
+  const resetSidePanelPosition = useSettingsStore((s) => s.resetSidePanelPosition);
+
   const {
     pending: pendingHide,
     start: startHide,
@@ -165,7 +180,6 @@ export const SettingsPanel = ({
   } = useHotkeyCapture(clickThroughHotkey);
 
   const [snapshot] = useState(() => ({
-    // hotkey,
     hideHotkey,
     displayMode,
     targetInfoDisplayMode,
@@ -180,28 +194,18 @@ export const SettingsPanel = ({
     meterListOpacity,
     contributionMode,
     clickThroughHotkey,
-    theme: { ...theme },
+    theme: structuredClone(theme),
   }));
 
   useEffect(() => {
     onReady?.();
   }, []);
 
-  const handleChange = (
-    partial: Partial<{ displayMode: DisplayMode; nameDisplay: NameDisplay; rowHeight: number }>,
-  ) => {
-    if (partial.displayMode !== undefined) setDisplayMode(partial.displayMode);
-    if (partial.nameDisplay !== undefined) setNameDisplay(partial.nameDisplay);
-    if (partial.rowHeight !== undefined) setRowHeight(partial.rowHeight);
-  };
-
-  const handleSave = () => {
-    // setHotkey(pending);
+  const handleSave = useCallback(() => {
     setHideHotkey(pendingHide);
     setClickThroughHotkey(pendingClickThrough);
-
     onClose();
-  };
+  }, [setHideHotkey, pendingHide, setClickThroughHotkey, pendingClickThrough, onClose]);
 
   const handleCancel = useCallback(() => {
     setDisplayMode(snapshot.displayMode);
@@ -219,7 +223,6 @@ export const SettingsPanel = ({
     setMeterListOpacity(snapshot.meterListOpacity);
     setContributionMode(snapshot.contributionMode);
     resetClickThrough(snapshot.clickThroughHotkey);
-
     onClose();
   }, [
     onClose,
@@ -241,10 +244,19 @@ export const SettingsPanel = ({
     snapshot,
   ]);
 
-  useLayoutEffect(() => {
-    registerHeaderClose?.(handleCancel);
+  const handleCancelRef = useRef(handleCancel);
+  useEffect(() => {
+    handleCancelRef.current = handleCancel;
+  }, [handleCancel]);
+
+  const stableHandleCancel = useCallback(() => {
+    handleCancelRef.current();
+  }, []);
+
+  useEffect(() => {
+    registerHeaderClose?.(stableHandleCancel);
     return () => registerHeaderClose?.(null);
-  }, [registerHeaderClose, handleCancel]);
+  }, [registerHeaderClose, stableHandleCancel]);
 
   return (
     <div className="flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden">
@@ -415,15 +427,6 @@ export const SettingsPanel = ({
           <span className="text-xs opacity-40 px-2 shrink-0">미터기 설정</span>
           <div className="flex-1 h-px bg-white/10" />
         </div>
-        {/* <SettingsRow
-          title="전투력 표시"
-          description="이름 옆에 전투력을 표시합니다">
-          <Switch
-            checked={showPower}
-            onCheckedChange={(v) => setShowPower(v)}
-            className="data-[state=checked]:bg-purple-500"
-          />
-        </SettingsRow> */}
         <SettingsItem>
           <SettingsRow
             title="기여도 표시 방식"
@@ -456,7 +459,7 @@ export const SettingsPanel = ({
             rightClassName="w-44">
             <Select
               value={displayMode}
-              onValueChange={(v) => handleChange({ displayMode: v as DisplayMode })}>
+              onValueChange={(v) => setDisplayMode(v as DisplayMode)}>
               <SelectTrigger className="text-xs w-44 bg-white/5 border-white/10 ">
                 <SelectValue />
               </SelectTrigger>
@@ -502,7 +505,7 @@ export const SettingsPanel = ({
             rightClassName="w-44">
             <Select
               value={nameDisplay}
-              onValueChange={(v) => handleChange({ nameDisplay: v as NameDisplay })}>
+              onValueChange={(v) => setNameDisplay(v as NameDisplay)}>
               <SelectTrigger className="text-xs w-44 bg-white/5 border-white/10 ">
                 <SelectValue />
               </SelectTrigger>
@@ -530,7 +533,7 @@ export const SettingsPanel = ({
                 step={1}
                 className="cursor-pointer"
                 value={[rowHeight]}
-                onValueChange={(value) => handleChange({ rowHeight: value[0] })}
+                onValueChange={(value) => setRowHeight(value[0])}
               />
               <span className="text-xs opacity-60 w-12 text-right tabular-nums">{rowHeight}px</span>
             </div>
@@ -593,11 +596,6 @@ export const SettingsPanel = ({
               value={theme.serverBColor}
               onChange={(v) => setThemeColor("serverBColor", v)}
             />
-            {/* <ColorSwatch
-              label="기타"
-              value={theme.serverDefaultColor}
-              onChange={(v) => setThemeColor("serverDefaultColor", v)}
-            /> */}
           </div>
         </SettingsItem>
         <SettingsItem title="미터 바 색상">
@@ -672,7 +670,7 @@ export const SettingsPanel = ({
             variant="ghost"
             size="sm"
             onClick={resetTheme}
-            className="w-full opacity-50 hover:opacity-100  hover:bg-transition transition-opacity flex items-center gap-2 text-xs">
+            className="w-full opacity-50 hover:opacity-100 hover:bg-transition transition-opacity flex items-center gap-2 text-xs">
             <RotateCcw className="w-3 h-3" />
             테마 초기화
           </Button>
@@ -680,7 +678,7 @@ export const SettingsPanel = ({
             variant="ghost"
             size="sm"
             onClick={resetJoinPanelPosition}
-            className="w-full opacity-50 hover:opacity-100  hover:bg-transition transition-opacity flex items-center gap-2 text-xs">
+            className="w-full opacity-50 hover:opacity-100 hover:bg-transition transition-opacity flex items-center gap-2 text-xs">
             <RotateCcw className="w-3 h-3" />
             파티 신청 위치 초기화
           </Button>
@@ -688,7 +686,7 @@ export const SettingsPanel = ({
             variant="ghost"
             size="sm"
             onClick={resetSidePanelPosition}
-            className="w-full opacity-50 hover:opacity-100  hover:bg-transition transition-opacity flex items-center gap-2 text-xs">
+            className="w-full opacity-50 hover:opacity-100 hover:bg-transition transition-opacity flex items-center gap-2 text-xs">
             <RotateCcw className="w-3 h-3" />
             사이드 패널 위치 초기화
           </Button>
