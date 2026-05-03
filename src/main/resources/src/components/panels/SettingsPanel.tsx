@@ -102,8 +102,6 @@ export const SettingsPanel = ({
     setShowTargetInfoInMinimal,
     meterOpacity,
     setMeterOpacity,
-    panelOpacity,
-    setPanelOpacity,
     meterListOpacity,
     setMeterListOpacity,
     contributionMode,
@@ -145,7 +143,6 @@ export const SettingsPanel = ({
     showCombatTimerInMinimal,
     showTargetInfoInMinimal,
     meterOpacity,
-    panelOpacity,
     meterListOpacity,
     contributionMode,
     clickThroughHotkey,
@@ -184,7 +181,6 @@ export const SettingsPanel = ({
     setHeaderPosition(snapshot.headerPosition);
     setTheme(snapshot.theme as ThemeColors);
     setMeterOpacity(snapshot.meterOpacity);
-    setPanelOpacity(snapshot.panelOpacity);
     setMeterListOpacity(snapshot.meterListOpacity);
     setContributionMode(snapshot.contributionMode);
     resetClickThrough(snapshot.clickThroughHotkey);
@@ -202,7 +198,6 @@ export const SettingsPanel = ({
     setMeterListOpacity,
     setMeterOpacity,
     setNameDisplay,
-    setPanelOpacity,
     setRowHeight,
     setShowCombatTimerInMinimal,
     setShowTargetInfoInMinimal,
@@ -527,24 +522,6 @@ export const SettingsPanel = ({
           </SettingsRow>
         </SettingsItem>
 
-        <SettingsRow
-          title="패널 배경 투명도"
-          align="center"
-          rightClassName="w-44">
-          <div className="flex h-8 items-center gap-3">
-            <Slider
-              min={0}
-              max={1}
-              step={0.05}
-              className="cursor-pointer"
-              value={[panelOpacity]}
-              onValueChange={(value) => setPanelOpacity(value[0])}
-            />
-            <span className="text-xs opacity-60 w-12 text-right tabular-nums">
-              {Math.round(panelOpacity * 100)}%
-            </span>
-          </div>
-        </SettingsRow>
         <SettingsItem title="유저 이름 색상">
           <div className="flex flex-col gap-2.5">
             <ColorSwatch

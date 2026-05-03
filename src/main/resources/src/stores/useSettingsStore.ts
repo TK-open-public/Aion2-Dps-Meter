@@ -97,6 +97,8 @@ interface SettingsState {
   setMeterOpacity: (v: number) => void;
   panelOpacity: number;
   setPanelOpacity: (v: number) => void;
+  joinPanelOpacity: number;
+  setJoinPanelOpacity: (v: number) => void;
   meterListOpacity: number;
   setMeterListOpacity: (v: number) => void;
   contributionMode: ContributionMode;
@@ -157,6 +159,7 @@ const defaultSettings = {
   // showPower: true,
   meterOpacity: 0.4,
   panelOpacity: 0.8,
+  joinPanelOpacity: 0.8,
   meterListOpacity: 1,
   contributionMode: "contribution" as ContributionMode,
   clickThroughHotkey: { modifiers: 2, vkCode: 0x54 },
@@ -214,6 +217,10 @@ export const useSettingsStore = create<SettingsState>((set) => {
     const hasSavedJoinPanelX = savedJoinPanelXRaw != null && savedJoinPanelXRaw !== "";
     const hasSavedJoinPanelY = savedJoinPanelYRaw != null && savedJoinPanelYRaw !== "";
     const joinPanelPositioned = hasSavedJoinPanelX || hasSavedJoinPanelY;
+    const savedMeterOpacityRaw = j.loadProps?.("meterOpacity");
+    const savedPanelOpacityRaw = j.loadProps?.("panelOpacity");
+    const savedJoinPanelOpacityRaw = j.loadProps?.("joinPanelOpacity");
+    const savedMeterListOpacityRaw = j.loadProps?.("meterListOpacity");
 
     set({
       // hotkey: parsedHotkey ?? defaultSettings.hotkey,
@@ -235,10 +242,22 @@ export const useSettingsStore = create<SettingsState>((set) => {
       windowX: Number(j.loadProps?.("windowX")) || defaultSettings.windowX,
       windowY: Number(j.loadProps?.("windowY")) || defaultSettings.windowY,
       // showPower: j.loadProps?.("showPower") === "false" ? false : true,
-      meterOpacity: Number(j.loadProps?.("meterOpacity")) || defaultSettings.meterOpacity,
-      panelOpacity: Number(j.loadProps?.("panelOpacity")) || defaultSettings.panelOpacity,
+      meterOpacity:
+        savedMeterOpacityRaw != null && savedMeterOpacityRaw !== ""
+          ? Number(savedMeterOpacityRaw)
+          : defaultSettings.meterOpacity,
+      panelOpacity:
+        savedPanelOpacityRaw != null && savedPanelOpacityRaw !== ""
+          ? Number(savedPanelOpacityRaw)
+          : defaultSettings.panelOpacity,
+      joinPanelOpacity:
+        savedJoinPanelOpacityRaw != null && savedJoinPanelOpacityRaw !== ""
+          ? Number(savedJoinPanelOpacityRaw)
+          : defaultSettings.joinPanelOpacity,
       meterListOpacity:
-        Number(j.loadProps?.("meterListOpacity")) || defaultSettings.meterListOpacity,
+        savedMeterListOpacityRaw != null && savedMeterListOpacityRaw !== ""
+          ? Number(savedMeterListOpacityRaw)
+          : defaultSettings.meterListOpacity,
       contributionMode:
         (j.loadProps?.("contributionMode") as ContributionMode) ?? defaultSettings.contributionMode,
       clickThroughHotkey: parsedClickThroughHotkey ?? defaultSettings.clickThroughHotkey,
@@ -293,6 +312,7 @@ export const useSettingsStore = create<SettingsState>((set) => {
     // showPower: defaultSettings.showPower,
     meterOpacity: defaultSettings.meterOpacity,
     panelOpacity: defaultSettings.panelOpacity,
+    joinPanelOpacity: defaultSettings.joinPanelOpacity,
     meterListOpacity: defaultSettings.meterListOpacity,
     contributionMode: defaultSettings.contributionMode,
     clickThroughHotkey: defaultSettings.clickThroughHotkey,
@@ -404,9 +424,13 @@ export const useSettingsStore = create<SettingsState>((set) => {
       set({ panelOpacity });
       jb()?.saveProps?.("panelOpacity", String(panelOpacity));
     },
+    setJoinPanelOpacity: (joinPanelOpacity) => {
+      set({ joinPanelOpacity });
+      jb()?.saveProps?.("joinPanelOpacity", String(joinPanelOpacity));
+    },
     setMeterListOpacity: (meterListOpacity) => {
       set({ meterListOpacity });
-      jb()?.saveProps?.("panelOpacity", String(meterListOpacity));
+      jb()?.saveProps?.("meterListOpacity", String(meterListOpacity));
     },
     setContributionMode: (contributionMode) => {
       set({ contributionMode });

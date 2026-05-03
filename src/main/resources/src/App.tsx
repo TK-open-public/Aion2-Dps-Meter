@@ -57,6 +57,7 @@ export default function App() {
   const showTargetInfoInMinimal = useSettingsStore((s) => s.showTargetInfoInMinimal);
   const meterOpacity = useSettingsStore((s) => s.meterOpacity);
   const panelOpacity = useSettingsStore((s) => s.panelOpacity);
+  const joinPanelOpacity = useSettingsStore((s) => s.joinPanelOpacity);
   const meterListOpacity = useSettingsStore((s) => s.meterListOpacity);
   const isClickThrough = useSettingsStore((s) => s.isClickThrough);
 
@@ -191,6 +192,7 @@ export default function App() {
           width: "fit-content",
           "--meter-bg": `rgba(12,22,40,${meterOpacity})`,
           "--panel-bg": `rgba(12,22,40,${panelOpacity})`,
+          "--join-panel-bg": `rgba(12,22,40,${joinPanelOpacity})`,
         } as React.CSSProperties
       }
       className={rootClass}>

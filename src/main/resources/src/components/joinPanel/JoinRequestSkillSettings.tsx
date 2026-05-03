@@ -54,7 +54,7 @@ export const JoinRequestSkillSettings = ({
 
   const panelClass = cn(
     "absolute top-0 left-full ml-2 z-50",
-    "bg-(--panel-bg) text-white rounded-lg",
+    "bg-(--join-panel-bg) text-white rounded-lg",
     "transition-all duration-200 ease-in-out",
     visible ? "visible opacity-100 translate-x-0" : "invisible opacity-0 -translate-x-1",
   );

@@ -13,6 +13,7 @@ import { getClassColor } from "@/utils/classColor";
 import { useResizableJoinPanel } from "@/hooks/resize/useResizableJoinPanel";
 import { useDraggablePanel } from "@/hooks/drag/useDraggablePanel";
 import { ResizeHandle } from "../ResizeHandle";
+import { Slider } from "@/components/ui/slider";
 
 const TOTAL_SEC = 20;
 const DEFAULT_JOIN_PANEL_GAP = 8;
@@ -75,6 +76,8 @@ export const JoinRequestPanel = () => {
   const joinPanelX = useSettingsStore((s) => s.joinPanelX);
   const joinPanelY = useSettingsStore((s) => s.joinPanelY);
   const joinPanelPositioned = useSettingsStore((s) => s.joinPanelPositioned);
+  const joinPanelOpacity = useSettingsStore((s) => s.joinPanelOpacity);
+  const setJoinPanelOpacity = useSettingsStore((s) => s.setJoinPanelOpacity);
   const setJoinPanelPosition = useSettingsStore((s) => s.setJoinPanelPosition);
   const defaultJoinPanelX = DEFAULT_JOIN_PANEL_X;
   const defaultJoinPanelY = getDefaultJoinPanelY() + 8;
@@ -107,7 +110,7 @@ export const JoinRequestPanel = () => {
   const rootClass = cn(
     "text-[rgba(215,215,215)] rounded-lg font-bold",
     "transition-opacity duration-200 ease-in-out",
-    "bg-(--panel-bg)",
+    "bg-(--join-panel-bg)",
     visible ? "opacity-100" : "opacity-0 pointer-events-none",
   );
 
@@ -121,15 +124,28 @@ export const JoinRequestPanel = () => {
       <div>
         <div
           className={`${headerClass} flex items-center justify-between px-3 py-1.5 border-b border-white/10 rounded-t-lg`}>
-          <div
-            className="drag-handle mr-1 cursor-grab active:cursor-grabbing opacity-50 hover:opacity-100 transition-opacity shrink-0"
-            onMouseDown={onMouseDownHandle}
-            title="드래그하여 이동">
-            <Grip className="size-4 rotate-90" />
+          <div className="flex items-center h-8">
+            <div
+              className="drag-handle mr-1 cursor-grab active:cursor-grabbing opacity-50 hover:opacity-100 transition-opacity shrink-0"
+              onMouseDown={onMouseDownHandle}
+              title="드래그하여 이동">
+              <Grip className="size-4 rotate-90" />
+            </div>
+            <span className={`mr-2 pl-2 flex-1 text-sm`}>파티 신청</span>
+            <span className={`text-sm text-center`}>{requests.length}건</span>
           </div>
-          <span className={`pl-2 flex-1 text-sm`}>파티 신청</span>
-          <div className="flex items-center gap-2 h-8">
-            <span className={`text-xs w-8 text-center`}>{requests.length}건</span>
+          <div
+            className="flex items-center gap-2 h-8"
+            onMouseDown={(e) => e.stopPropagation()}>
+            <span className="text-[10px] opacity-50 shrink-0">투명도</span>
+            <Slider
+              min={0}
+              max={1}
+              step={0.05}
+              className="w-16 cursor-pointer"
+              value={[joinPanelOpacity]}
+              onValueChange={(value) => setJoinPanelOpacity(value[0])}
+            />
 
             <Button
               size="icon"
