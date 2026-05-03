@@ -272,9 +272,9 @@ export const DetailsPanel = ({
                         <TableHead className="py-2 text-center font-bold text-white">
                           강타
                         </TableHead>
-                        <TableHead className="py-2 text-center font-bold text-white">
+                        {/* <TableHead className="py-2 text-center font-bold text-white">
                           다단 히트
-                        </TableHead>
+                        </TableHead> */}
                         <TableHead className="py-2 text-center font-bold text-white">
                           완벽
                         </TableHead>
