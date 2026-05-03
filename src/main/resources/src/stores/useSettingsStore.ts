@@ -9,6 +9,12 @@ export type DisplayMode =
   | "amount_percent"
   | "amount_full_dps_percent"
   | "amount_full_percent";
+export type TargetInfoDisplayMode =
+  | "hp_full_percent"
+  | "hp_percent"
+  | "remain_full_percent"
+  | "remain_percent"
+  | "percent";
 export type NameDisplay = "all" | "me_only" | "hidden";
 export type HeaderPosition = "top" | "bottom";
 export type FontFamily =
@@ -55,6 +61,8 @@ interface SettingsState {
   // hotkey: Hotkey;
   displayMode: DisplayMode;
   setDisplayMode: (mode: DisplayMode) => void;
+  targetInfoDisplayMode: TargetInfoDisplayMode;
+  setTargetInfoDisplayMode: (mode: TargetInfoDisplayMode) => void;
   nameDisplay: NameDisplay;
   setNameDisplay: (mode: NameDisplay) => void;
   fontFamily: FontFamily;
@@ -150,6 +158,7 @@ const defaultSettings = {
   windowY: 0,
   isLoaded: false,
   displayMode: "dps_percent" as DisplayMode,
+  targetInfoDisplayMode: "hp_full_percent" as TargetInfoDisplayMode,
   nameDisplay: "all" as NameDisplay,
   fontFamily: "NEXON Lv2 Gothic" as FontFamily,
   headerPosition: "top" as HeaderPosition,
@@ -232,6 +241,8 @@ export const useSettingsStore = create<SettingsState>((set) => {
       detailHeight: Number(j.loadProps?.("detailHeight")) || defaultSettings.detailHeight,
       detailWidth: Number(j.loadProps?.("detailWidth")) || defaultSettings.detailWidth,
       displayMode: j.loadProps?.("displayMode") ?? defaultSettings.displayMode,
+      targetInfoDisplayMode:
+        j.loadProps?.("targetInfoDisplayMode") ?? defaultSettings.targetInfoDisplayMode,
       isDebugMode: j.isDebuggingMode?.() ?? false,
       nameDisplay: j.loadProps?.("nameDisplay") ?? defaultSettings.nameDisplay,
       fontFamily: (j.loadProps?.("fontFamily") as FontFamily) ?? defaultSettings.fontFamily,
@@ -304,6 +315,7 @@ export const useSettingsStore = create<SettingsState>((set) => {
     detailWidth: defaultSettings.detailWidth,
     visibleSkillCodes: defaultSettings.visibleSkillCodes,
     displayMode: defaultSettings.displayMode,
+    targetInfoDisplayMode: defaultSettings.targetInfoDisplayMode,
     nameDisplay: defaultSettings.nameDisplay,
     fontFamily: defaultSettings.fontFamily,
     isDebugMode: defaultSettings.isDebugMode,
@@ -366,6 +378,10 @@ export const useSettingsStore = create<SettingsState>((set) => {
     setDisplayMode: (displayMode) => {
       set({ displayMode });
       jb()?.saveProps?.("displayMode", displayMode);
+    },
+    setTargetInfoDisplayMode: (targetInfoDisplayMode) => {
+      set({ targetInfoDisplayMode });
+      jb()?.saveProps?.("targetInfoDisplayMode", targetInfoDisplayMode);
     },
     setNameDisplay: (nameDisplay) => {
       set({ nameDisplay });

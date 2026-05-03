@@ -9,6 +9,7 @@ import type {
   FontFamily,
   HeaderPosition,
   NameDisplay,
+  TargetInfoDisplayMode,
   ThemeColors,
 } from "@/stores/useSettingsStore";
 import type { ContributionMode } from "@/types";
@@ -52,6 +53,34 @@ const DISPLAY_MODES: { value: DisplayMode; label: string; description: string }[
   { value: "amount_full_percent", label: "누적(전체) / 기여도", description: "1,234,567 (35.5%)" },
 ];
 
+const TARGET_INFO_DISPLAY_MODES: {
+  value: TargetInfoDisplayMode;
+  label: string;
+  description: string;
+}[] = [
+  {
+    value: "hp_full_percent",
+    label: "남은/최대(전체) / 퍼센트",
+    description: "1,234,567 / 9,876,543 12.5%",
+  },
+  {
+    value: "hp_percent",
+    label: "남은/최대(축약) / 퍼센트",
+    description: "1.2M / 9.9M 12.5%",
+  },
+  {
+    value: "remain_full_percent",
+    label: "남은 체력(전체) / 퍼센트",
+    description: "1,234,567 12.5%",
+  },
+  {
+    value: "remain_percent",
+    label: "남은 체력(축약) / 퍼센트",
+    description: "1.2M 12.5%",
+  },
+  { value: "percent", label: "퍼센트만", description: "12.5%" },
+];
+
 const NAME_DISPLAY_MODES: { value: NameDisplay; label: string }[] = [
   { value: "all", label: "모두 표기" },
   { value: "me_only", label: "나만 표기" },
@@ -82,6 +111,8 @@ export const SettingsPanel = ({
     setHideHotkey,
     displayMode,
     setDisplayMode,
+    targetInfoDisplayMode,
+    setTargetInfoDisplayMode,
     nameDisplay,
     setNameDisplay,
     fontFamily,
@@ -137,6 +168,7 @@ export const SettingsPanel = ({
     // hotkey,
     hideHotkey,
     displayMode,
+    targetInfoDisplayMode,
     headerPosition,
     nameDisplay,
     fontFamily,
@@ -173,6 +205,7 @@ export const SettingsPanel = ({
 
   const handleCancel = useCallback(() => {
     setDisplayMode(snapshot.displayMode);
+    setTargetInfoDisplayMode(snapshot.targetInfoDisplayMode);
     setNameDisplay(snapshot.nameDisplay);
     setFontFamily(snapshot.fontFamily);
     setRowHeight(snapshot.rowHeight);
@@ -204,6 +237,7 @@ export const SettingsPanel = ({
     setShowCombatTimerInMinimal,
     setShowTargetInfoInMinimal,
     setTheme,
+    setTargetInfoDisplayMode,
     snapshot,
   ]);
 
@@ -428,6 +462,29 @@ export const SettingsPanel = ({
               </SelectTrigger>
               <SelectContent>
                 {DISPLAY_MODES.map(({ value, label }) => (
+                  <SelectItem
+                    key={value}
+                    value={value}
+                    className="px-4 py-2">
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </SettingsRow>
+
+          <SettingsRow
+            title="보스 표시 형식"
+            align="center"
+            rightClassName="w-44">
+            <Select
+              value={targetInfoDisplayMode}
+              onValueChange={(v) => setTargetInfoDisplayMode(v as TargetInfoDisplayMode)}>
+              <SelectTrigger className="text-xs w-44 bg-white/5 border-white/10 ">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {TARGET_INFO_DISPLAY_MODES.map(({ value, label }) => (
                   <SelectItem
                     key={value}
                     value={value}
