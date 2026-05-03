@@ -109,7 +109,9 @@ const TimerBar = ({ arrivedAt }: { arrivedAt: number }) => {
 };
 
 export const JoinRequestPanel = memo(() => {
-  const { requests, isOpen, setOpen } = useJoinRequestStore();
+  const requests = useJoinRequestStore((s) => s.requests);
+  const isOpen = useJoinRequestStore((s) => s.isOpen);
+  const setOpen = useJoinRequestStore((s) => s.setOpen);
   const visibleSkillCodes = useSettingsStore((s) => s.visibleSkillCodes);
   const [skillSettingsOpen, setSkillSettingsOpen] = useState(false);
   const [rendered, setRendered] = useState(false);

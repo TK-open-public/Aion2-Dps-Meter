@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import logoSrc from "@/assets/logo.png";
 import type { PanelType } from "@/types";
+import { memo } from "react";
 import {
   Settings,
   //  RefreshCcw,
@@ -21,14 +22,15 @@ interface Props {
 }
 import { useSettingsStore } from "@/stores/useSettingsStore";
 
-export const Header = ({
+export const Header = memo(({
   className,
   //  reset,
   setSettings,
 }: Props) => {
   const isDebugMode = useSettingsStore((s) => s.isDebugMode);
-  const { requests, isOpen, setOpen } = useJoinRequestStore();
-  const requestCount = requests.length;
+  const requestCount = useJoinRequestStore((s) => s.requests.length);
+  const isOpen = useJoinRequestStore((s) => s.isOpen);
+  const setOpen = useJoinRequestStore((s) => s.setOpen);
   const exitApp = () => {
     (window as any).javaBridge.exitApp();
   };
@@ -128,4 +130,4 @@ export const Header = ({
       </div>
     </div>
   );
-};
+});

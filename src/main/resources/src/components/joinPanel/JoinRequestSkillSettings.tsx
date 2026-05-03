@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { memo, useRef, useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSettingsStore } from "@/stores/useSettingsStore";
@@ -8,7 +8,7 @@ import { GROUPED_BY_JOB, getSkillName } from "@/constants/codes";
 import { cn } from "@/lib/utils";
 import { getJobIconSrc } from "@/utils/icons";
 
-export const JoinRequestSkillSettings = ({
+export const JoinRequestSkillSettings = memo(({
   open,
   onOpenChange,
 }: {
@@ -16,7 +16,8 @@ export const JoinRequestSkillSettings = ({
   onOpenChange: (open: boolean) => void;
 }) => {
   const [visible, setVisible] = useState(false);
-  const { visibleSkillCodes, setVisibleSkillCodes } = useSettingsStore();
+  const visibleSkillCodes = useSettingsStore((s) => s.visibleSkillCodes);
+  const setVisibleSkillCodes = useSettingsStore((s) => s.setVisibleSkillCodes);
   const panelRef = useRef<HTMLDivElement>(null);
   const joinPanelWidth = useSettingsStore((s) => s.joinPanelWidth);
   const joinPanelHeight = useSettingsStore((s) => s.joinPanelHeight);
@@ -145,4 +146,4 @@ export const JoinRequestSkillSettings = ({
       </div>
     </div>
   );
-};
+});

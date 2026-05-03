@@ -43,10 +43,14 @@ export default function App() {
     checkUpdate,
     checkStatus,
   } = useVersionCheck();
-  const { addRequest, removeRequest, clearAll, refuseRequest } = useJoinRequestStore();
+  const addRequest = useJoinRequestStore((s) => s.addRequest);
+  const removeRequest = useJoinRequestStore((s) => s.removeRequest);
+  const clearAll = useJoinRequestStore((s) => s.clearAll);
+  const refuseRequest = useJoinRequestStore((s) => s.refuseRequest);
 
   const headerPosition = useSettingsStore((s) => s.headerPosition);
-  const { windowX, windowY } = useSettingsStore();
+  const windowX = useSettingsStore((s) => s.windowX);
+  const windowY = useSettingsStore((s) => s.windowY);
   const isLoaded = useSettingsStore((s) => s.isLoaded);
 
   const [activePanel, setActivePanel] = useState<PanelType>(null);
