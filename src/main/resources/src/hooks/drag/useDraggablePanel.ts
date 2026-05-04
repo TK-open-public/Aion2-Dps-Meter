@@ -13,31 +13,18 @@ interface UseDraggablePanelOptions {
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
-// 드래그를 막아야 하는 인터랙티브 요소인지 확인
-const isInteractiveTarget = (target: Element, panelEl: Element): boolean => {
-  const INTERACTIVE_TAGS = new Set(["button", "input", "select", "textarea", "a", "label"]);
-  const INTERACTIVE_ROLES = new Set(["button", "slider", "checkbox", "radio", "textbox", "combobox", "menuitem", "tab", "switch"]);
-
-  // 클릭된 요소 자신이 스크롤 가능한지만 체크 (상위 순회 X)
-  const targetStyle = window.getComputedStyle(target);
-  const targetOverflow = targetStyle.overflowY;
+const isInteractiveTarget = (target: Element): boolean => {
   if (
-    (targetOverflow === "auto" || targetOverflow === "scroll") &&
-    target.scrollHeight > target.clientHeight
-  ) return true;
+    target.closest(
+      "button, input, select, textarea, a, label, [role='slider'], [role='checkbox'], [data-no-drag], .no-drag, .cursor-pointer, .resizeHandle",
+    )
+  )
+    return true;
+  const style = window.getComputedStyle(target);
+  const overflow = style.overflowY;
+  if ((overflow === "auto" || overflow === "scroll") && target.scrollHeight > target.clientHeight)
+    return true;
 
-  let el: Element | null = target;
-  while (el && el !== panelEl) {
-    const tag = el.tagName.toLowerCase();
-    if (INTERACTIVE_TAGS.has(tag)) return true;
-
-    const role = el.getAttribute("role");
-    if (role && INTERACTIVE_ROLES.has(role)) return true;
-
-    if (el.hasAttribute("data-no-drag")) return true;
-
-    el = el.parentElement;
-  }
   return false;
 };
 
@@ -63,6 +50,7 @@ export const useDraggablePanel = ({
 
       const panel = panelRef.current;
       if (!panel) return;
+      panel.style.willChange = "left, top";
 
       const rect = panel.getBoundingClientRect();
       const startMouseX = e.clientX;
@@ -91,8 +79,7 @@ export const useDraggablePanel = ({
           if (panel) {
             panel.style.left = `${nextX}px`;
             panel.style.top = `${nextY}px`;
-            panel.style.right = "auto";
-            panel.style.bottom = "auto";
+            panel.style.transform = "none";
           }
         });
       };
@@ -102,6 +89,8 @@ export const useDraggablePanel = ({
           cancelAnimationFrame(rafId.current);
           rafId.current = null;
         }
+        panel.style.willChange = "auto";
+
         onPositionChange(posRef.current.x, posRef.current.y);
         document.removeEventListener("mousemove", handleMouseMove);
         document.removeEventListener("mouseup", handleMouseUp);
@@ -120,15 +109,13 @@ export const useDraggablePanel = ({
     ],
   );
 
-  // Grip 전용 핸들러 (기존 유지)
   const onMouseDownHandle = startDrag;
 
-  // 패널 전체 클릭 핸들러 — 인터랙티브 요소 필터링
   const onMouseDownPanel = useCallback(
     (e: React.MouseEvent) => {
       const panel = panelRef.current;
       if (!panel) return;
-      if (isInteractiveTarget(e.target as Element, panel)) return;
+      if (isInteractiveTarget(e.target as Element)) return;
       startDrag(e);
     },
     [startDrag],

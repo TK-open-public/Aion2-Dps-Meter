@@ -175,7 +175,10 @@ const SidePanelComponent = ({
   return (
     <div
       ref={panelRef}
-      style={positionStyle}
+      style={{
+        ...positionStyle,
+        contain: "layout style paint",
+      }}
       className={cn(rootClass, "fixed left-0 top-0  flex flex-col overflow-hidden ")}
       onMouseDown={onMouseDownPanel}>
       <div className="flex items-center shrink-0 pl-5 px-3 py-1.5 border-b border-white/10 gap-2">

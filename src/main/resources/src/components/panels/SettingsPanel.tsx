@@ -145,28 +145,29 @@ export const SettingsPanel = ({
     })),
   );
 
-  const setHideHotkey = useSettingsStore((s) => s.setHideHotkey);
-  const setDisplayMode = useSettingsStore((s) => s.setDisplayMode);
-  const setTargetInfoDisplayMode = useSettingsStore((s) => s.setTargetInfoDisplayMode);
-  const setNameDisplay = useSettingsStore((s) => s.setNameDisplay);
-  const setFontFamily = useSettingsStore((s) => s.setFontFamily);
-  const setRowHeight = useSettingsStore((s) => s.setRowHeight);
-  const setIsMinimal = useSettingsStore((s) => s.setIsMinimal);
-  const setHeaderPosition = useSettingsStore((s) => s.setHeaderPosition);
-  const setThemeColor = useSettingsStore((s) => s.setThemeColor);
-  const setTheme = useSettingsStore((s) => s.setTheme);
-  const resetTheme = useSettingsStore((s) => s.resetTheme);
-  const setShowCombatTimerInMinimal = useSettingsStore((s) => s.setShowCombatTimerInMinimal);
-  const setShowTargetInfoInMinimal = useSettingsStore((s) => s.setShowTargetInfoInMinimal);
-  const setMeterOpacity = useSettingsStore((s) => s.setMeterOpacity);
-  const setMeterListOpacity = useSettingsStore((s) => s.setMeterListOpacity);
-  const setContributionMode = useSettingsStore((s) => s.setContributionMode);
-  const setClickThroughHotkey = useSettingsStore((s) => s.setClickThroughHotkey);
-  const toggleAutoHide = useSettingsStore((s) => s.toggleAutoHide);
-  const resetJoinPanelPosition = useSettingsStore((s) => s.resetJoinPanelPosition);
-  const resetSidePanelPosition = useSettingsStore((s) => s.resetSidePanelPosition);
-  const resetMeterPosition = useSettingsStore((s) => s.resetMeterPosition);
-
+  const {
+    setHideHotkey,
+    setDisplayMode,
+    setTargetInfoDisplayMode,
+    setNameDisplay,
+    setFontFamily,
+    setRowHeight,
+    setIsMinimal,
+    setHeaderPosition,
+    setThemeColor,
+    setTheme,
+    resetTheme,
+    setShowCombatTimerInMinimal,
+    setShowTargetInfoInMinimal,
+    setMeterOpacity,
+    setMeterListOpacity,
+    setContributionMode,
+    setClickThroughHotkey,
+    toggleAutoHide,
+    resetJoinPanelPosition,
+    resetSidePanelPosition,
+    resetMeterPosition,
+  } = useSettingsStore.getState();
   const {
     pending: pendingHide,
     start: startHide,
@@ -260,7 +261,11 @@ export const SettingsPanel = ({
   }, [registerHeaderClose, stableHandleCancel]);
 
   return (
-    <div className="flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden">
+    <div
+      className="flex pr-3 min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden py-2"
+      style={{
+        contain: "layout style paint",
+      }}>
       <div className="flex pr-3 min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden scrollbar-gutter:stable py-2">
         <SettingsItem>
           <SettingsRow

@@ -33,6 +33,7 @@ export const useDragUi = () => {
         )
       )
         return;
+      rootEl.style.willChange = "left, top";
 
       const rect = rootEl.getBoundingClientRect();
       isDragging = true;
@@ -77,6 +78,8 @@ export const useDragUi = () => {
         rafId.current = null;
       }
       isDragging = false;
+      rootEl.style.willChange = "auto";
+
       setTimeout(() => {
         wasDraggingRef.current = false;
       }, 0);

@@ -185,7 +185,9 @@ export const JoinRequestPanel = memo(() => {
   return (
     <div
       ref={panelRef}
-      style={positionStyle}
+      style={{
+        ...positionStyle,
+      }}
       className={cn(rootClass, "fixed flex flex-col")}
       onMouseDown={onMouseDownPanel}>
       <div>
