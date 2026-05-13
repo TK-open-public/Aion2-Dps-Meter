@@ -276,14 +276,9 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
         }
 
 
-val mainScreen = GraphicsEnvironment
-    .getLocalGraphicsEnvironment()
-    .defaultScreenDevice
-    .defaultConfiguration
-    .bounds
-
-val scene = Scene(webView, mainScreen.width.toDouble(), mainScreen.height.toDouble())
+        val scene = Scene(webView, 1920.0, 1080.0)
         scene.fill = Color.TRANSPARENT
+
 
         try {
             val pageField = engine.javaClass.getDeclaredField("page")
