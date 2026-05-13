@@ -11,8 +11,6 @@ import com.tbread.entity.DpsReport
 import com.tbread.entity.JoinRequestUser
 import com.tbread.packet.PacketEvent
 import com.tbread.packet.PacketEventBus
-import javafx.animation.KeyFrame
-import javafx.animation.Timeline
 import javafx.application.Application
 import javafx.application.HostServices
 import javafx.application.Platform
@@ -23,7 +21,6 @@ import javafx.scene.web.WebEngine
 import javafx.scene.web.WebView
 import javafx.stage.Stage
 import javafx.stage.StageStyle
-import javafx.util.Duration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -330,12 +327,13 @@ class BrowserApp(private val config: VersionConfig, private val dpsCalculator: D
         }
         
         
-        Timeline(KeyFrame(Duration.millis(500.0), {
-            dpsData = dpsCalculator.getDps()
-            cachedDpsJson = Json.encodeToString(dpsData)
-        })).apply {
-            cycleCount = Timeline.INDEFINITE
-            play()
+        CoroutineScope(Dispatchers.IO).launch {
+            while (true) {
+                kotlinx.coroutines.delay(500)
+                val data = dpsCalculator.getDps()
+                cachedDpsJson = Json.encodeToString(data)
+                dpsData = data
+            }
         }
 
         CoroutineScope(Dispatchers.IO).launch {
