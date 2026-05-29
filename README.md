@@ -62,7 +62,7 @@ cd Aion2-Dps-Meter
   - # 관리자 권한으로 실행하세요.
 
 - 미터기가 처음 실행때 잠깐 보였다 이후 보이지 않아요.
-  - 미터기를 종료하고 win+r을 누른 뒤, %appdata%\Aion2DpsMeter 를 입력합니다. 해당 폴더에 settings.properties를 열어 windowX와 windowY값을 0으로 변경한 다음 재실행합니다.
+  - 미터기를 종료하고 win+r을 누른 뒤, %appdata%\Aion2DpsMeter 를 입력합니다. 해당 폴더에 settings.properties를 열어 windowX와 windowY, uiX, uiY 4개의 값을 0으로 변경한 다음 재실행합니다.
 
 - 미터기에 표시되는 퍼센트는 보스의 체력을 기준으로 계산되나요?
   - 아닙니다. 보스의 전체 체력이 아닌, 파티원들이 가한 총 데미지 합계를 기준으로 퍼센트를 계산합니다.
