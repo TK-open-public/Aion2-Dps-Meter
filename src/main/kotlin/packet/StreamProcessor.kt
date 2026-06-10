@@ -28,7 +28,7 @@ class StreamProcessor() {
 
         object OwnNickname   : Opcode(0x33, 0x36)
         object OtherNickname : Opcode(0x44, 0x36)
-        object Summon        : Opcode(0x40, 0x36)
+        object Summon        : Opcode(0x41, 0x36)
         object Damage        : Opcode(0x04, 0x38)
         object DoT           : Opcode(0x05, 0x38)
         object BuffApply     : Opcode(0x2A, 0x38)
@@ -412,7 +412,7 @@ class StreamProcessor() {
         }
 
 
-        if (packet[offset] != 0x40.toByte()) return false
+        if (packet[offset] != 0x41.toByte()) return false
         if (packet[offset + 1] != 0x36.toByte()) return false
         offset += 2
 
@@ -583,9 +583,6 @@ class StreamProcessor() {
 
         if (pdp.getActorId() != pdp.getTargetId()) {
             //추후 hps 를 넣는다면 수정하기
-            //혹시 나중에 자기자신에게 데미지주는 보스 기믹이 나오면..
-            if (pdp.getDamage() < 10000000) {
-                //무의요람 버그수정을 위해 일단 천만이상의 데미지 무시
                 pdp.setTimestamp(arrivedAt)
 //                println("mobCode:${DataManager.mobId(pdp.getTargetId())}")
                 DataManager.saveDamage(pdp, epoch)
@@ -593,7 +590,6 @@ class StreamProcessor() {
                 if (mobCode != null && DataManager.mob(mobCode)?.isDummy == true) {
                     DataManager.touchDummyBattle(pdp.getTargetId(), epoch)
                 }
-            }
         }
         return true
 
