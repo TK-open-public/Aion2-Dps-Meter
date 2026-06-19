@@ -27,7 +27,8 @@ class StreamProcessor() {
         val key: Int = b1 or (b2 shl 8)
 
         object OwnNickname   : Opcode(0x33, 0x36)
-        object OtherNickname : Opcode(0x45, 0x36)
+        object OtherNickname : Opcode(0x44, 0x36)
+        object OtherNickname2 : Opcode(0x45, 0x36)
         object Summon        : Opcode(0x41, 0x36)
         object Damage        : Opcode(0x04, 0x38)
         object DoT           : Opcode(0x05, 0x38)
@@ -46,6 +47,7 @@ class StreamProcessor() {
     private val handlers: Map<Int, (ByteArray, VarIntOutput, Boolean, Long, Long) -> Unit> = mapOf(
         Opcode.OwnNickname.key   to { packet, lengthInfo, _, _, arrivedAt            -> searchOwnNickname(packet, lengthInfo, arrivedAt) },
         Opcode.OtherNickname.key to { packet, lengthInfo, _, _, arrivedAt            -> searchOtherNickname(packet, lengthInfo, arrivedAt) },
+        Opcode.OtherNickname2.key to { packet, lengthInfo, _, _, arrivedAt            -> searchOtherNickname(packet, lengthInfo, arrivedAt) },
         Opcode.Summon.key        to { packet, _, extraFlag, _, _                     -> parseSummonPacket(packet, extraFlag) },
         Opcode.Damage.key        to { packet, _, extraFlag, epoch, arrivedAt         -> parsingDamage(packet, extraFlag, epoch, arrivedAt) },
         Opcode.DoT.key           to { packet, _, extraFlag, epoch, arrivedAt         -> parseDoTPacket(packet, extraFlag, epoch, arrivedAt) },
@@ -179,8 +181,6 @@ class StreamProcessor() {
 
     private fun searchOtherNickname(packet: ByteArray, lengthInfo: VarIntOutput, arrivedAt: Long) {
         var offset = lengthInfo.length
-        if (packet[offset] != 0x45.toByte()) return
-        if (packet[offset + 1] != 0x36.toByte()) return
 
         offset += 2
         if (packet.size < offset) return
