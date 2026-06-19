@@ -27,7 +27,7 @@ class StreamProcessor() {
         val key: Int = b1 or (b2 shl 8)
 
         object OwnNickname   : Opcode(0x33, 0x36)
-        object OtherNickname : Opcode(0x44, 0x36)
+        object OtherNickname : Opcode(0x45, 0x36)
         object Summon        : Opcode(0x41, 0x36)
         object Damage        : Opcode(0x04, 0x38)
         object DoT           : Opcode(0x05, 0x38)
@@ -179,7 +179,7 @@ class StreamProcessor() {
 
     private fun searchOtherNickname(packet: ByteArray, lengthInfo: VarIntOutput, arrivedAt: Long) {
         var offset = lengthInfo.length
-        if (packet[offset] != 0x44.toByte()) return
+        if (packet[offset] != 0x45.toByte()) return
         if (packet[offset + 1] != 0x36.toByte()) return
 
         offset += 2
@@ -261,7 +261,7 @@ class StreamProcessor() {
 //            }
             PacketAddonManager.parse(packet, arrivedAt)
         }
-
+        println("$nickname, ${userInfo.value}")
         DataManager.saveNickname(userInfo.value, nickname, false, server)
 
     }
